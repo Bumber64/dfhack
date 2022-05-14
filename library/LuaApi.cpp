@@ -1509,17 +1509,13 @@ static const LuaWrapper::FunctionReg dfhack_gui_module[] = {
 
 static int gui_autoDFAnnouncement(lua_State *state)
 {
-    int rv;
+    bool rv;
     df::report_init *r = Lua::GetDFObject<df::report_init>(state, 1);
 
     if (r)
     {
         std::string message = luaL_checkstring(state, 2);
-
-        if (lua_gettop(state) >= 3)
-            rv = Gui::autoDFAnnouncement(*r, message, lua_toboolean(state, 3));
-        else
-            rv = Gui::autoDFAnnouncement(*r, message);
+        rv = Gui::autoDFAnnouncement(*r, message);
     }
     else
     {
@@ -1572,7 +1568,7 @@ static int gui_autoDFAnnouncement(lua_State *state)
         }
     }
 
-    lua_pushinteger(state, rv);
+    lua_pushboolean(state, rv);
     return 1;
 }
 
