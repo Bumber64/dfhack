@@ -1015,7 +1015,7 @@ Fortress mode
   ``dfhack.gui.recenterViewscreen([zoom])``
 
   Recenter the view on a position using a specific zoom type. If no position is given,
-  recenter on ``df.global.cursor``. Zoom types are ``df.report_zoom_type`` (0 = Generic, 1 = Item, 2 = Unit),
+  recenter on ``df.global.cursor``. Zoom types are ``df.report_zoom_type`` (see: `enum definition <https://github.com/DFHack/df-structures/blob/master/df.announcements.xml#L438>`_),
   where ``Generic`` skips recentering and enforces valid view bounds (the same as x = -30000,) ``Item`` brings
   the position onscreen without centering, and ``Unit`` centers the screen on the position. Default zoom type is Item.
   
