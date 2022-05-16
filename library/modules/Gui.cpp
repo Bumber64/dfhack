@@ -113,7 +113,10 @@ using namespace DFHack;
 #include "df/viewscreen_workshop_profilest.h"
 #include "df/world.h"
 
-DBG_DECLARE(core,gui,DebugCategory::LINFO);
+namespace DFHack
+{
+    DBG_DECLARE(core, gui, DebugCategory::LINFO);
+}
 
 using namespace df::enums;
 
@@ -1712,10 +1715,10 @@ void Gui::showAutoAnnouncement(
 
 bool Gui::autoDFAnnouncement(df::report_init r, string message)
 {   // Reverse-engineered from DF announcement code
-
-    if (!world->unk_26a9a8) // TODO: world->show_announcements
+    
+    if (!world->allow_announcements)
     {
-        DEBUG(gui,out).print("Skipped announcement because world->show_announcements is false:\n%s\n", message.c_str());
+        DEBUG(gui).print("Skipped announcement because world->allow_announcements is false:\n%s\n", message.c_str());
         return false;
     }
 
@@ -1724,7 +1727,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
         a_flags = df::global::d_init->announcements.flags[r.type];
     else
     {
-        WARN(gui,out).printerr("Invalid announcement type:\n%s\n", message.c_str());
+        WARN(gui).print("Invalid announcement type:\n%s\n", message.c_str());
         return false;
     }
 
@@ -1746,7 +1749,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             if ((world->units.active.empty() || (r.unit1 != world->units.active[0] && r.unit2 != world->units.active[0])) &&
                 ((Maps::getTileDesignation(r.pos)->whole & 0x10) == 0x0)) // Adventure mode uses this bit to determine current visibility
             {
-                DEBUG(gui,out).print("Adventure mode announcement not heard:\n%s\n", message.c_str());
+                DEBUG(gui).print("Adventure mode announcement not heard:\n%s\n", message.c_str());
                 return false;
             }
         }
@@ -1755,7 +1758,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
     {   // Dwarf mode (or arena?)
         if ((r.unit1 != NULL || r.unit2 != NULL) && (r.unit1 == NULL || Units::isHidden(r.unit1)) && (r.unit2 == NULL || Units::isHidden(r.unit2)))
         {
-            DEBUG(gui,out).print("Dwarf mode announcement not heard:\n%s\n", message.c_str());
+            DEBUG(gui).print("Dwarf mode announcement not heard:\n%s\n", message.c_str());
             return false;
         }
 
@@ -1765,7 +1768,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             {
                 if (r.unit1 == NULL && r.unit2 == NULL)
                 {
-                    DEBUG(gui,out).print("Skipped UNIT_COMBAT_REPORT because it has no units:\n%s\n", message.c_str());
+                    DEBUG(gui).print("Skipped UNIT_COMBAT_REPORT because it has no units:\n%s\n", message.c_str());
                     return false;
                 }
             }
@@ -1773,12 +1776,12 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             {
                 if (!a_flags.bits.UNIT_COMBAT_REPORT_ALL_ACTIVE)
                 {
-                    DEBUG(gui,out).print("Skipped announcement not enabled for this game mode:\n%s\n", message.c_str());
+                    DEBUG(gui).print("Skipped announcement not enabled for this game mode:\n%s\n", message.c_str());
                     return false;
                 }
                 else if (!recent_report_any(r.unit1) && !recent_report_any(r.unit2))
                 {
-                    DEBUG(gui,out).print("Skipped UNIT_COMBAT_REPORT_ALL_ACTIVE because there's no active report:\n%s\n", message.c_str());
+                    DEBUG(gui).print("Skipped UNIT_COMBAT_REPORT_ALL_ACTIVE because there's no active report:\n%s\n", message.c_str());
                     return false;
                 }
             }
@@ -1797,7 +1800,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
 
     if (results.empty())
     {
-        DEBUG(gui,out).print("Skipped announcement because it was empty after parsing:\n%s\n", message.c_str());
+        DEBUG(gui).print("Skipped announcement because it was empty after parsing:\n%s\n", message.c_str());
         return false;
     }
 
@@ -1810,7 +1813,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             world->status.display_timer = r.display_timer;
             Gui::writeToGamelog("x" + to_string(repeat_count + 1));
         }
-        DEBUG(gui,out).print("Announcement succeeded as repeat:\n%s\n", message.c_str());
+        DEBUG(gui).print("Announcement succeeded as repeat:\n%s\n", message.c_str());
         return true;
     }
 
@@ -1892,19 +1895,19 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
 
     if (/*debug_gamelog &&*/ success) // TODO: Add debug_gamelog to globals
     {
-        DEBUG(gui,out).print("Announcement succeeded and printed to gamelog.txt:\n%s\n", message.c_str());
+        DEBUG(gui).print("Announcement succeeded and printed to gamelog.txt:\n%s\n", message.c_str());
         Gui::writeToGamelog(message);
     }
     else if (success)
     {
-        DEBUG(gui,out).print("Announcement succeeded but skipped printing to gamelog.txt because debug_gamelog is false:\n%s\n", message.c_str());
-        return true;
+        DEBUG(gui).print("Announcement succeeded but skipped printing to gamelog.txt because debug_gamelog is false:\n%s\n", message.c_str());
     }
     else
     {
-        DEBUG(gui,out).print("Announcement succeeded internally but didn't qualify to be displayed anywhere:\n%s\n", message.c_str());
-        return true;
+        DEBUG(gui).print("Announcement succeeded internally but didn't qualify to be displayed anywhere:\n%s\n", message.c_str());
     }
+
+    return true;
 }
 
 bool Gui::autoDFAnnouncement(df::announcement_type type, df::coord pos, std::string message, int color,
