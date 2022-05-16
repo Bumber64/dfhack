@@ -1893,15 +1893,15 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
 
     delete_old_reports();
 
-    if (/*debug_gamelog &&*/ success) // TODO: Add debug_gamelog to globals
+    if (/*debug_gamelog &&*/ success) // TODO: Add debug_gamelog to globals?
     {
         DEBUG(gui).print("Announcement succeeded and printed to gamelog.txt:\n%s\n", message.c_str());
         Gui::writeToGamelog(message);
     }
-    else if (success)
+    /*else if (success)
     {
         DEBUG(gui).print("Announcement succeeded but skipped printing to gamelog.txt because debug_gamelog is false:\n%s\n", message.c_str());
-    }
+    }*/
     else
     {
         DEBUG(gui).print("Announcement succeeded internally but didn't qualify to be displayed anywhere:\n%s\n", message.c_str());
