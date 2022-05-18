@@ -1368,82 +1368,41 @@ DFHACK_EXPORT void Gui::writeToGamelog(std::string message)
     fseed.close();
 }
 
-bool Gui::parseReportString(std::vector<std::string> &out, const std::string &str, size_t line_length)
-{   // out vector will contain strings cut to line_length, avoiding cutting up words
-    // Reverse-engineered from DF announcement code, fixes applied
-
-    if (str.empty() || line_length == 0)
-        return false;
-    out.clear();
-
-    bool ignore_space = false;
-    string current_line = "";
-    size_t iter = 0;
-    do
+namespace
+{   // Utility functions for reports
+    bool parseReportString(std::vector<std::string> *out, const std::string &str, size_t line_length = 73)
     {
-        if (ignore_space)
-        {
-            if (str[iter] == ' ')
-                continue;
-            ignore_space = false;
-        }
+        if (str.empty() || line_length == 0)
+            return false;
+        out->clear();
 
-        if (str[iter] == '&') // escape character
-        {
-            iter++; // ignore the '&' itself
-            if (iter >= str.length())
-                break;
+        string parsed = "";
+        size_t i = 0;
 
-            if (str[iter] == 'r') // "&r" starts new line
+        while (i < str.length())
+        {
+            if (str[i] == '&') // escape character
             {
-                if (!current_line.empty())
-                {
-                    out.push_back(string(current_line));
-                    current_line = "";
-                }
-                out.push_back(" ");
-                continue; // don't add 'r' to current_line
-            }
-            else if (str[iter] != '&')
-            {   // not "&&", don't add character to current_line
-                continue;
-            }
-        }
+                i++; // ignore the '&' itself
+                if (i >= str.length())
+                    break;
 
-        current_line += str[iter];
-        if (current_line.length() > line_length)
-        {
-            size_t i = current_line.length(); // start of current word
-            size_t j; // end of previous word
-            while (--i > 0 && current_line[i] != ' '); // find start of current word
-
-            if (i == 0)
-            {   // need to push at least one char
-                j = i = line_length; // last char ends up on next line
+                if (str[i] == 'r') // "&r" is newline
+                    parsed += '\n';
+                else if (str[i] == '&') // "&&" is '&'
+                    parsed += "&";
+                // else next char is ignored
             }
             else
             {
-                j = i;
-                while (j > 1 && current_line[j - 1] == ' ')
-                    j--; // consume excess spaces at the split point
+                parsed += str[i];
             }
-            out.push_back(current_line.substr(0, j)); // push string before j
-
-            if (current_line[i] == ' ')
-                i++; // don't keep this space
-            current_line.erase(0, i); // current_line now starts at last word or is empty
-            ignore_space = current_line.empty(); // ignore leading spaces on new line
+            i++;
         }
-    } while (++iter < str.length());
 
-    if (!current_line.empty())
-        out.push_back(current_line);
-
-    return true;
-}
-
-namespace
-{   // Utility functions for reports
+        return word_wrap(out, parsed, line_length, true);
+    }
+    
     bool recent_report(df::unit *unit, df::unit_report_type slot)
     {
         if (unit && !unit->reports.log[slot].empty() &&
@@ -1796,7 +1755,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
 
     vector<string> results;
     size_t line_length = (r.speaker_id == -1) ? (init->display.grid_x - 7) : (init->display.grid_x - 10);
-    parseReportString(results, message, line_length);
+    parseReportString(&results, message, line_length);
 
     if (results.empty())
     {
