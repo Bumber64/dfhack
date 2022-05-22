@@ -130,7 +130,7 @@ namespace DFHack
         // Process an announcement exactly like DF would, which might result in no announcement
         DFHACK_EXPORT bool autoDFAnnouncement(df::report_init r, std::string message);
         DFHACK_EXPORT bool autoDFAnnouncement(df::announcement_type type, df::coord pos, std::string message, int color = 7, bool bright = true,
-                                             df::unit *unit1 = NULL, df::unit *unit2 = NULL, bool is_sparring = false);
+                                              df::unit *unit1 = NULL, df::unit *unit2 = NULL, bool is_sparring = false);
         
         /*
          * Cursor and window coords
