@@ -1095,7 +1095,7 @@ Announcements
   and a string and processes them just like DF does. Sometimes this means the announcement won't occur.
   Can also be built from parameters instead of a ``report_init``. Setting ``is_sparring`` to ``true`` means the report
   will be added to sparring logs (if applicable) rather than hunting or combat. Text is parsed using ``&`` as an escape character, with ``&r``
-  being a newline, ``&&`` being just ``&``, and any other combination causing neither character to display.
+  adding a blank line (equivalent to ``\n \n``,) ``&&`` being just ``&``, and any other combination causing neither character to display.
 
 Other
 ~~~~~
