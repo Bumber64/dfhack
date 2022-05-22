@@ -1387,8 +1387,8 @@ namespace
                 if (i >= str.length())
                     break;
 
-                if (str[i] == 'r') // "&r" is newline
-                    parsed += '\n';
+                if (str[i] == 'r') // "&r" adds a blank line a single space
+                    parsed += "\n \n";
                 else if (str[i] == '&') // "&&" is '&'
                     parsed += "&";
                 // else next char is ignored
@@ -1714,7 +1714,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
         }
     }
     else
-    {   // Dwarf mode (or arena?)
+    {   // Dwarf mode
         if ((r.unit1 != NULL || r.unit2 != NULL) && (r.unit1 == NULL || Units::isHidden(r.unit1)) && (r.unit2 == NULL || Units::isHidden(r.unit2)))
         {
             DEBUG(gui).print("Dwarf mode announcement not heard:\n%s\n", message.c_str());
@@ -1757,14 +1757,14 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
     size_t line_length = (r.speaker_id == -1) ? (init->display.grid_x - 7) : (init->display.grid_x - 10);
     parseReportString(&results, message, line_length);
 
-    if (results.empty())
+    if (results.empty()) // DF doesn't do this check
     {
         DEBUG(gui).print("Skipped announcement because it was empty after parsing:\n%s\n", message.c_str());
         return false;
     }
 
     // Check for repeat report
-    int32_t repeat_count = check_repeat_report(results);
+    int32_t repeat_count = check_repeat_report(results); // Does nothing outside dwarf mode
     if (repeat_count > 0)
     {
         if (a_flags.bits.D_DISPLAY)
@@ -1777,7 +1777,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
     }
 
     bool success = false; // only print to gamelog if report was used
-    size_t new_report_index = world->status.reports.size();
+    size_t new_report_index = world->status.reports.size(); // we need this for addCombatReport
     for (size_t i = 0; i < results.size(); i++)
     {   // Generate report entries for each line
         auto new_report = new df::report();
@@ -1813,7 +1813,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
         }
     }
 
-    if (*gamemode == game_mode::DWARF)
+    if (*gamemode == game_mode::DWARF) // DF does this inside the previous loop, but we're using addCombatReport instead
     {
         if (a_flags.bits.UNIT_COMBAT_REPORT)
         {
@@ -1861,7 +1861,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
     {
         DEBUG(gui).print("Announcement succeeded but skipped printing to gamelog.txt because debug_gamelog is false:\n%s\n", message.c_str());
     }*/
-    else
+    else // not sure if this can actually happen; our results.empty() check handles the one edge case I can think of that would get this far
     {
         DEBUG(gui).print("Announcement succeeded internally but didn't qualify to be displayed anywhere:\n%s\n", message.c_str());
     }
