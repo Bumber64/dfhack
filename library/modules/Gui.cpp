@@ -1870,7 +1870,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
 }
 
 bool Gui::autoDFAnnouncement(df::announcement_type type, df::coord pos, std::string message, int color,
-                            bool bright, df::unit *unit1, df::unit *unit2, bool is_sparring)
+                             bool bright, df::unit *unit1, df::unit *unit2, bool is_sparring)
 {
     auto r = df::report_init();
     r.type = type;
@@ -1880,9 +1880,6 @@ bool Gui::autoDFAnnouncement(df::announcement_type type, df::coord pos, std::str
     r.unit1 = unit1;
     r.unit2 = unit2;
     r.flags.bits.hostile_combat = !is_sparring;
-
-    if (Maps::isValidTilePos(pos))
-        r.zoom_type = report_zoom_type::Unit;
 
     return autoDFAnnouncement(r, message);
 }
