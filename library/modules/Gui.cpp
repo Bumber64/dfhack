@@ -1711,11 +1711,13 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             r.type != announcement_type::CONFLICT_CONVERSATION &&
             r.type != announcement_type::MECHANISM_SOUND)
         {   // If not sound, make sure we can see pos
-            if ((world->units.active.empty() || (r.unit1 != world->units.active[0] && r.unit2 != world->units.active[0])) &&
-                ((Maps::getTileDesignation(r.pos)->whole & 0x10) == 0x0)) // Adventure mode uses a "dig" bit to determine current visibility
-            {
-                DEBUG(gui).print("Adventure mode announcement not detected:\n%s\n", message.c_str());
-                return false;
+            if (world->units.active.empty() || (r.unit1 != world->units.active[0] && r.unit2 != world->units.active[0]))
+            {   // Adventure mode reuses a dwarf mode digging designation bit to determine current visibility
+                if (!Maps::isValidTilePos(r.pos) || (Maps::getTileDesignation(r.pos)->whole & 0x10) == 0x0)
+                {
+                    DEBUG(gui).print("Adventure mode announcement not detected:\n%s\n", message.c_str());
+                    return false;
+                }
             }
         }
     }
