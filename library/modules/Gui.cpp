@@ -1678,27 +1678,23 @@ void Gui::showAutoAnnouncement(
 
 bool Gui::autoDFAnnouncement(df::report_init r, string message)
 {   // Reverse-engineered from DF announcement code
-    
     if (!world->allow_announcements)
     {
         DEBUG(gui).print("Skipped announcement because world->allow_announcements is false:\n%s\n", message.c_str());
         return false;
-    }
-
-    df::announcement_flags a_flags;
-    if (is_valid_enum_item(r.type))
-        a_flags = df::global::d_init->announcements.flags[r.type];
-    else
+    } 
+    elseif (!is_valid_enum_item(r.type))
     {
         WARN(gui).print("Invalid announcement type:\n%s\n", message.c_str());
         return false;
     }
-
-    if (message.empty())
+    elseif (message.empty())
     {
         Core::printerr("Empty announcement %u\n", r.type); // DF would print this to errorlog.txt
         return false;
     }
+
+    df::announcement_flags a_flags = df::global::d_init->announcements.flags[r.type];
 
     // Check if the announcement will actually be announced
     if (*gamemode == game_mode::ADVENTURE)
@@ -1712,7 +1708,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             if ((world->units.active.empty() || (r.unit1 != world->units.active[0] && r.unit2 != world->units.active[0])) &&
                 ((Maps::getTileDesignation(r.pos)->whole & 0x10) == 0x0)) // Adventure mode uses this bit to determine current visibility
             {
-                DEBUG(gui).print("Adventure mode announcement not heard:\n%s\n", message.c_str());
+                DEBUG(gui).print("Adventure mode announcement not detected:\n%s\n", message.c_str());
                 return false;
             }
         }
@@ -1721,7 +1717,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
     {   // Dwarf mode
         if ((r.unit1 != NULL || r.unit2 != NULL) && (r.unit1 == NULL || Units::isHidden(r.unit1)) && (r.unit2 == NULL || Units::isHidden(r.unit2)))
         {
-            DEBUG(gui).print("Dwarf mode announcement not heard:\n%s\n", message.c_str());
+            DEBUG(gui).print("Dwarf mode announcement not detected:\n%s\n", message.c_str());
             return false;
         }
 
@@ -1939,9 +1935,7 @@ df::coord Gui::getCursorPos()
 }
 
 void Gui::recenterViewscreen(int32_t x, int32_t y, int32_t z, df::report_zoom_type zoom)
-{
-    // Reverse-engineered from DF announcement code, also used when scrolling
-
+{   // Reverse-engineered from DF announcement code, also used when scrolling
     auto dims = getDwarfmodeViewDims();
     int32_t w = dims.map_x2 - dims.map_x1 + 1;
     int32_t h = dims.map_y2 - dims.map_y1 + 1;
@@ -1980,9 +1974,7 @@ void Gui::recenterViewscreen(int32_t x, int32_t y, int32_t z, df::report_zoom_ty
 }
 
 void Gui::pauseRecenter(int32_t x, int32_t y, int32_t z, bool pause)
-{
-    // Reverse-engineered from DF announcement code
-
+{   // Reverse-engineered from DF announcement code
     if (*gamemode != game_mode::DWARF)
         return;
 
