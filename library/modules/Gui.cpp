@@ -1444,7 +1444,7 @@ namespace
     }
 
     int32_t check_repeat_report(vector<string> &results)
-    {
+    {   // returns the new repeat count, else 0
         if (*gamemode == game_mode::DWARF && !results.empty() && world->status.reports.size() >= results.size())
         {
             auto &reports = world->status.reports;
@@ -1592,6 +1592,19 @@ bool Gui::addCombatReport(df::unit *unit, df::unit_report_type slot, int report_
     return true;
 }
 
+namespace
+{   // An additional utility function for reports
+    bool add_proper_report(df::unit *unit, bool is_sparring, int report_index)
+    {
+        if (is_sparring)
+            return addCombatReport(unit, unit_report_type::Sparring, report_index);
+        else if (unit->job.current_job != NULL && unit->job.current_job->job_type == job_type::Hunt)
+            return addCombatReport(unit, unit_report_type::Hunting, report_index);
+        else
+            return addCombatReport(unit, unit_report_type::Combat, report_index);
+    }
+}
+
 bool Gui::addCombatReportAuto(df::unit *unit, df::announcement_flags mode, int report_index)
 {
     using df::global::world;
@@ -1605,14 +1618,7 @@ bool Gui::addCombatReportAuto(df::unit *unit, df::announcement_flags mode, int r
     bool ok = false;
 
     if (mode.bits.UNIT_COMBAT_REPORT)
-    {
-        if (unit->flags2.bits.sparring)
-            ok |= addCombatReport(unit, unit_report_type::Sparring, report_index);
-        else if (unit->job.current_job && unit->job.current_job->job_type == job_type::Hunt)
-            ok |= addCombatReport(unit, unit_report_type::Hunting, report_index);
-        else
-            ok |= addCombatReport(unit, unit_report_type::Combat, report_index);
-    }
+        ok |= add_proper_report(unit, unit->flags2.bits.sparring, report_index);
 
     if (mode.bits.UNIT_COMBAT_REPORT_ALL_ACTIVE)
     {
@@ -1683,12 +1689,12 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
         DEBUG(gui).print("Skipped announcement because world->allow_announcements is false:\n%s\n", message.c_str());
         return false;
     } 
-    elseif (!is_valid_enum_item(r.type))
+    else if (!is_valid_enum_item(r.type))
     {
         WARN(gui).print("Invalid announcement type:\n%s\n", message.c_str());
         return false;
     }
-    elseif (message.empty())
+    else if (message.empty())
     {
         Core::printerr("Empty announcement %u\n", r.type); // DF would print this to errorlog.txt
         return false;
@@ -1706,7 +1712,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             r.type != announcement_type::MECHANISM_SOUND)
         {   // If not sound, make sure we can see pos
             if ((world->units.active.empty() || (r.unit1 != world->units.active[0] && r.unit2 != world->units.active[0])) &&
-                ((Maps::getTileDesignation(r.pos)->whole & 0x10) == 0x0)) // Adventure mode uses this bit to determine current visibility
+                ((Maps::getTileDesignation(r.pos)->whole & 0x10) == 0x0)) // Adventure mode uses a "dig" bit to determine current visibility
             {
                 DEBUG(gui).print("Adventure mode announcement not detected:\n%s\n", message.c_str());
                 return false;
@@ -1818,24 +1824,10 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
         if (a_flags.bits.UNIT_COMBAT_REPORT)
         {
             if (r.unit1 != NULL)
-            {
-                if (r.flags.bits.hostile_combat)
-                    success |= addCombatReport(r.unit1, unit_report_type::Combat, new_report_index);
-                else if (r.unit1->job.current_job != NULL && r.unit1->job.current_job->job_type == job_type::Hunt)
-                    success |= addCombatReport(r.unit1, unit_report_type::Hunting, new_report_index);
-                else
-                    success |= addCombatReport(r.unit1, unit_report_type::Sparring, new_report_index);
-            }
+                success |= add_proper_report(r.unit1, !r.flags.bits.hostile_combat, new_report_index);
 
             if (r.unit2 != NULL)
-            {
-                if (r.flags.bits.hostile_combat)
-                    success |= addCombatReport(r.unit2, unit_report_type::Combat, new_report_index);
-                else if (r.unit2->job.current_job != NULL && r.unit2->job.current_job->job_type == job_type::Hunt)
-                    success |= addCombatReport(r.unit2, unit_report_type::Hunting, new_report_index);
-                else
-                    success |= addCombatReport(r.unit2, unit_report_type::Sparring, new_report_index);
-            }
+                success |= add_proper_report(r.unit2, !r.flags.bits.hostile_combat, new_report_index);
         }
 
         if (a_flags.bits.UNIT_COMBAT_REPORT_ALL_ACTIVE)
@@ -1844,6 +1836,7 @@ bool Gui::autoDFAnnouncement(df::report_init r, string message)
             {
                 if (recent_report(r.unit1, slot))
                     success |= addCombatReport(r.unit1, slot, new_report_index);
+
                 if (recent_report(r.unit2, slot))
                     success |= addCombatReport(r.unit2, slot, new_report_index);
             }
@@ -1951,7 +1944,7 @@ void Gui::recenterViewscreen(int32_t x, int32_t y, int32_t z, df::report_zoom_ty
         }
         else // report_zoom_type::Item
         {
-            if (new_win_x > (x - 5))
+            if (new_win_x > (x - 5)) // equivalent to: "while (new_win_x > x - 5) new_win_x -= 10;"
                 new_win_x -= (new_win_x - (x - 5) - 1) / 10 * 10 + 10;
             if (new_win_y > (y - 5))
                 new_win_y -= (new_win_y - (y - 5) - 1) / 10 * 10 + 10;
@@ -1961,14 +1954,15 @@ void Gui::recenterViewscreen(int32_t x, int32_t y, int32_t z, df::report_zoom_ty
                 new_win_y += ((y + 5 - h) - new_win_y - 1) / 10 * 10 + 10;
         }
 
-        if (new_win_z != z)
-            ui_sidebar_menus->minimap.need_scan = true;
         new_win_z = z;
     }
 
     *df::global::window_x = clip_range(new_win_x, 0, (world->map.x_count - w));
     *df::global::window_y = clip_range(new_win_y, 0, (world->map.y_count - h));
     *df::global::window_z = clip_range(new_win_z, 0, (world->map.z_count - 1));
+    
+    ui_sidebar_menus->minimap.need_render = true;
+    ui_sidebar_menus->minimap.need_scan = true;
 
     return;
 }
@@ -1979,12 +1973,9 @@ void Gui::pauseRecenter(int32_t x, int32_t y, int32_t z, bool pause)
         return;
 
     resetDwarfmodeView(pause);
+    
     if (x != -30000)
-    {
         recenterViewscreen(x, y, z, report_zoom_type::Item);
-        ui_sidebar_menus->minimap.need_render = true;
-        ui_sidebar_menus->minimap.need_scan = true;
-    }
 
     if (init->input.pause_zoom_no_interface_ms > 0)
     {
