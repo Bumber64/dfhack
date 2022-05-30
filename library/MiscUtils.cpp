@@ -168,12 +168,6 @@ std::string to_search_normalized(const std::string &str)
     return result;
 }
 
-enum word_wrap_wspace_mode {
-    WSMODE_KEEP_ALL,
-    WSMODE_COLLAPSE_ALL,
-    WSMODE_TRIM_LEADING
-};
-
 bool word_wrap(std::vector<std::string> *out, const std::string &str, size_t line_length,
                word_wrap_wspace_mode mode)
 {
