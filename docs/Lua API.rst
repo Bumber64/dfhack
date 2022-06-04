@@ -1010,17 +1010,6 @@ Fortress mode
   Same as ``resetDwarfmodeView``, but also recenter if ``x`` isn't ``-30000``. Respects
   ``RECENTER_INTERFACE_SHUTDOWN_MS`` in DF's ``init.txt`` (the delay before input is recognized when a recenter occurs.)
 
-* ``dfhack.gui.recenterViewscreen(pos[,zoom])``
-  ``dfhack.gui.recenterViewscreen(x,y,z[,zoom])``
-  ``dfhack.gui.recenterViewscreen([zoom])``
-
-  Recenter the view on a position using a specific zoom type. If no position is given,
-  recenter on ``df.global.cursor``. Zoom types are ``df.report_zoom_type``
-  (see: `enum definition <https://github.com/DFHack/df-structures/blob/master/df.announcements.xml>`_),
-  where ``df.report_zoom_type.Generic`` skips recentering and enforces valid view bounds (the same as x = -30000,)
-  ``df.report_zoom_type.Item`` brings the position onscreen without centering, and
-  ``df.report_zoom_type.Unit`` centers the screen on the position. Default zoom type is ``df.report_zoom_type.Item``.
-
 * ``dfhack.gui.revealInDwarfmodeMap(pos)``
 
   Centers the view on the given position, which can be a ``df.coord`` instance
