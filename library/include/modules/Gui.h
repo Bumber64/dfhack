@@ -140,7 +140,7 @@ namespace DFHack
 
         // Recenter the viewscreen, based on DF code for announcements and scrolling
         DFHACK_EXPORT void pauseRecenter(int32_t x, int32_t y, int32_t z, bool pause);
-        DFHACK_EXPORT inline void pauseRecenter(df::coord pos, bool pause) { pauseRecenter(pos.x, pos.y, pos.z, pause); }; };
+        DFHACK_EXPORT inline void pauseRecenter(df::coord pos, bool pause) { pauseRecenter(pos.x, pos.y, pos.z, pause); };
 
         static const int AREA_MAP_WIDTH = 23;
         static const int MENU_WIDTH = 30;
@@ -158,7 +158,8 @@ namespace DFHack
         DFHACK_EXPORT DwarfmodeDims getDwarfmodeViewDims();
 
         DFHACK_EXPORT void resetDwarfmodeView(bool pause = false);
-        DFHACK_EXPORT bool revealInDwarfmodeMap(df::coord pos, bool center = false);
+        DFHACK_EXPORT bool revealInDwarfmodeMap(int32_t x, int32_t y, int32_t z, bool center = false);
+        DFHACK_EXPORT inline bool revealInDwarfmodeMap(df::coord pos, bool center = false) { return revealInDwarfmodeMap(pos.x, pos.y, pos.z, center); };
         DFHACK_EXPORT bool refreshSidebar();
 
         DFHACK_EXPORT bool inRenameBuilding();
