@@ -1013,15 +1013,15 @@ Fortress mode
 * ``dfhack.gui.revealInDwarfmodeMap(pos[,center])``
   ``dfhack.gui.revealInDwarfmodeMap(x,y,z[,center])``
 
-  Centers the view on the given position, which can be a ``df.coord`` instance
-  or a table assignable to a ``df.coord`` (see `lua-api-table-assignment`),
+  Centers the view on the given coordinates. If ``center`` is true, make sure the
+  position is in the exact center of the view, else just bring it on screen.
+  
+  ``pos`` can be a ``df.coord`` instance or a table assignable to a ``df.coord`` (see `lua-api-table-assignment`),
   e.g.::
 
     {x = 5, y = 7, z = 11}
     getSelectedUnit().pos
     copyall(df.global.cursor)
-
-  If ``center`` is true, make sure the position is in the exact center of the view, else just bring it on screen.
 
 * ``dfhack.gui.refreshSidebar()``
 
