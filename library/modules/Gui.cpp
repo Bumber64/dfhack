@@ -2059,7 +2059,7 @@ void Gui::resetDwarfmodeView(bool pause)
         *df::global::pause_state = true;
 }
 
-bool Gui::revealInDwarfmodeMap(df::coord pos, bool center)
+bool Gui::revealInDwarfmodeMap(int32_t x, int32_t y, int32_t z, bool center)
 {
     using df::global::window_x;
     using df::global::window_y;
@@ -2074,14 +2074,14 @@ bool Gui::revealInDwarfmodeMap(df::coord pos, bool center)
     int32_t new_win_x, new_win_y, new_win_z;
     getViewCoords(new_win_x, new_win_y, new_win_z);
 
-    if (Maps::isValidTilePos(pos))
+    if (Maps::isValidTilePos(x, y, z))
     {
-        if (zoom == report_zoom_type::Unit)
+        if (center)
         {
             new_win_x = x - w / 2;
             new_win_y = y - h / 2;
         }
-        else // report_zoom_type::Item
+        else // just bring it on screen
         {
             if (new_win_x > (x - 5)) // equivalent to: "while (new_win_x > x - 5) new_win_x -= 10;"
                 new_win_x -= (new_win_x - (x - 5) - 1) / 10 * 10 + 10;
@@ -2096,9 +2096,9 @@ bool Gui::revealInDwarfmodeMap(df::coord pos, bool center)
         new_win_z = z;
     }
 
-    *df::global::window_x = clip_range(new_win_x, 0, (world->map.x_count - w));
-    *df::global::window_y = clip_range(new_win_y, 0, (world->map.y_count - h));
-    *df::global::window_z = clip_range(new_win_z, 0, (world->map.z_count - 1));
+    *window_x = clip_range(new_win_x, 0, (world->map.x_count - w));
+    *window_y = clip_range(new_win_y, 0, (world->map.y_count - h));
+    *window_z = clip_range(new_win_z, 0, (world->map.z_count - 1));
     ui_sidebar_menus->minimap.need_render = true;
     ui_sidebar_menus->minimap.need_scan = true;
 
