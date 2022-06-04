@@ -156,8 +156,8 @@ namespace DFHack
         DFHACK_EXPORT void resetDwarfmodeView(bool pause = false);
         DFHACK_EXPORT bool revealInDwarfmodeMap(int32_t x, int32_t y, int32_t z, bool center = false);
         DFHACK_EXPORT inline bool revealInDwarfmodeMap(df::coord pos, bool center = false) { return revealInDwarfmodeMap(pos.x, pos.y, pos.z, center); };
-        DFHACK_EXPORT bool pauseRecenter(int32_t x, int32_t y, int32_t z, bool pause = false);
-        DFHACK_EXPORT inline bool pauseRecenter(df::coord pos, bool pause) { return pauseRecenter(pos.x, pos.y, pos.z, pause); };
+        DFHACK_EXPORT bool pauseRecenter(int32_t x, int32_t y, int32_t z, bool pause = true);
+        DFHACK_EXPORT inline bool pauseRecenter(df::coord pos, bool pause = true) { return pauseRecenter(pos.x, pos.y, pos.z, pause); };
         DFHACK_EXPORT bool refreshSidebar();
 
         DFHACK_EXPORT bool inRenameBuilding();
