@@ -1007,10 +1007,11 @@ Fortress mode
 * ``dfhack.gui.pauseRecenter(pos[,pause])``
   ``dfhack.gui.pauseRecenter(x,y,z[,pause])``
 
-  Same as ``resetDwarfmodeView``, but also recenter if ``x`` isn't ``-30000``. Respects
+  Same as ``resetDwarfmodeView``, but also recenter if position is valid. Respects
   ``RECENTER_INTERFACE_SHUTDOWN_MS`` in DF's ``init.txt`` (the delay before input is recognized when a recenter occurs.)
 
-* ``dfhack.gui.revealInDwarfmodeMap(pos)``
+* ``dfhack.gui.revealInDwarfmodeMap(pos[,center])``
+  ``dfhack.gui.revealInDwarfmodeMap(x,y,z[,center])``
 
   Centers the view on the given position, which can be a ``df.coord`` instance
   or a table assignable to a ``df.coord`` (see `lua-api-table-assignment`),
@@ -1020,7 +1021,7 @@ Fortress mode
     getSelectedUnit().pos
     copyall(df.global.cursor)
 
-  Returns false if unsuccessful.
+  If ``center`` is true, make sure the position is in the exact center of the view, else just bring it on screen.
 
 * ``dfhack.gui.refreshSidebar()``
 
