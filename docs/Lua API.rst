@@ -1007,7 +1007,7 @@ Fortress mode
 * ``dfhack.gui.pauseRecenter(pos[,pause])``
   ``dfhack.gui.pauseRecenter(x,y,z[,pause])``
 
-  Same as ``resetDwarfmodeView``, but also recenter if position is valid. Respects
+  Same as ``resetDwarfmodeView``, but also recenter if position is valid. If ``pause`` is false, skip pausing. Respects
   ``RECENTER_INTERFACE_SHUTDOWN_MS`` in DF's ``init.txt`` (the delay before input is recognized when a recenter occurs.)
 
 * ``dfhack.gui.revealInDwarfmodeMap(pos[,center])``
