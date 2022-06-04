@@ -113,6 +113,9 @@ using namespace DFHack;
 #include "df/viewscreen_workshop_profilest.h"
 #include "df/world.h"
 
+const size_t MAX_REPORTS_SIZE = 3000;
+const int32_t RECENT_REPORT_TICKS = 500;
+
 namespace DFHack
 {
     DBG_DECLARE(core, gui, DebugCategory::LINFO);
@@ -1410,7 +1413,7 @@ static bool recent_report(df::unit *unit, df::unit_report_type slot)
 {
     return unit && !unit->reports.log[slot].empty() &&
         *df::global::cur_year == unit->reports.last_year[slot] &&
-        (*df::global::cur_year_tick - unit->reports.last_year_tick[slot]) <= 500;
+        (*df::global::cur_year_tick - unit->reports.last_year_tick[slot]) <= RECENT_REPORT_TICKS;
 }
 
 static bool recent_report_any(df::unit *unit)
@@ -1426,7 +1429,7 @@ static bool recent_report_any(df::unit *unit)
 static void delete_old_reports()
 {
     auto &reports = world->status.reports;
-    while (reports.size() > 3000)
+    while (reports.size() > MAX_REPORTS_SIZE)
     {
         if (reports[0] != NULL)
         {
@@ -1618,7 +1621,7 @@ bool Gui::addCombatReportAuto(df::unit *unit, df::announcement_flags mode, int r
         {
             if (!unit->reports.log[slot].empty() &&
                 unit->reports.last_year[slot] == report->year &&
-                (report->time - unit->reports.last_year_tick[slot]) <= 500)
+                (report->time - unit->reports.last_year_tick[slot]) <= RECENT_REPORT_TICKS)
             {
                 ok |= addCombatReport(unit, slot, report_index);
             }
