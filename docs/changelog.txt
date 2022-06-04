@@ -47,7 +47,8 @@ changelog.txt uses a syntax similar to RST, with a few special sequences:
 ## Documentation
 
 ## API
-- add functions reverse-engineered from announcement code: ``Gui::autoDFAnnouncement``, ``Gui::pauseRecenter``, ``Gui::recenterViewscreen``
+- add functions reverse-engineered from announcement code: ``Gui::autoDFAnnouncement``, ``Gui::pauseRecenter``
+- ``Gui::revealInDwarfmodeMap``: Now enforce valid view bounds when pos invalid
 
 ## Lua
 - ``widgets.HotkeyLabel``: the ``key_sep`` string is now configurable
