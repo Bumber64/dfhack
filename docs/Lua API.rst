@@ -1023,6 +1023,8 @@ Fortress mode
     getSelectedUnit().pos
     copyall(df.global.cursor)
 
+  If the position is invalid, the function will simply ensure the current window position is clamped between valid values.
+
 * ``dfhack.gui.refreshSidebar()``
 
   Refreshes the fortress mode sidebar. This can be useful when making changes to
