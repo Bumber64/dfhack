@@ -2001,7 +2001,7 @@ void Gui::resetDwarfmodeView(bool pause)
 }
 
 bool Gui::revealInDwarfmodeMap(int32_t x, int32_t y, int32_t z, bool center)
-{
+{   // Reverse-engineered from DF announcement and scrolling code
     using df::global::window_x;
     using df::global::window_y;
     using df::global::window_z;
