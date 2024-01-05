@@ -1449,6 +1449,8 @@ static bool isMapLoaded() { return Core::getInstance().isMapLoaded(); }
 static std::string df2utf(std::string s) { return DF2UTF(s); }
 static std::string utf2df(std::string s) { return UTF2DF(s); }
 static std::string df2console(color_ostream &out, std::string s) { return DF2CONSOLE(out, s); }
+static std::string cp437toUpper(std::string s) { return toUpper(s, true); }
+static std::string cp437toLower(std::string s) { return toLower(s, true); }
 static std::string toSearchNormalized(std::string s) { return to_search_normalized(s); }
 static std::string capitalizeStringWords(std::string s) { return capitalize_string_words(s); }
 
@@ -1468,8 +1470,8 @@ static const LuaWrapper::FunctionReg dfhack_module[] = {
     WRAP(df2utf),
     WRAP(utf2df),
     WRAP(df2console),
-    WRAP(toUpper),
-    WRAP(toLower),
+    WRAP(cp437toUpper),
+    WRAP(cp437toLower),
     WRAP(toSearchNormalized),
     WRAP(capitalizeStringWords),
     WRAP_VERSION_FUNC(getDFHackVersion, dfhack_version),
