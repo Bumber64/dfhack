@@ -82,7 +82,7 @@ Template for new versions:
 
 ## Lua
 - ``dfhack.capitalizeStringWords``: new function, returns string with all words capitalized
-- ``dfhack.cp437toUpper(string)``, ``dfhack.cp437toLower(string)``: new functions, return string with all chars changed, respecting CP437
+- ``dfhack.cp437Upper(string)``, ``dfhack.cp437Lower(string)``: new functions, return string with all chars changed, respecting CP437
 
 ## Removed
 
