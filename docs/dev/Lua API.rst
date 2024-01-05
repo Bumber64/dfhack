@@ -956,8 +956,8 @@ can be omitted.
 * ``dfhack.capitalizeStringWords(string)``
 
   Return a version of the string with the first letter of each word capitalized.
-  The beginning of a word is determined by a space, quote ``"``, or an
-  apostrophe ``'`` preceded by a space or comma.
+  The beginning of a word is determined by a space or quote ``"``. It is also
+  determined by an apostrophe ``'`` when preceded by a space or comma.
   Non-ASCII CP437 characters will be capitalized if a CP437 version exists.
   This function does not downcase characters. Use ``dfhack.cp437toLower``
   first, if desired.
