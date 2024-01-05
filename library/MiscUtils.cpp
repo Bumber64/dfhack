@@ -251,7 +251,7 @@ std::string capitalize_string_words(const std::string& str)
 
         if (starting || conf)
         {   // Capitalize
-            out[s] = cp437_toupper(out[s])
+            out[s] = cp437_toupper(out[s]);
             starting = false;
         }
     }
