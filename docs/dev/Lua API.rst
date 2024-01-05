@@ -935,12 +935,14 @@ can be omitted.
   Convert a string from UTF-8 to DF's CP437 encoding.
 
 * ``dfhack.cp437toUpper(string)``
+
   Return a version of the string with all letters capitalized.
   Non-ASCII CP437 characters are capitalized if a CP437 version exists.
   For example, ``ä`` is replaced by ``Ä``, but ``â`` is never capitalized.
 
 
 * ``dfhack.cp437toLower(string)``
+
   Return a version of the string with all letters in lower case.
   Non-ASCII CP437 characters are downcased. For example, ``Ä`` is replaced by ``ä``.
 
