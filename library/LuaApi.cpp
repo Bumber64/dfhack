@@ -1468,6 +1468,8 @@ static const LuaWrapper::FunctionReg dfhack_module[] = {
     WRAP(df2utf),
     WRAP(utf2df),
     WRAP(df2console),
+    WRAP(toUpper),
+    WRAP(toLower),
     WRAP(toSearchNormalized),
     WRAP(capitalizeStringWords),
     WRAP_VERSION_FUNC(getDFHackVersion, dfhack_version),
