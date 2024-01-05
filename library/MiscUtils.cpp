@@ -120,7 +120,7 @@ std::string join_strings(const std::string &separator, const std::vector<std::st
     return ss.str();
 }
 
-char CP437_toupper(char c)
+char cp437_toupper(char c)
 {
     switch (c)
     {
@@ -145,7 +145,7 @@ char CP437_toupper(char c)
     }
 }
 
-char CP437_tolower(char c)
+char cp437_tolower(char c)
 {
     switch (c)
     {
@@ -174,7 +174,7 @@ std::string toUpper(const std::string &str, bool non_ascii)
 {
     std::string rv(str.size(),' ');
     for (unsigned i = 0; i < str.size(); ++i)
-        rv[i] = non_ascii ? CP437_toupper(str[i]) : toupper(str[i]);
+        rv[i] = non_ascii ? cp437_toupper(str[i]) : toupper(str[i]);
     return rv;
 }
 
@@ -182,7 +182,7 @@ std::string toLower(const std::string &str, bool non_ascii)
 {
     std::string rv(str.size(),' ');
     for (unsigned i = 0; i < str.size(); ++i)
-        rv[i] = non_ascii ? CP437_tolower(str[i]) : tolower(str[i]);
+        rv[i] = non_ascii ? cp437_tolower(str[i]) : tolower(str[i]);
     return rv;
 }
 
@@ -250,9 +250,8 @@ std::string capitalize_string_words(const std::string& str)
         }
 
         if (starting || conf)
-        {
-            // Capitalize
-            out[s] = CP437_toupper(out[s])
+        {   // Capitalize
+            out[s] = cp437_toupper(out[s])
             starting = false;
         }
     }
