@@ -1826,7 +1826,7 @@ void Gui::showPopupAnnouncement(std::string message, int color, bool bright)
     df::popup_message *popup = new df::popup_message();
     popup->text = message;
     popup->color = color; // Doesn't do anything anymore? Popups are always [C:7:0:0] gray text
-    popup->bright = bright; // To color popup use: "[C:" + to_string(color) + ":0:" + (bright ? '1' : '0') + ']' + message
+    popup->bright = bright; // See: https://dwarffortressbugtracker.com/view.php?id=12672
 
     auto &popups = world->status.popups;
     popups.push_back(popup);
@@ -1839,9 +1839,9 @@ void Gui::showPopupAnnouncement(std::string message, int color, bool bright)
         popups.erase(popups.begin());
     }
 
-    Gui::MTB_Clear(&world->status.mega_text);
-    Gui::MTB_Parse(&world->status.mega_text, popups[0]->text);
-    Gui::MTB_Prepare(&world->status.mega_text);
+    Gui::MTB_clean(&world->status.mega_text);
+    Gui::MTB_parse(&world->status.mega_text, popups[0]->text);
+    Gui::MTB_set_width(&world->status.mega_text);
 
     if (gps->force_full_display_count < 2)
         gps->force_full_display_count = 2;
