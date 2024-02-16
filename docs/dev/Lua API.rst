@@ -1139,10 +1139,10 @@ Announcements
   (see: `bug report <https://dwarffortressbugtracker.com/view.php?id=12672>`_.)
   Add ``[C:``color``:0:``bright``]`` (where color is 0-7 and bright is 0-1)
   in front of your text string to force the popup text to be colored.
-  Test.
+
   Text is run through a parser as it is converted into a markup text box.
   The parser accepts tokens in square brackets (``[`` ``]``.)
-  Use ``[[`` and ``]]` to include actual square brackets in text.
+  Use ``[[`` and ``]]`` to include actual square brackets in text.
 
   The following tokens are accepted:
 
