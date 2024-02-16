@@ -1866,7 +1866,7 @@ void Gui::showAutoAnnouncement(
 }
 
 bool Gui::autoDFAnnouncement(df::announcement_infost info, string message)
-{   // Based on reverse-engineering of DF announcement function "make_annoucement" FUN_1400574e0 (v50.11 win64 Steam)
+{   // Based on reverse-engineering of "make_announcement" FUN_1400574e0 (v50.11 win64 Steam)
     if (!world->allow_announcements)
     {
         DEBUG(gui).print("Skipped announcement because world->allow_announcements is false:\n%s\n", message.c_str());
@@ -2105,8 +2105,8 @@ bool Gui::autoDFAnnouncement(df::announcement_type type, df::coord pos, std::str
     return autoDFAnnouncement(info, message);
 }
 
-void Gui::MTB_Clear(df::markup_text_boxst *mtb)
-{   // Reverse-engineered from FUN_140056f60 (v50.11 win64 Steam)
+void Gui::MTB_clean(df::markup_text_boxst *mtb)
+{   // Reverse-engineered from "markup_text_boxst::clean" FUN_140056f60 (v50.11 win64 Steam)
     mtb->word.clear();
     mtb->link.clear();
     mtb->current_width = -1;
@@ -2133,8 +2133,8 @@ static bool insert_markup_text_wordst(vector<df::markup_text_wordst *> &vec, str
     return true;
 }
 
-void Gui::MTB_Parse(df::markup_text_boxst *mtb, string parse_text)
-{   // Reverse-engineered from FUN_1409f70b0 (v50.11 win64 Steam)
+void Gui::MTB_parse(df::markup_text_boxst *mtb, string parse_text)
+{   // Reverse-engineered from "markup_text_boxst::process_string_to_lines" FUN_1409f70b0 (v50.11 win64 Steam)
     CHECK_NULL_POINTER(mtb);
     auto &word_vec = mtb->word;
 
@@ -2290,9 +2290,9 @@ void Gui::MTB_Parse(df::markup_text_boxst *mtb, string parse_text)
 
                     if (buff1 == "VAR") // Color from dipscript var
                     {
-                        DEBUG(gui).print("MTB_Parse received:\n[C:VAR:%s:%s]\nwhich is for dipscripts and is unimplemented.\nThe dipscript environment itself is: %s\n",
+                        DEBUG(gui).print("MTB_parse received:\n[C:VAR:%s:%s]\nwhich is for dipscripts and is unimplemented.\nThe dipscript environment itself is: %s\n",
                             buff2.c_str(), buff3.c_str(), mtb->environment ? "Active" : "NULL");
-                        //meeting_context_setColor(mtb, buff2, buff3);
+                        //MTB_set_color_on_var(mtb, buff2, buff3);
                     }
                     else
                     {
@@ -2345,9 +2345,9 @@ void Gui::MTB_Parse(df::markup_text_boxst *mtb, string parse_text)
                     string buff_var_name = grab_token_string_pos(parse_text, i, ':');
                     i += buff_var_name.size();
 
-                    DEBUG(gui).print("MTB_Parse received:\n[VAR:%s:%s:%s]\nwhich is for dipscripts and is unimplemented.\nThe dipscript environment itself is: %s\n",
+                    DEBUG(gui).print("MTB_parse received:\n[VAR:%s:%s:%s]\nwhich is for dipscripts and is unimplemented.\nThe dipscript environment itself is: %s\n",
                         buff_format.c_str(), buff_var_type.c_str(), buff_var_name.c_str(), mtb->environment ? "Active" : "NULL");
-                    //meeting_context_formatString(mtb, str, buff_format, buff_var_type, buff_var_name);
+                    //MTB_append_variable(mtb, str, buff_format, buff_var_type, buff_var_name);
                 }
                 else if (token_buffer == "R" || token_buffer == "B" || token_buffer == "P")
                 {
@@ -2402,8 +2402,8 @@ void Gui::MTB_Parse(df::markup_text_boxst *mtb, string parse_text)
     return;
 }
 
-void Gui::MTB_Prepare(df::markup_text_boxst* mtb, int32_t width)
-{   // Reverse-engineered from FUN_1409f6e80 (v50.11 win64 Steam)
+void Gui::MTB_set_width(df::markup_text_boxst* mtb, int32_t width)
+{   // Reverse-engineered from "markup_text_boxst::set_width" FUN_1409f6e80 (v50.11 win64 Steam)
     if (mtb->current_width == width)
         return;
 
