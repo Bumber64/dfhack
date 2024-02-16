@@ -1180,6 +1180,7 @@ Announcements
   Setting ``is_sparring`` to *true* means the report will be added to sparring logs (if applicable) rather than hunting or combat.
 
   The announcement will not display if units are involved and the player can't see them (or hear, for adventure mode sound announcement types.)
+  Returns *true* if a report was created or repeated.
   For detailed info on why an announcement failed to display, enable ``debugfilter set Debug core gui`` in the DFHack console.
   If you want a guaranteed announcement, use ``dfhack.gui.showAutoAnnouncement`` instead.
 
