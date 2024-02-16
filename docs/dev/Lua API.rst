@@ -1141,7 +1141,7 @@ Announcements
   in front of your text string to force the popup text to be colored.
 
   Text is run through a parser as it is converted into a markup text box.
-  The parser accepts tokens in square brackets (``[````]``.)
+  The parser accepts tokens in square brackets (``[`` ``]``.)
   Use ``[[`` and ``]]` to include actual square brackets in text.
 
   The following tokens are accepted:
