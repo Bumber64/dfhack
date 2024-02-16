@@ -1137,11 +1137,11 @@ Announcements
   Displays a megabeast-style modal announcement window.
   DF is currently ignoring the color and brightness settings
   (see: `bug report <https://dwarffortressbugtracker.com/view.php?id=12672>`_.)
-  Add ``[C:`` color ``:0:`` bright ``]`` (where color is 0-7 and bright is 0-1)
+  Add ``[C:``color``:0:``bright``]`` (where color is 0-7 and bright is 0-1)
   in front of your text string to force the popup text to be colored.
 
   Text is run through a parser as it is converted into a markup text box.
-  The parser accepts tokens in square brackets ( ``[`` ``]`` .)
+  The parser accepts tokens in square brackets (``[`` ``]``.)
   Use ``[[`` and ``]]` to include actual square brackets in text.
 
   The following tokens are accepted:
@@ -1150,11 +1150,11 @@ Announcements
   ``[B]``: (BLANK_LINE) Ends the current line and adds an additional blank line, begining on the line after that.
   ``[P]``: (INDENT) Ends the current line and begins four spaces indented on the next.
 
-  ``[CHAR:`` n ``]``,``[CHAR:~`` ch ``]: Add a single character. First version takes a base-10 integer ``n`` representing a CP-437 character.
+  ``[CHAR:``n``]``,``[CHAR:~``ch``]: Add a single character. First version takes a base-10 integer ``n`` representing a CP-437 character.
   Second version accepts a character ``ch`` instead. ``"[CHAR:154]"`` and ``"[CHAR:~"..string.char(154).."]"`` both result in ``Ü``.
   Use ``[CHAR:32]`` or ``[CHAR:~ ]`` to add extra spaces, which would normally be trimmed by the parser.
 
-  ``[LPAGE:`` link_type ``:`` id ``]``, ``[LPAGE:`` link_type ``:`` id ``:`` subid ``]``: Start a ``markup_text_linkst``.
+  ``[LPAGE:``link_type``:``id``]``, ``[LPAGE:``link_type``:``id``:``subid``]``: Start a ``markup_text_linkst``.
   These are intended for Legends mode page links and don't work in popups. The text will just be colored based on ``link_type``.
   Valid link types are: ``HF`` (``HIST_FIG``,) ``SITE``, ``ARTIFACT``, ``BOOK``, ``SR`` (``SUBREGION``,) ``FL`` (``FEATURE_LAYER``,)
   ``ENT`` (``ENTITY``,) ``AB`` (``ABSTRACT_BUILDING``,) ``EPOP`` (``ENTITY_POPULATION``,) ``ART_IMAGE``, ``ERA``, ``HEC``.
