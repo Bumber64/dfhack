@@ -33,12 +33,13 @@ Options
     map block. Allows regrass to work in blocks that never had any grass to
     begin with. Will still fail in incompatible biomes.
 ``-f [<grass_id>]``, ``--force [<grass_id>]``
-    Force a grass type on tiles with no compatible grass types. If ``GRASS_ID``
+    Force a grass type on tiles with no compatible grass types. If ``grass_id``
     is not given, then a single random grass type will be selected from raws.
-    The ``--new`` option takes precidence for compatible biomes, otherwise those
-    tiles will be forced as well.
+    ``grass_id`` is not case-sensitive. The ``--new`` option takes precidence
+    for compatible biomes, otherwise such tiles will be forced instead.
 ``-a``, ``--ashes``
-    Regrass tiles that've been burnt to ash.
+    Regrass tiles that've been burnt to ash. Not recommended if your map is
+    currently on fire.
 ``-u``, ``--mud``
     Converts non-smoothed, mud-spattered stone into grass. Valid for layer stone,
     obsidian, and ore.
@@ -59,9 +60,9 @@ Examples
     Regrass the selected tile, refilling existing and depleted grass except on
     ashes and muddy stone.
 ``regrass --ashes --mud --point 0,0,100 19,19,119``
-    Regrass tiles in a 20x20x20 cube defined by the coords, refilling existing
-    and depleted grass, and converting ashes and muddy stone (if block ever had
-    grass.)
+    Regrass tiles in the 20x20x20 cube defined by the coords, refilling existing
+    and depleted grass, and converting ashes and muddy stone (if respective blocks
+    ever had grass.)
 ``regrass -b 10,10,100 -aunm``
     Regrass the block that contains the given coord, converting ashes and muddy
     stone, adding all compatible grass types, and filling each grass type to max.
