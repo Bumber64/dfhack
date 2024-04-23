@@ -60,7 +60,9 @@ Template for new versions:
 
 ## Misc Improvements
 - `suspendmanager`: Account for walls planned on the z-layer below when determining accessibility to a job
-- `regrass`: Work on non-floors, ashes, muddy stone, shrubs, trees. Operate on single block or tile. Add new grass events. Logging.
+- `regrass`: Can now add grass to stairs, ramps, ashes, muddy stone, shrubs, and trees
+- `regrass`: Can now restrict regrass effect to specified tiles, block, or z-level
+- `regrass`: Can now add grass in map blocks where there was no grass before
 
 ## Documentation
 - `autoclothing`: add section comparing ``autoclothing`` and `tailor` to guide players choosing which to enable
