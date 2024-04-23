@@ -1,8 +1,9 @@
 #include "Debug.h"
-#include "modules/Gui.h"
-#include "modules/Maps.h"
 #include "PluginManager.h"
 #include "TileTypes.h"
+
+#include "modules/Gui.h"
+#include "modules/Maps.h"
 
 #include "df/biome_type.h"
 #include "df/block_square_event_grassst.h"
@@ -33,10 +34,13 @@ struct regrass_options
 {
     bool max_grass = false;
     bool new_grass = false;
+    bool force = false;
     bool ashes = false;
     bool mud = false;
-    bool here = false;
+    bool point = false;
     bool block = false;
+    bool zlevel = false;
+    int32_t forced_plant = -1;
 };
 
 static bool valid_tile(df::map_block *block, int x, int y, regrass_options options)
@@ -95,7 +99,7 @@ static bool valid_tile(df::map_block *block, int x, int y, regrass_options optio
         DEBUG(log).print("Invalid tile: Building\n");
         return false;
     }
-    else if (block->occupancy[x][y].bits.no_grow)
+    else if (!options.force && block->occupancy[x][y].bits.no_grow)
     {
         DEBUG(log).print("Invalid tile: no_grow\n");
         return false;
@@ -160,6 +164,12 @@ static bool valid_tile(df::map_block *block, int x, int y, regrass_options optio
 static vector<int32_t> grasses_for_tile(df::map_block *block, int x, int y)
 {   // Return sorted vector of valid grass ids
     vector<int32_t> grasses;
+
+    if (block->occupancy[x][y].bits.no_grow)
+    {
+        DEBUG(log).print("Skipping grass collection: no_grow.\n");
+        return grasses;
+    }
 
     DEBUG(log).print("Collecting grasses...\n");
     if (block->designation[x][y].bits.subterranean)
@@ -235,7 +245,14 @@ static bool regrass_events(df::map_block *block, int x, int y, regrass_options o
     }
 
     auto valid_grasses = grasses_for_tile(block, x, y);
-    if (options.new_grass && !valid_grasses.empty())
+    if (options.force && valid_grasses.empty())
+    {
+        DEBUG(log).print("Forcing grass.\n");
+        grasses.push_back(options.forced_plant);
+        block->occupancy[x][y].bits.no_grow = false;
+    }
+    
+    if (options.force || (options.new_grass && !valid_grasses.empty()))
     {
         DEBUG(log).print("Adding missing grasses...\n");
         auto new_grasses(valid_grasses); // Copy vector
@@ -376,6 +393,7 @@ DFhackCExport command_result plugin_init(color_ostream &out, vector<PluginComman
 command_result df_regrass(color_ostream &out, vector<string> &parameters)
 {
     regrass_options options;
+    df::coord pos_1, pos_2;
 
     for (size_t i = 0; i < parameters.size(); i++) // TODO: argparse
     {
@@ -388,20 +406,21 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
             options.ashes = true;
         else if (s == "u" || s == "mud")
             options.mud = true;
-        else if (s == "h" || s == "here")
-            options.here = true;
+        else if (s == "p" || s == "point")
+            options.point = true;
         else if (s == "b" || s == "block")
             options.block = true;
+        else if (s == "z" || s == "zlevel")
+            options.zlevel = true;
         else // invalid
             return CR_WRONG_USAGE;
     }
 
-    if (options.here)
+    if (options.point && options.block ||
+        options.point && options.zlevel ||
+        options.block && options.zlevel)
     {
-        if (options.block)
-            return CR_WRONG_USAGE;
-        options.ashes = true;
-        options.mud = true;
+        return CR_WRONG_USAGE;
     }
 
     if (!Core::getInstance().isMapLoaded())
@@ -410,35 +429,57 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
         return CR_FAILURE;
     }
 
+    if (options.force && options.forced_plant < 0)
+    {
+        out.printerr("Plant raw not found for force regrass!");
+        return CR_FAILURE;
+    }
+
     CoreSuspender suspend;
 
     int count = 0;
-    if (options.here || options.block)
+    if (options.point || options.block)
     {
-        auto p = Gui::getCursorPos();
-        if (!p.isValid())
+        if (!pos_1.isValid())
         {
-            out.printerr("Cursor required!\n");
-            return CR_FAILURE;
+            pos_1 = Gui::getCursorPos();
+            if (!pos_1.isValid())
+            {
+                out.printerr("Keyboard cursor required!\n");
+                return CR_FAILURE;
+            }
         }
 
-        auto b = Maps::getTileBlock(p);
-        if (!b)
+        if (pos_2.isValid())
         {
-            out.printerr("No map block at cursor!\n");
-            return CR_FAILURE;
-        }
-
-        if (options.block)
-        {
-            DEBUG(log).print("Regrassing block...\n");
-            count = regrass_block(b, options);
+            DEBUG(log).print("Regrassing cuboid...\n");
+            //count = regrass_cuboid(pos_1, pos_2, options);
         }
         else
         {
-            DEBUG(log).print("Regrassing single tile...\n");
-            count = regrass_tile(b, p.x&15, p.y&15, options);
+            auto b = Maps::getTileBlock(pos_1);
+            if (!b)
+            {
+                out.printerr("No map block at position!\n");
+                return CR_FAILURE;
+            }
+
+            if (options.block)
+            {
+                DEBUG(log).print("Regrassing block...\n");
+                count = regrass_block(b, options);
+            }
+            else
+            {
+                DEBUG(log).print("Regrassing single tile...\n");
+                count = regrass_tile(b, pos_1.x&15, pos_1.y&15, options);
+            }
         }
+    }
+    else if (options.zlevel)
+    {
+        DEBUG(log).print("Regrassing z-level...\n");
+        //count = regrass_zlevel(options);
     }
     else
     {
