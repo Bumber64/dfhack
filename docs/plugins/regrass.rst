@@ -31,17 +31,22 @@ Options
     Adds biome-compatible grass types that were not originally present in the
     map block. Allows regrass to work in blocks that never had any grass to
     begin with. Will still fail in incompatible biomes.
+``-f [<grass_id>]``, ``--force [<grass_id>]``
+    Force a grass type on tiles with no compatible grass types. If ``GRASS_ID``
+    is not given, then a single random grass type will be selected from raws.
+    The ``--new`` option takes precidence for compatible biomes, otherwise those
+    tiles will be forced as well.
 ``-a``, ``--ashes``
     Regrass tiles that've been burnt to ash.
 ``-u``, ``--mud``
     Converts non-smoothed, mud-spattered stone into grass. Valid for layer stone,
     obsidian, and ore.
-``-h``, ``--here``
-    Only regrass the tile selected by the keyboard cursor. Automatically enables
-    ``--ashes`` and ``--mud``.
-``-b``, ``--block``
-    Only regrass the map block containing the keyboard cursor.
-    ``devel/block-borders`` can be used to visualize map blocks.
+``-p [<pos> [<pos>]]``, ``--point [<pos> [<pos>]]``
+    Only regrass the tile at a given coord, or the tiles in a cuboid defined by
+    two coords. The keyboard cursor will be used if no coords are given.
+``-b [<pos>]``, ``--block [<pos>]``
+    Only regrass the map block containing a given coord or the keyboard cursor.
+    `devel/block-borders` can be used to visualize map blocks.
 
 Examples
 --------
@@ -49,18 +54,29 @@ Examples
 ``regrass``
     Regrass the entire map, refilling existing and depleted grass except on ashes
     and muddy stone.
-``regrass --here``
-    Regrass the selected tile, refilling grass and creating grass on ashes and
-    muddy stone using the block's existing grass types.
-``regrass --block --ashes --max``
-    Regrass the block, maxing out grass and converting ashes to grass floors.
-``regrass -bun``
-    Regrass the block, converting muddy stone and adding new grass types.
+``regrass -p``
+    Regrass the selected tile, refilling existing and depleted grass except on
+    ashes and muddy stone.
+``regrass --ashes --mud --point 0,0,100 19,19,119``
+    Regrass tiles in a 20x20x20 cube defined by the coords, refilling existing
+    and depleted grass, and converting ashes and muddy stone (if block ever had
+    grass.)
+``regrass -b 10,10,100 -aunm``
+    Regrass the block that contains the given coord, converting ashes and muddy
+    stone, adding all compatible grass types, and filling each grass type to max.
+``regrass -bn -f "DOG'S TOOTH GRASS"``
+    Regrass the selected block, adding all compatible grass types to block data,
+    adding ``dog's tooth grass`` if no compatible types exist, and ignoring ashes
+    and muddy stone. Refill existing grass, else select one of the block's types
+    for each tile.
+``regrass -f UNDERLICHEN``
+    Regrass the entire map, refilling existing and depleted grass, else filling
+    with ``underlichen``. Ignore ashes and muddy stone.
 
 Troubleshooting
 ---------------
 
 ``debugfilter set Debug regrass log`` can be used to figure out why regrass
-is failing on a tile. (Avoid regrassing the entire map with this enabled, as it
-will make the game unresponsive and flood the console for several minutes!)
+is failing on a tile. (Avoid regrassing large parts of the map with this enabled,
+as it will make the game unresponsive and flood the console for several minutes!)
 Disable with ``debugfilter set Info regrass log``.
