@@ -49,6 +49,8 @@ Options
 ``-b [<pos>]``, ``--block [<pos>]``
     Only regrass the map block containing a given coord or the keyboard cursor.
     `devel/block-borders` can be used to visualize map blocks.
+``-z``, ``--zlevel``
+    Only regrass the current z-level.
 
 Examples
 --------
@@ -66,8 +68,8 @@ Examples
 ``regrass -b 10,10,100 -aunm``
     Regrass the block that contains the given coord, converting ashes and muddy
     stone, adding all compatible grass types, and filling each grass type to max.
-``regrass -f UNDERLICHEN``
-    Regrass the entire map, refilling existing and depleted grass, else filling
+``regrass -z -f UNDERLICHEN``
+    Regrass the current z-level, refilling existing and depleted grass, else filling
     with ``underlichen``. Ignore ashes and muddy stone.
 ``regrass -bn -f "DOG'S TOOTH GRASS"``
     Regrass the selected block, adding all compatible grass types to block data,
