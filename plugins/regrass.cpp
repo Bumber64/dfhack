@@ -381,6 +381,16 @@ int regrass_map(regrass_options options)
     return count;
 }
 
+int regrass_zlevel(regrass_options options)
+{   // Regrass current z-level
+    return 0;
+}
+
+int regrass_cuboid(df::coord pos_1, df::coord pos_2, regrass_options options)
+{   // Regrass cuboid bounded by pos_1, pos_2
+    return 0;
+}
+
 DFhackCExport command_result plugin_init(color_ostream &out, vector<PluginCommand> &commands)
 {
     commands.push_back(PluginCommand(
@@ -394,29 +404,17 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
 {
     regrass_options options;
     df::coord pos_1, pos_2;
+    bool show_help = false;
 
-    for (size_t i = 0; i < parameters.size(); i++) // TODO: argparse
+    if (!Lua::CallLuaModuleFunction(out, "plugins.regrass", "parse_commandline", parameters, 1,
+            [&](lua_State *L) { show_help = !lua_toboolean(L, -1);}))
     {
-        auto &s = parameters[i];
-        if (s == "m" || s == "max")
-            options.max_grass = true;
-        else if (s == "n" || s == "new")
-            options.new_grass = true;
-        else if (s == "a" || s == "ashes")
-            options.ashes = true;
-        else if (s == "u" || s == "mud")
-            options.mud = true;
-        else if (s == "p" || s == "point")
-            options.point = true;
-        else if (s == "b" || s == "block")
-            options.block = true;
-        else if (s == "z" || s == "zlevel")
-            options.zlevel = true;
-        else // invalid
-            return CR_WRONG_USAGE;
+        out.printerr("Failed Lua call!\n");
+        return CR_FAILURE;
     }
 
-    if (options.point && options.block ||
+    if (show_help ||
+        options.point && options.block ||
         options.point && options.zlevel ||
         options.block && options.zlevel)
     {
@@ -453,7 +451,7 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
         if (pos_2.isValid())
         {
             DEBUG(log).print("Regrassing cuboid...\n");
-            //count = regrass_cuboid(pos_1, pos_2, options);
+            count = regrass_cuboid(pos_1, pos_2, options);
         }
         else
         {
@@ -479,7 +477,7 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
     else if (options.zlevel)
     {
         DEBUG(log).print("Regrassing z-level...\n");
-        //count = regrass_zlevel(options);
+        count = regrass_zlevel(options);
     }
     else
     {
