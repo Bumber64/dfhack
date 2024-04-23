@@ -27,7 +27,7 @@ Options
     Not normal DF behavior. Tile will appear to be the first type of grass
     present in the map block until that is depleted, moving on to the next type.
     When this option isn't used, non-depleted grass tiles will have their existing
-    type refilled, while depleted grass will have a type selected randomly.
+    type refilled, while grass-depleted soils will have a type selected randomly.
 ``-n``, ``--new``
     Adds biome-compatible grass types that were not originally present in the
     map block. Allows regrass to work in blocks that never had any grass to
