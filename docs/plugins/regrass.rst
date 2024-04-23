@@ -16,7 +16,8 @@ Usage
 
     regrass [<options>]
 
-Regrasses the entire map by default, for map blocks that had grass to begin with.
+Regrasses the entire map by default, for compatible tiles in map blocks that
+have or had grass at some point.
 
 Options
 -------
