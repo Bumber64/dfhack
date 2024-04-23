@@ -39,8 +39,7 @@ Options
     exist. The ``--new`` option takes precidence for compatible biomes, otherwise
     such tiles will be forced instead.
 ``-a``, ``--ashes``
-    Regrass tiles that've been burnt to ash. Not recommended if your map is
-    currently on fire.
+    Regrass tiles that've been burnt to ash.
 ``-u``, ``--mud``
     Converts non-smoothed, mud-spattered stone into grass. Valid for layer stone,
     obsidian, and ore.
