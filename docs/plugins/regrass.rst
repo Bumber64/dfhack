@@ -35,8 +35,9 @@ Options
 ``-f [<grass_id>]``, ``--force [<grass_id>]``
     Force a grass type on tiles with no compatible grass types. If ``grass_id``
     is not given, then a single random grass type will be selected from raws.
-    ``grass_id`` is not case-sensitive. The ``--new`` option takes precidence
-    for compatible biomes, otherwise such tiles will be forced instead.
+    ``grass_id`` is not case-sensitive, but must be enclosed in quotes if spaces
+    exist. The ``--new`` option takes precidence for compatible biomes, otherwise
+    such tiles will be forced instead.
 ``-a``, ``--ashes``
     Regrass tiles that've been burnt to ash. Not recommended if your map is
     currently on fire.
@@ -66,14 +67,14 @@ Examples
 ``regrass -b 10,10,100 -aunm``
     Regrass the block that contains the given coord, converting ashes and muddy
     stone, adding all compatible grass types, and filling each grass type to max.
+``regrass -f UNDERLICHEN``
+    Regrass the entire map, refilling existing and depleted grass, else filling
+    with ``underlichen``. Ignore ashes and muddy stone.
 ``regrass -bn -f "DOG'S TOOTH GRASS"``
     Regrass the selected block, adding all compatible grass types to block data,
     adding ``dog's tooth grass`` if no compatible types exist, and ignoring ashes
     and muddy stone. Refill existing grass, else select one of the block's types
     for each tile.
-``regrass -f UNDERLICHEN``
-    Regrass the entire map, refilling existing and depleted grass, else filling
-    with ``underlichen``. Ignore ashes and muddy stone.
 
 Troubleshooting
 ---------------
