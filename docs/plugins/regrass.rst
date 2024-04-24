@@ -37,7 +37,7 @@ Options
 ``-f [grass_id]``, ``--force [grass_id]``
     Force a grass type on tiles with no compatible grass types. ``grass_id`` is
     not case-sensitive, but must be enclosed in quotes if spaces exist. If an
-    empty string is used via `""`, then a single random grass type will be
+    empty string is used via "", then a single random grass type will be
     selected from the world's raws. The ``--new`` option takes precidence for
     compatible biomes, otherwise such tiles will be forced instead.
 ``-a``, ``--ashes``
