@@ -60,7 +60,7 @@ static const struct_field_info regrass_options_fields[] =
 };
 struct_identity regrass_options::_identity(sizeof(regrass_options), &df::allocator_fn<regrass_options>, NULL, "regrass_options", NULL, regrass_options_fields);
 
-command_result df_regrass(color_ostream& out, vector<string>& parameters);
+command_result df_regrass(color_ostream& out, vector<string> &parameters);
 
 static bool valid_tile(regrass_options options, df::map_block *block, int x, int y)
 {   // Is valid tile for regrass
