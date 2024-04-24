@@ -34,12 +34,12 @@ Options
     Adds biome-compatible grass types that were not originally present in the
     map block. Allows regrass to work in blocks that never had any grass to
     begin with. Will still fail in incompatible biomes.
-``-f [<grass_id>]``, ``--force [<grass_id>]``
-    Force a grass type on tiles with no compatible grass types. If ``grass_id``
-    is not given, then a single random grass type will be selected from raws.
-    ``grass_id`` is not case-sensitive, but must be enclosed in quotes if spaces
-    exist. The ``--new`` option takes precidence for compatible biomes, otherwise
-    such tiles will be forced instead.
+``-f [grass_id]``, ``--force [grass_id]``
+    Force a grass type on tiles with no compatible grass types. ``grass_id`` is
+    not case-sensitive, but must be enclosed in quotes if spaces exist. If an
+    empty string is used via `""`, then a single random grass type will be
+    selected from the world's raws. The ``--new`` option takes precidence for
+    compatible biomes, otherwise such tiles will be forced instead.
 ``-a``, ``--ashes``
     Regrass tiles that've been burnt to ash.
 ``-u``, ``--mud``
@@ -72,10 +72,14 @@ Examples
 ``regrass 10,10,100 -baunm``
     Regrass the block that contains the given coord, converting ashes and muddy
     stone, adding all compatible grass types, and filling each grass type to max.
-``regrass -z -f UNDERLICHEN``
-    Regrass the current z-level, refilling existing and depleted grass, else filling
-    with ``underlichen`` if non-existent. Ignore ashes and muddy stone.
-``regrass here -bn -f "DOG'S TOOTH GRASS"``
+``regrass -f ""``
+    Regrass the entire map, refilling existing and depleted grass, else filling
+    with a randomly selected grass type if non-existent. Ignore ashes and muddy
+    stone.
+``regrass -z -f underlichen``
+    Regrass the current z-level, refilling existing and depleted grass, else
+    filling with ``underlichen`` if non-existent. Ignore ashes and muddy stone.
+``regrass here -bn -f "dog's tooth grass"``
     Regrass the selected block, adding all compatible grass types to block data,
     ``dog's tooth grass`` if no compatible types exist, and ignoring ashes
     and muddy stone. Refill existing grass on each tile, else select one of the
