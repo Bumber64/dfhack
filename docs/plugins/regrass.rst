@@ -14,10 +14,12 @@ Usage
 
 ::
 
-    regrass [<options>]
+    regrass [<pos> [<pos>]] [<options>]
 
-Regrasses the entire map by default, for compatible tiles in map blocks that
-had grass at some point.
+Regrasses the entire map by default, on compatible tiles in map blocks that
+had grass at some point. Supplying a ``pos`` argument can limit operation to
+a single tile. Supplying both can operate on a cuboid. The string ``here`` can be
+used in place of ``pos`` to use the coords of the keyboard cursor, if active.
 
 Options
 -------
@@ -43,14 +45,13 @@ Options
 ``-u``, ``--mud``
     Converts non-smoothed, mud-spattered stone into grass. Valid for layer stone,
     obsidian, and ore.
-``-p [<pos> [<pos>]]``, ``--point [<pos> [<pos>]]``
-    Only regrass the tile at a given coord, or the tiles in a cuboid defined by
-    two coords. The keyboard cursor will be used if no coords are given.
-``-b [<pos>]``, ``--block [<pos>]``
-    Only regrass the map block containing a given coord or the keyboard cursor.
+``-b``, ``--block``
+    Only regrass the map block that contains the first ``pos`` argument.
     `devel/block-borders` can be used to visualize map blocks.
 ``-z``, ``--zlevel``
-    Only regrass the current z-level.
+    Regrass entire z-levels. Will do all z-levels between ``pos`` arguments if
+    both given, z-level of first ``pos`` if one given, else z-level of viewscreen
+    if no ``pos`` given.
 
 Examples
 --------
@@ -58,24 +59,27 @@ Examples
 ``regrass``
     Regrass the entire map, refilling existing and depleted grass except on ashes
     and muddy stone.
-``regrass -p``
+``regrass here``
     Regrass the selected tile, refilling existing and depleted grass except on
     ashes and muddy stone.
-``regrass --ashes --mud --point 0,0,100 19,19,119``
+``regrass here 0,0,90 --zlevel``
+    Regrass all z-levels including the selected tile's z-level through z-level 90,
+    refilling existing and depleted grass except on ashes and muddy stone.
+``regrass 0,0,100 19,19,119 --ashes --mud``
     Regrass tiles in the 20x20x20 cube defined by the coords, refilling existing
     and depleted grass, and converting ashes and muddy stone (if respective blocks
     ever had grass.)
-``regrass -b 10,10,100 -aunm``
+``regrass 10,10,100 -baunm``
     Regrass the block that contains the given coord, converting ashes and muddy
     stone, adding all compatible grass types, and filling each grass type to max.
 ``regrass -z -f UNDERLICHEN``
     Regrass the current z-level, refilling existing and depleted grass, else filling
-    with ``underlichen``. Ignore ashes and muddy stone.
-``regrass -bn -f "DOG'S TOOTH GRASS"``
+    with ``underlichen`` if non-existent. Ignore ashes and muddy stone.
+``regrass here -bn -f "DOG'S TOOTH GRASS"``
     Regrass the selected block, adding all compatible grass types to block data,
-    adding ``dog's tooth grass`` if no compatible types exist, and ignoring ashes
-    and muddy stone. Refill existing grass, else select one of the block's types
-    for each tile.
+    ``dog's tooth grass`` if no compatible types exist, and ignoring ashes
+    and muddy stone. Refill existing grass on each tile, else select one of the
+    block's types if depleted or previously non-existent.
 
 Troubleshooting
 ---------------
