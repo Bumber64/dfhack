@@ -18,8 +18,9 @@ Usage
 
 Regrasses the entire map by default, on compatible tiles in map blocks that
 had grass at some point. Supplying a ``pos`` argument can limit operation to
-a single tile. Supplying both can operate on a cuboid. The string ``here`` can be
-used in place of ``pos`` to use the coords of the keyboard cursor, if active.
+a single tile. Supplying both can operate on a cuboid. ``pos`` should normally
+be in the form ``0,0,0``, without spaces. The string ``here`` can be used in
+place of ``pos`` to use the coords of the keyboard cursor, if active.
 
 Options
 -------
