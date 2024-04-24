@@ -37,7 +37,7 @@ Options
     Adds biome-compatible grass types that were not originally present in the
     map block. Allows regrass to work in blocks that never had any grass to
     begin with. Will still fail in incompatible biomes.
-``-f [grass_id]``, ``--force [grass_id]``
+``-f <grass_id>``, ``--force <grass_id>``
     Force a grass type on tiles with no compatible grass types. ``grass_id`` is
     not case-sensitive, but must be enclosed in quotes if spaces exist. If an
     empty string is used via ``""``, then a single random grass type will be
