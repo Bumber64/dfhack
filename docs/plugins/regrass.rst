@@ -60,14 +60,14 @@ Examples
 --------
 
 ``regrass``
-    Regrass the entire map, refilling existing and depleted grass except on ashes
+    Regrass the entire map, refilling existing and depleted grass, ignoring ashes
     and muddy stone.
 ``regrass here``
-    Regrass the selected tile, refilling existing and depleted grass except on
+    Regrass the selected tile, refilling existing and depleted grass, ignoring
     ashes and muddy stone.
 ``regrass here 0,0,90 --zlevel``
     Regrass all z-levels including the selected tile's z-level through z-level 90,
-    refilling existing and depleted grass except on ashes and muddy stone.
+    refilling existing and depleted grass, ignoring ashes and muddy stone.
 ``regrass 0,0,100 19,19,119 --ashes --mud``
     Regrass tiles in the 20x20x20 cube defined by the coords, refilling existing
     and depleted grass, and converting ashes and muddy stone (if respective blocks
