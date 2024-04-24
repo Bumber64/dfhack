@@ -270,7 +270,7 @@ static bool regrass_events(const regrass_options &options, df::map_block *block,
         valid_grasses.push_back(options.forced_plant);
         block->occupancy[x][y].bits.no_grow = false;
     }
-    
+
     if (options.force || (options.new_grass && !valid_grasses.empty()))
     {
         DEBUG(log).print("Adding missing grasses...\n");
