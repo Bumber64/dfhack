@@ -50,7 +50,7 @@ Options
     obsidian, and ore.
 ``-b``, ``--block``
     Only regrass the map block that contains the first ``pos`` argument.
-    `devel/block-borders` can be used to visualize map blocks.
+    ``devel/block-borders`` can be used to visualize map blocks.
 ``-z``, ``--zlevel``
     Regrass entire z-levels. Will do all z-levels between ``pos`` arguments if
     both given, z-level of first ``pos`` if one given, else z-level of viewscreen
