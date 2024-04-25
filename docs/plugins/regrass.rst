@@ -7,7 +7,7 @@ regrass
 
 This command can refresh the grass (and subterranean moss) growing on your map.
 Operates on floors, stairs, and ramps. Also works underneath shrubs, saplings,
-and tree trunks. Ignores furrowed soil, beaches, and tiles under buildings.
+and tree trunks. Ignores furrowed soil and wet sand (beaches).
 
 Usage
 -----
@@ -45,6 +45,10 @@ Options
     compatible biomes, otherwise such tiles will be forced instead.
 ``-a``, ``--ashes``
     Regrass tiles that've been burnt to ash.
+``-d``, ``--buildings``
+    Regrass tiles under passable building tiles including stockpiles, planned
+    buildings, and walkable workshop tiles. Does not include buildings that can
+    otherwise act as floors over gaps, such as floor grates and hatches.
 ``-u``, ``--mud``
     Converts non-smoothed, mud-spattered stone into grass. Valid for layer stone,
     obsidian, and ore.
@@ -60,33 +64,31 @@ Examples
 --------
 
 ``regrass``
-    Regrass the entire map, refilling existing and depleted grass, ignoring ashes
-    and muddy stone.
+    Regrass the entire map, refilling existing and depleted grass.
 ``regrass here``
-    Regrass the selected tile, refilling existing and depleted grass, ignoring
-    ashes and muddy stone.
+    Regrass the selected tile, refilling existing and depleted grass.
 ``regrass here 0,0,90 --zlevel``
     Regrass all z-levels including the selected tile's z-level through z-level 90,
-    refilling existing and depleted grass, ignoring ashes and muddy stone.
+    refilling existing and depleted grass.
 ``regrass 0,0,100 19,19,119 --ashes --mud``
     Regrass tiles in the 20x20x20 cube defined by the coords, refilling existing
     and depleted grass, and converting ashes and muddy stone (if respective blocks
     ever had grass.)
-``regrass 10,10,100 -baunm``
-    Regrass the block that contains the given coord, converting ashes and muddy
-    stone, adding all compatible grass types, and filling each grass type to max.
+``regrass 10,10,100 -badunm``
+    Regrass the block that contains the given coord -- converting ashes, tiles under
+    buildings, and muddy stone -- adding all compatible grass types, and filling
+    each grass type to max.
 ``regrass -f ""``
     Regrass the entire map, refilling existing and depleted grass, else filling
-    with a randomly selected grass type if non-existent. Ignore ashes and muddy
-    stone.
+    with a randomly selected grass type if non-existent.
 ``regrass -z -f underlichen``
     Regrass the current z-level, refilling existing and depleted grass, else
-    filling with ``underlichen`` if non-existent. Ignore ashes and muddy stone.
+    filling with ``underlichen`` if non-existent.
 ``regrass here -bn -f "dog's tooth grass"``
     Regrass the selected block, adding all compatible grass types to block data,
-    ``dog's tooth grass`` if no compatible types exist, and ignoring ashes
-    and muddy stone. Refill existing grass on each tile, else select one of the
-    block's types if depleted or previously non-existent.
+    ``dog's tooth grass`` if no compatible types exist. Refill existing grass on
+    each tile, else select one of the block's types if depleted or previously
+    non-existent.
 
 Troubleshooting
 ---------------
