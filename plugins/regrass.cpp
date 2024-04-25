@@ -118,7 +118,8 @@ static bool valid_tile(regrass_options options, df::map_block *block, int x, int
     else if (block->occupancy[x][y].bits.building >
         (options.buildings ? tile_building_occ::Passable : tile_building_occ::None))
     {   // Avoid stockpiles and planned/passable buildings unless enabled
-        DEBUG(log).print("Invalid tile: Building\n");
+        DEBUG(log).print("Invalid tile: Building (%s)\n",
+            ENUM_KEY_STR(tile_building_occ, block->occupancy[x][y].bits.building).c_str());
         return false;
     }
     else if (!options.force && block->occupancy[x][y].bits.no_grow)
@@ -153,7 +154,7 @@ static bool valid_tile(regrass_options options, df::map_block *block, int x, int
             mat != tiletype_material::LAVA_STONE &&
             mat != tiletype_material::MINERAL)
         {   // Not non-feature stone
-            DEBUG(log).print("Invalid tile: Wrong mat (mud check)\n");
+            DEBUG(log).print("Invalid tile: Wrong tile mat (mud check)\n");
             return false;
         }
 
@@ -419,17 +420,17 @@ int regrass_zlevels(const regrass_options &options, int32_t z1, int32_t z2 = -30
     auto z = z2 < 0 ? z1 : std::min(z1, z2);
     auto z_end = std::max(z1, z2);
     int count = 0;
-    for (int32_t x = 0; x < world->map.x_count_block; x++)
+    for (z; z <= z_end; z++)
     {   // Iterate all blocks in z-level range
-        for (int32_t y = 0; y < world->map.y_count_block; y++)
+        for (int32_t x = 0; x < world->map.x_count_block; x++)
         {
-            for (z; z <= z_end; z++)
+            for (int32_t y = 0; y < world->map.y_count_block; y++)
             {
                 auto block = Maps::getBlock(x, y, z);
                 if (block)
                     count += regrass_block(options, block);
-                else // Probably sky
-                    DEBUG(log).print("No getBlock(%d, %d, %d)! Skipping.\n", x, y, z);
+                else // Probably below HFS
+                    Core::print("No getBlock(%d, %d, %d)! Skipping.\n", x, y, z);
             }
         }
     }
@@ -458,7 +459,7 @@ int regrass_cuboid(const regrass_options &options, df::coord pos_1, df::coord po
                 auto block = Maps::getTileBlock(x, y, z);
                 if (block)
                     count += regrass_tile(options, block, x&15, y&15);
-                else // Probably sky
+                else // Probably below HFS
                     DEBUG(log).print("No getTileBlock(%d, %d, %d)! Skipping.\n", x, y, z);
             }
         }
@@ -498,9 +499,7 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
         return CR_WRONG_USAGE;
     }
 
-    DEBUG(log).print("forced_plant = %d (%s)\npos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n",
-        options.forced_plant, options.forced_plant < 0 ? "NONE" :
-        world->raws.plants.grasses[options.forced_plant]->id.c_str(),
+    DEBUG(log).print("pos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n",
         pos_1.x, pos_1.y, pos_1.z, pos_2.x, pos_2.y, pos_2.z);
 
     if (options.block && options.zlevel)
@@ -518,10 +517,18 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
         out.printerr("Map not loaded!\n");
         return CR_FAILURE;
     }
-    else if (options.force && options.forced_plant < 0)
+
+    if (options.force)
     {
-        out.printerr("Plant raw not found for force regrass!\n");
-        return CR_FAILURE;
+        DEBUG(log).print("forced_plant = %d\n", options.forced_plant);
+        auto p_raw = vector_get(world->raws.plants.all, options.forced_plant);
+        if (p_raw)
+            DEBUG(log).print("Forced plant_raw = %s\n", p_raw->id.c_str());
+        else
+        {
+            out.printerr("Plant raw not found for force regrass!\n");
+            return CR_FAILURE;
+        }
     }
 
     int count = 0;
