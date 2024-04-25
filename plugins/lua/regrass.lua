@@ -33,6 +33,7 @@ function parse_commandline(opts, pos_1, pos_2, args)
         {'m', 'max', handler=function() opts.max_grass = true end},
         {'n', 'new', handler=function() opts.new_grass = true end},
         {'a', 'ashes', handler=function() opts.ashes = true end},
+        {'d', 'buildings', handler=function() opts.buildings = true end},
         {'u', 'mud', handler=function() opts.mud = true end},
         {'b', 'block', handler=function() opts.block = true end},
         {'z', 'zlevel', handler=function() opts.zlevel = true end},
