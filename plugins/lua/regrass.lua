@@ -14,7 +14,7 @@ local function find_grass_idx(s)
         return -1 --no grass raws, world not loaded
     elseif s == '' then
         local rng = dfhack.random.new()
-        return rng:random(#grasses)
+        return grasses[rng:random(#grasses)].index
     end
 
     local id_str = search_str(s)
@@ -52,7 +52,7 @@ function parse_commandline(opts, pos_1, pos_2, args)
     end
 
     if positionals[2] then
-        utils.assign(pos_2, argparse.coords(positionals[1], 'pos_2', true))
+        utils.assign(pos_2, argparse.coords(positionals[2], 'pos_2', true))
     end
 end
 
