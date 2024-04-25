@@ -38,6 +38,7 @@ struct regrass_options
     bool new_grass = false; // Add new valid grass events
     bool force = false; // Force a grass regardless of no_grow and biome
     bool ashes = false; // Regrass ashes
+    bool buildings = false; // Regrass under stockpiles and passable buildings
     bool mud = false; // Regrass muddy stone
     bool block = false; // Operate on single map block
     bool zlevel = false; // Operate on entire z-levels
@@ -52,6 +53,7 @@ static const struct_field_info regrass_options_fields[] =
     { struct_field_info::PRIMITIVE, "new_grass",    offsetof(regrass_options, new_grass),    &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "force",        offsetof(regrass_options, force),        &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "ashes",        offsetof(regrass_options, ashes),        &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "buildings",    offsetof(regrass_options, buildings),    &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "mud",          offsetof(regrass_options, mud),          &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "block",        offsetof(regrass_options, block),        &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "zlevel",       offsetof(regrass_options, zlevel),       &df::identity_traits<bool>::identity, 0, 0 },
@@ -113,8 +115,9 @@ static bool valid_tile(regrass_options options, df::map_block *block, int x, int
         DEBUG(log).print("Invalid tile: Shape\n");
         return false;
     }
-    else if (block->occupancy[x][y].bits.building != tile_building_occ::None)
-    {
+    else if (block->occupancy[x][y].bits.building >
+        (options.buildings ? tile_building_occ::Passable : tile_building_occ::None))
+    {   // Avoid stockpiles and planned/passable buildings unless enabled
         DEBUG(log).print("Invalid tile: Building\n");
         return false;
     }
@@ -494,7 +497,13 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
     {
         return CR_WRONG_USAGE;
     }
-    else if (options.block && options.zlevel)
+
+    DEBUG(log).print("forced_plant = %d (%s)\npos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n",
+        options.forced_plant, options.forced_plant < 0 ? "NONE" :
+        world->raws.plants.grasses[options.forced_plant]->id.c_str(),
+        pos_1.x, pos_1.y, pos_1.z, pos_2.x, pos_2.y, pos_2.z);
+
+    if (options.block && options.zlevel)
     {
         out.printerr("Choose only block or zlevel!\n");
         return CR_WRONG_USAGE;
@@ -511,22 +520,9 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
     }
     else if (options.force && options.forced_plant < 0)
     {
-        out.printerr("Plant raw not found for force regrass!");
+        out.printerr("Plant raw not found for force regrass!\n");
         return CR_FAILURE;
     }
-
-    // DEBUG
-    out.print("max_grass = %d\n", options.max_grass);
-    out.print("new_grass = %d\n", options.new_grass);
-    out.print("force = %d\n", options.force);
-    out.print("ashes = %d\n", options.ashes);
-    out.print("mud = %d\n", options.mud);
-    out.print("block = %d\n", options.block);
-    out.print("zlevel = %d\n", options.zlevel);
-    out.print("forced_plant = %d\n", options.forced_plant);
-    out.print("pos_1 = %d\n", pos_1.isValid());
-    out.print("pos_2 = %d\n", pos_2.isValid());
-    return CR_OK; // DEBUG
 
     int count = 0;
     if (options.zlevel)
