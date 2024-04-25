@@ -47,9 +47,12 @@ Options
 ``-a``, ``--ashes``
     Regrass tiles that've been burnt to ash.
 ``-d``, ``--buildings``
-    Regrass tiles under passable building tiles including stockpiles, planned
-    buildings, and walkable workshop tiles. Does not include buildings that can
-    otherwise act as floors over gaps, such as floor grates and hatches.
+    Regrass tiles under certain passable building tiles including stockpiles,
+    planned buildings, workshops, and farms. (Farms will convert grass tiles to
+    furrowed soil after a short while, but is useful with ``--mud`` option.)
+    Doesn't work on "dynamic" buildings such as doors and floor grates.
+    (Dynamic buildings also include levers and cage traps, for some reason.)
+    Existing grass tiles will always be refilled, regardless of building tile.
 ``-u``, ``--mud``
     Converts non-smoothed, mud-spattered stone into grass. Valid for layer
     stone, obsidian, and ore.
