@@ -30,9 +30,10 @@ Options
 ``-m``, ``--max``
     Maxes out every grass type in the tile, giving extra grazing time.
     Not normal DF behavior. Tile will appear to be the first type of grass
-    present in the map block until that is depleted, moving on to the next type.
-    When this option isn't used, non-depleted grass tiles will have their existing
-    type refilled, while grass-depleted soils will have a type selected randomly.
+    present in the map block until that is depleted, moving on to the next
+    type. When this option isn't used, non-depleted grass tiles will have their
+    existing type refilled, while grass-depleted soils will have a type
+    selected randomly.
 ``-n``, ``--new``
     Adds biome-compatible grass types that were not originally present in the
     map block. Allows regrass to work in blocks that never had any grass to
@@ -50,15 +51,15 @@ Options
     buildings, and walkable workshop tiles. Does not include buildings that can
     otherwise act as floors over gaps, such as floor grates and hatches.
 ``-u``, ``--mud``
-    Converts non-smoothed, mud-spattered stone into grass. Valid for layer stone,
-    obsidian, and ore.
+    Converts non-smoothed, mud-spattered stone into grass. Valid for layer
+    stone, obsidian, and ore.
 ``-b``, ``--block``
     Only regrass the map block that contains the first ``pos`` argument.
     ``devel/block-borders`` can be used to visualize map blocks.
 ``-z``, ``--zlevel``
     Regrass entire z-levels. Will do all z-levels between ``pos`` arguments if
-    both given, z-level of first ``pos`` if one given, else z-level of viewscreen
-    if no ``pos`` given.
+    both given, z-level of first ``pos`` if one given, else z-level of
+    viewscreen if no ``pos`` given.
 
 Examples
 --------
@@ -68,16 +69,16 @@ Examples
 ``regrass here``
     Regrass the selected tile, refilling existing and depleted grass.
 ``regrass here 0,0,90 --zlevel``
-    Regrass all z-levels including the selected tile's z-level through z-level 90,
-    refilling existing and depleted grass.
+    Regrass all z-levels including the selected tile's z-level through z-level
+    90, refilling existing and depleted grass.
 ``regrass 0,0,100 19,19,119 --ashes --mud``
-    Regrass tiles in the 20x20x20 cube defined by the coords, refilling existing
-    and depleted grass, and converting ashes and muddy stone (if respective blocks
-    ever had grass.)
-``regrass 10,10,100 -badunm``
-    Regrass the block that contains the given coord -- converting ashes, tiles under
-    buildings, and muddy stone -- adding all compatible grass types, and filling
-    each grass type to max.
+    Regrass tiles in the 20x20x20 cube defined by the coords, refilling
+    existing and depleted grass, and converting ashes and muddy stone (if
+    respective blocks ever had grass.)
+``regrass 10,10,100 -baudnm``
+    Regrass the block that contains the given coord; converting ashes, muddy
+    stone, and tiles under buildings; adding all compatible grass types, and
+    filling each grass type to max.
 ``regrass -f ""``
     Regrass the entire map, refilling existing and depleted grass, else filling
     with a randomly selected grass type if non-existent.
@@ -86,15 +87,16 @@ Examples
     filling with ``underlichen`` if non-existent.
 ``regrass here -bn -f "dog's tooth grass"``
     Regrass the selected block, adding all compatible grass types to block data,
-    ``dog's tooth grass`` if no compatible types exist. Refill existing grass on
-    each tile, else select one of the block's types if depleted or previously
-    non-existent.
+    ``dog's tooth grass`` if no compatible types exist. Refill existing grass
+    on each tile, else select one of the block's types if depleted or
+    previously non-existent.
 
 Troubleshooting
 ---------------
 
 ``debugfilter set Debug regrass log`` can be used to figure out why regrass
-is failing on a tile. (Avoid regrassing large parts of the map with this enabled,
-as it will make the game unresponsive and flood the console for several minutes!)
+is failing on a tile. (Avoid regrassing large parts of the map with this
+enabled, as it will make the game unresponsive and flood the console for
+several minutes!)
 
 Disable with ``debugfilter set Info regrass log``.
