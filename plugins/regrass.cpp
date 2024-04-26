@@ -43,7 +43,7 @@ struct regrass_options
     bool block = false; // Operate on single map block
     bool zlevel = false; // Operate on entire z-levels
 
-    int32_t forced_plant = -1; // Plant raw index of grass to force
+    int32_t forced_plant = -1; // Plant raw index of grass to force; -2 means print all ids
 
     static struct_identity _identity;
 };
@@ -62,7 +62,7 @@ static const struct_field_info regrass_options_fields[] =
 };
 struct_identity regrass_options::_identity(sizeof(regrass_options), &df::allocator_fn<regrass_options>, NULL, "regrass_options", NULL, regrass_options_fields);
 
-command_result df_regrass(color_ostream& out, vector<string> &parameters);
+command_result df_regrass(color_ostream &out, vector<string> &parameters);
 
 static bool valid_tile(color_ostream &out, regrass_options options, df::map_block *block, int x, int y)
 {   // Is valid tile for regrass
@@ -82,7 +82,7 @@ static bool valid_tile(color_ostream &out, regrass_options options, df::map_bloc
     else if (tt == tiletype::TreeTrunkPillar)
     {   // Trees can have grass for ground level tiles
         auto p = df::coord(block->map_pos.x + x, block->map_pos.y + y, block->map_pos.z);
-        auto &plant = Maps::getPlantAtTile(p)
+        auto plant = Maps::getPlantAtTile(p);
         if (plant && plant->pos.z == p.z)
         {
             DEBUG(log, out).print("Valid tile: Tree\n");
