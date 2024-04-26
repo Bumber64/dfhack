@@ -82,20 +82,10 @@ static bool valid_tile(color_ostream &out, regrass_options options, df::map_bloc
     else if (tt == tiletype::TreeTrunkPillar)
     {   // Trees can have grass under main tile
         auto p = df::coord(block->map_pos.x + x, block->map_pos.y + y, block->map_pos.z);
-        auto mbc = world->map.column_index[(block->map_pos.x / 48)*3][(block->map_pos.y / 48)*3];
-        if (!mbc)
+        if (Maps::getPlantAtTile(p, true))
         {
-            out.printerr("No MLT block column for tile at (%d, %d, %d)!\n", p.x, p.y, p.z);
-            return false;
-        }
-
-        for (auto plant : mbc->plants)
-        {
-            if (plant->pos == p)
-            {
-                DEBUG(log, out).print("Valid tile: Tree\n");
-                return true; // Is main tile
-            }
+            DEBUG(log, out).print("Valid tile: Tree\n");
+            return true; // Is main tile
         }
 
         DEBUG(log, out).print("Invalid tile: Tree\n");
