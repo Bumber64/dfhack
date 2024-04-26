@@ -784,7 +784,7 @@ df::plant *Maps::getPlantAtTile(int32_t x, int32_t y, int32_t z, bool ignore_tre
         else if (ignore_tree_tiles)
             continue;
 
-        df::plant_tree_info *t = plant->tree_info;
+        auto &t = plant->tree_info;
         if (!t)
             continue;
 
