@@ -80,16 +80,17 @@ static bool valid_tile(color_ostream &out, regrass_options options, df::map_bloc
         return true;
     }
     else if (tt == tiletype::TreeTrunkPillar)
-    {   // Trees can have grass under main tile
+    {   // Trees can have grass for ground level tiles
         auto p = df::coord(block->map_pos.x + x, block->map_pos.y + y, block->map_pos.z);
-        if (Maps::getPlantAtTile(p, true))
+        auto &plant = Maps::getPlantAtTile(p)
+        if (plant && plant->pos.z == p.z)
         {
             DEBUG(log, out).print("Valid tile: Tree\n");
-            return true; // Is main tile
+            return true; // Ground tile
         }
 
         DEBUG(log, out).print("Invalid tile: Tree\n");
-        return false; // Not main tile
+        return false; // Not ground tile
     }
     else if (des.bits.flow_size > (des.bits.liquid_type == tile_liquid::Magma ? 0 : 3))
     {   // Under water/magma (df::plant_raw::shrub_drown_level is usually 4)
