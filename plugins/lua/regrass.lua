@@ -37,8 +37,8 @@ function parse_commandline(opts, pos_1, pos_2, args)
         {'u', 'mud', handler=function() opts.mud = true end},
         {'b', 'block', handler=function() opts.block = true end},
         {'z', 'zlevel', handler=function() opts.zlevel = true end},
-        {'f', 'force', hasArg=true, handler=function(optarg)
-            opts.force = true
+        {'f', 'force', handler=function() opts.force = true end},
+        {'p', 'plant', hasArg=true, handler=function(optarg)
             opts.forced_plant = find_grass_idx(optarg)
         end},
     })
