@@ -34,8 +34,10 @@ function parse_commandline(opts, pos_1, pos_2, args)
     })
 
     if plant_str then
-        if s == '' then --will print all ids
+        if plant_str == '' then --will print all ids
             opts.forced_plant = -2
+        elseif not opts.force then
+            qerror('Use of --plant without --force!')
         else
             opts.forced_plant = find_grass_idx(plant_str)
         end
