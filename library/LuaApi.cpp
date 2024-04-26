@@ -2463,7 +2463,7 @@ static int maps_getTileBiomeRgn(lua_State *L)
 static int maps_getPlantAtTile(lua_State *L)
 {
     auto pos = CheckCoordXYZ(L, 1, true);
-    Lua::PushDFObject(L, Maps::getPlantAtTile(pos));
+    Lua::PushDFObject(L, Maps::getPlantAtTile(pos, lua_toboolean(L, 2)));
     return 1;
 }
 
