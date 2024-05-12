@@ -46,8 +46,9 @@ Options
     specified.
 ``-p <grass_id>``, ``--plant <grass_id>``
     Specify a grass type for the ``--force`` option. ``grass_id`` is not
-    case-sensitive, but must be enclosed in quotes if spaces exist. Providing
-    an empty string with "" will print all available IDs and skip regrass.
+    case-sensitive, but must be enclosed in quotes if spaces exist. A numerical
+    ID will also be accepted. Providing an empty string with "" will print all
+    available IDs and skip regrass.
 ``-a``, ``--ashes``
     Regrass tiles that've been burnt to ash.
 ``-d``, ``--buildings``
