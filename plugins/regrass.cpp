@@ -493,7 +493,7 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
     else if (options.forced_plant == -2)
     {   // Print all grass raw ids
         for (auto p_raw : world->raws.plants.grasses)
-            out.print("%s\n", p_raw->id.c_str());
+            out.print("%d: %s\n", p_raw->index, p_raw->id.c_str());
 
         return CR_OK;
     }
@@ -503,12 +503,12 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
 
     if (options.block && options.zlevel)
     {
-        out.printerr("Choose only block or zlevel!\n");
+        out.printerr("Choose only --block or --zlevel!\n");
         return CR_WRONG_USAGE;
     }
     else if (options.block && (!pos_1.isValid() || pos_2.isValid()))
     {
-        out.printerr("Attempt to regrass block with inappropriate pos!\n");
+        out.printerr("Invalid pos for --block (or used more than one!)\n");
         return CR_WRONG_USAGE;
     }
     else if (!Core::getInstance().isMapLoaded())
@@ -522,10 +522,17 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
         DEBUG(log, out).print("forced_plant = %d\n", options.forced_plant);
         auto p_raw = vector_get(world->raws.plants.all, options.forced_plant);
         if (p_raw)
-            DEBUG(log, out).print("Forced plant_raw = %s\n", p_raw->id.c_str());
+        {
+            DEBUG(log, out).print("Forced plant raw: %s\n", p_raw->id.c_str());
+            if (!p_raw->flags.is_set(plant_raw_flags::GRASS))
+            {
+                out.printerr("Plant raw wasn't grass: %d (%s)\n", options.forced_plant, p_raw->id.c_str());
+                return CR_FAILURE;
+            }
+        }
         else
         {
-            out.printerr("Plant raw not found for force regrass!\n");
+            out.printerr("Plant raw not found for --force: %d\n", options.forced_plant);
             return CR_FAILURE;
         }
     }
