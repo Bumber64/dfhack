@@ -15,7 +15,7 @@ local function find_plant_idx(s) --find plant raw index by id string
         end
     end
 
-    return -1
+    qerror('Plant raw not found: "'..s..'"')
 end
 
 local function find_plant(s) --accept index string or match id string
@@ -35,12 +35,7 @@ local function build_filter(vec, s)
 
     local set = {}
     for _,id in ipairs(argparse.stringList(s, 'list')) do
-        local idx = find_plant(id)
-        if idx < 0 then
-            qerror('Plant raw not found: "'..id..'"')
-        else
-            set[idx] = true
-        end
+        set[find_plant(id)] = true
     end
 
     for idx,_ in pairs(set) do
