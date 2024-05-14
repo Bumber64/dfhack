@@ -15,14 +15,14 @@ local function find_grass_idx(s) --find plant raw index by id string
         end
     end
 
-    return -1
+    qerror('Plant raw not found: "'..s..'"')
 end
 
 local function find_grass(s) --accept index string or match id string
     if tonumber(s) then
         return argparse.nonnegativeInt(s, 'grass_id')
     else
-        return find_plant_idx(s)
+        return find_grass_idx(s)
     end
 end
 
