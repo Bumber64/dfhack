@@ -16,12 +16,15 @@ Usage
 
 The ``pos`` argument can limit operation of ``--grow`` or ``-remove`` to a single tile or a cuboid. ``pos`` should normally be in the form ``0,0,0``, without spaces. The string ``here`` can be used in place of numeric coordinates to use the position of the keyboard cursor, if active. ``--grow`` and ``--remove`` will normally operate on the entire map if no ``pos`` is provided. ``--create`` always operates on a single tile and cannot accept a second ``pos``. If no ``pos`` is provided to ``--create``, the keyboard cursor will be used by default.
 
+Create
+------
 ``-c <plant_id>``, ``--create <plant_id>``
     Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` (to create a sapling that will immediately grow into a tree.) Defaults to 0 if option is unused.
 
-
+Grow
+----
 ``-g``, ``--grow``
     Grows saplings into trees. Will default to all saplings on the map if no ``pos`` arguments are used.
 ``-a <value>``, ``--age <value>``
@@ -33,7 +36,8 @@ The ``pos`` argument can limit operation of ``--grow`` or ``-remove`` to a singl
 ``-z``, ``--zlevel``
     Operate on a range of z-levels instead of default targeting. Will do all z-levels between ``pos`` arguments if both are given (instead of cuboid,) z-level of first ``pos`` if one is given (instead of single tile,) else z-level of current view if no ``pos`` is given (instead of entire map.)
 
-
+Remove
+------
 ``-r``, ``--remove``
     Remove plants from the map (or area defined by ``pos`` arguments.) By default, only removes invalid plants that exist on non-plant tiles (`Bug 12868 <https://dwarffortressbugtracker.com/view.php?id=12868>`_.) The ``--shrubs`` and ``--saplings`` options allow normal plants to be targeted instead.
 ``-s``, ``--shrubs``
