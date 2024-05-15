@@ -1,4 +1,4 @@
-local _ENV = mkmodule('plugins.plants')
+local _ENV = mkmodule('plugins.plant')
 
 local argparse = require('argparse')
 local utils = require('utils')
