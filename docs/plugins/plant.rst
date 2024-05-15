@@ -5,12 +5,19 @@ plant
     :summary: Grow and remove shrubs or trees.
     :tags: adventure fort armok map plants
 
-Grow and remove shrubs or trees. Modes are ``create``, ``grow``, and ``remove``. ``create`` allows the creation of new shrubs and saplings. ``grow`` adjusts the age of saplings and trees, allowing them to grow instantly. ``remove`` can remove existing shrubs and saplings.
+Grow and remove shrubs or trees. Modes are ``create``, ``grow``, and ``remove``.
+``create`` allows the creation of new shrubs and saplings. ``grow`` adjusts the
+age of saplings and trees, allowing them to grow instantly. ``remove`` can
+remove existing shrubs and saplings.
 
 Usage
 -----
 
-Provide a mode (including a ``plant_id`` for ``create``) followed by optional ``pos`` arguments and options. The ``pos`` arguments can limit operation of ``grow`` or ``remove`` to a single tile or a cuboid. ``pos`` should normally be in the form ``0,0,0``, without spaces. The string ``here`` can be used in place of numeric coordinates to use the position of the keyboard cursor, if active.
+Provide a mode (including a ``plant_id`` for ``create``) followed by optional
+``pos`` arguments and options. The ``pos`` arguments can limit operation of
+``grow`` or ``remove`` to a single tile or a cuboid. ``pos`` should normally be
+in the form ``0,0,0``, without spaces. The string ``here`` can be used in place
+of numeric coordinates to use the position of the keyboard cursor, if active.
 
 create
 ======
@@ -19,13 +26,19 @@ create
 
     plant create <plant_id> [<pos>] [<options>]
 
-Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. (No unmodded shrub or sapling IDs have spaces.) A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
+Creates a new plant of the specified type at ``pos`` or the cursor position.
+The target tile must be a dirt or grass floor. ``plant_id`` is not
+case-sensitive, but must be enclosed in quotes if spaces exist. (No unmodded
+shrub or sapling IDs have spaces.) A numerical ID can also be used. Providing
+an empty string with "" will print all available IDs and skip plant creation.
 
 Options
 -------
 
 ``-a <value>``, ``--age <value>``
-    Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` to have saplings immediately grow into trees. Defaults to 0 if option is unused.
+    Set the created plant to a specific age (in ticks.) ``value`` can be a
+	non-negative integer, or the string ``tree`` to have saplings immediately
+	grow into trees. Defaults to 0 if option is unused.
 
 grow
 ====
@@ -34,7 +47,9 @@ grow
 
     plant grow [<pos> [<pos>]] [<options>]
 
-Grows saplings (including dead ones) into trees. Will default to all saplings on the map if no ``pos`` arguments are used. Saplings will die and fail to grow if they are blocked by another tree.
+Grows saplings (including dead ones) into trees. Will default to all saplings
+on the map if no ``pos`` arguments are used. Saplings will die and fail to grow
+if they are blocked by another tree.
 
 Options
 -------
