@@ -5,10 +5,7 @@ plant
     :summary: Grow and remove shrubs or trees.
     :tags: adventure fort armok map plants
 
-Grow and remove shrubs or trees. Sub-commands are ``grow``, ``create``, and
-``remove``. ``grow`` adjusts the age of saplings and trees, allowing them
-to grow up instantly. ``create`` allows the creation of new shrubs and
-saplings. ``remove`` allows for the removal of existing shrubs and saplings.
+Grow and remove shrubs or trees. Primary options are ``--create``, ``--grow``, and ``--remove``. ``--create`` allows the creation of new shrubs and saplings. ``--grow`` adjusts the age of saplings and trees, allowing them to grow up instantly. ``--remove`` can remove existing shrubs and saplings.
 
 Usage
 -----
@@ -17,15 +14,23 @@ Usage
 
     plant [<pos> [<pos>]] [<options>]
 
-Sample text.
+The ``pos`` argument can limit operation of ``--grow`` or ``-remove`` to a single tile or a cuboid. ``pos`` should normally be in the form ``0,0,0``, without spaces. The string ``here`` can be used in place of numeric coordinates to use the position of the keyboard cursor, if active. ``--grow`` and ``--remove`` will normally operate on the entire map if no ``pos`` is provided. ``--create`` always operates on a single tile and cannot accept a second ``pos``. If no ``pos`` is provided to ``--create``, the keyboard cursor will be used by default.
 
-``plant create <ID>``
-    Creates a new plant of the specified type at the active cursor position.
-    The cursor must be on a dirt or grass floor tile.
-``plant grow``
-    Grows saplings into trees. If the cursor is active, it only affects the
-    sapling under the cursor. If no cursor is active, it affect all saplings
-    on the map.
+``-c <plant_id>``, ``--create <plant_id>``
+    Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
+``-a <value>``, ``--age <value>``
+    Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` (to create a sapling that will immediately grow into a tree.) Defaults to 0 if option is unused.
+
+``-g``, ``--grow``
+    Grows saplings into trees. Will default to all saplings on the map if no ``pos`` arguments are used.
+``-a <value>``, ``--age <value>``
+    Define the age (in ticks) to set saplings to. ``value`` can be a non-negative integer, or the string ``tree``. Defaults to ``tree`` if option is unused. If a ``value`` larger than ``tree`` (equivalent to 120959) is used, it will make sure selected trees have an age of at least the given value, allowing them to grow larger.
+``-f <list>``, ``--filter <list>``
+    Define a filter list of plant IDs to target, ignoring all other tree types. ``list`` should be a comma-separated list of strings and/or non-negative integers with no spaces in between them. Spaces are acceptable within strings as long as they are enclosed in quotes.
+``-e <list>``, ``--exclude <list>``
+    Same as ``--filter``, but target everything except these. Cannot be used with ``--filter``.
+``-z``, ``--zlevel``
+    Operate on a range of z-levels instead of default targeting. Will do all z-levels between ``pos`` arguments if both are given (instead of cuboid,) z-level of first ``pos`` if one is given (instead of single tile,) else z-level of current view if no ``pos`` is given (instead of entire map.)
 
 Examples
 --------
