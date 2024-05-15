@@ -19,7 +19,7 @@ The ``pos`` argument can limit operation of ``--grow`` or ``--remove`` to a sing
 Create
 ------
 ``-c <plant_id>``, ``--create <plant_id>``
-    Required. Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
+    Required. Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist (no unmodded shrub or sapling IDs have spaces.) A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` to have saplings immediately grow into trees. Defaults to 0 if option is unused.
 
@@ -56,5 +56,23 @@ Remove
 Examples
 --------
 
-``plant create TOWER_CAP``
-    Create a Tower Cap sapling at the cursor position.
+``plant --create tower_cap``
+    Create a Tower Cap sapling at the cursor.
+``plant -c ""``
+    List all valid shrub and sapling IDs.
+``plant -c 200 -a tree``
+    Create an Acacia sapling at the cursor, ready to mature into a tree.
+``plant 70,70,140 -c 0``
+    Create a Single-grain Wheat shrub at (70, 70, 140).
+``plant --grow``
+    Attempt to grow all saplings on the map into trees.
+``plant -gz -f maple,198,sand_pear``
+    Attempt to grow all Maple, Oak, and Sand Pear saplings on the current z-level into trees.
+``plant 0,0,100 19,19,119 -g -a 4032000``
+    Set the age of all saplings and trees (with their sapling tile) in the defined 20x20x20 cube to 100 years.
+``plant --remove``
+    Remove all invalid plants from the map.
+``plant here -rsp``
+    Remove the shrub or sapling at the cursor.
+``plant 0,0,49 0,0,51 -rpz -e nether_cap``
+    Remove all saplings on z-levels 49-51, excluding Nether Cap.
