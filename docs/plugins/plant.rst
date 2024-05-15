@@ -14,7 +14,7 @@ Usage
 
     plant [<pos> [<pos>]] [<options>]
 
-The ``pos`` argument can limit operation of ``--grow`` or ``--remove`` to a single tile or a cuboid. ``pos`` should normally be in the form ``0,0,0``, without spaces. The string ``here`` can be used in place of numeric coordinates to use the position of the keyboard cursor, if active. ``--grow`` and ``--remove`` will normally operate on the entire map if no ``pos`` is provided. ``--create`` always operates on a single tile and cannot accept a second ``pos``. If no ``pos`` is provided to ``--create``, the keyboard cursor will be used by default.
+The ``pos`` argument can limit operation of ``--grow`` or ``--remove`` to a single tile or a cuboid. ``pos`` should normally be in the form ``0,0,0``, without spaces. The string ``here`` can be used in place of numeric coordinates to use the position of the keyboard cursor, if active. ``--grow`` and ``--remove`` will operate on the entire map if no ``pos`` is provided. ``--create`` always operates on a single tile and cannot accept a second ``pos``. If no ``pos`` is provided to ``--create``, the keyboard cursor will be used by default.
 
 Create
 ------
