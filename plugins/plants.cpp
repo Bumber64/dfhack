@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 
+#include "DataDefs.h"
 #include "Debug.h"
 #include "Core.h"
 #include "Console.h"
@@ -409,7 +410,7 @@ command_result df_removeplant(color_ostream &out, cuboid bounds, plants_options 
     return CR_OK;
 }
 
-command_result df_plant(color_ostream &out, vector <string> &parameters)
+command_result df_plant(color_ostream &out, vector<string> &parameters)
 {
     plants_options options;
     cuboid bounds;
@@ -448,7 +449,7 @@ command_result df_plant(color_ostream &out, vector <string> &parameters)
     else if (options.trees)
     {   // TODO: implement
         out.printerr("Tree removal not implemented!\n");
-        return CR_NOT_IMPLEMENTED;
+        return CR_FAILURE;
     }
     else if (options.plant_idx == -2)
     {   // Print all non-grass raw ids
@@ -465,6 +466,25 @@ command_result df_plant(color_ostream &out, vector <string> &parameters)
 
     DEBUG(log, out).print("pos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n",
         pos_1.x, pos_1.y, pos_1.z, pos_2.x, pos_2.y, pos_2.z);
+
+    out.print("pos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n\n",
+        pos_1.x, pos_1.y, pos_1.z, pos_2.x, pos_2.y, pos_2.z);
+    out.print("grow = %d\n", options.grow);
+    out.print("create = %d\n", options.create);
+    out.print("remove = %d\n", options.del);
+    out.print("shrubs = %d\n", options.shrubs);
+    out.print("saplings = %d\n", options.saplings);
+    out.print("trees = %d\n", options.trees);
+    out.print("dry_run = %d\n", options.dry_run);
+    out.print("filter_ex = %d\n", options.filter_ex);
+    out.print("zlevel = %d\n", options.zlevel);
+    out.print("\nplant_idx = %d\n", options.plant_idx);
+    out.print("age = %d\n", options.age);
+    out.print("\nfilter =\n");
+    for (auto i : filter)
+        out.print("%d\n", i);
+    out.print("Done.\n");
+    if (true) return CR_OK; //DEBUG
 
     if (!Core::getInstance().isMapLoaded())
     {
@@ -597,6 +617,8 @@ command_result df_plant(color_ostream &out, vector <string> &parameters)
             return CR_FAILURE;
         }
     }
+
+    if (true) return CR_OK; //DEBUG
 
     if (options.grow)
         return df_grow(out, bounds, options.age, &filter, options.filter_ex);
