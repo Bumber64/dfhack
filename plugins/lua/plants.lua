@@ -19,7 +19,7 @@ local function find_plant_idx(s) --find plant raw index by id string
 end
 
 local function find_plant(s) --accept index string or match id string
-    if s = '' then
+    if s == '' then
         return -2 --will print all non-grass ids (for create)
     elseif tonumber(s) then
         return argparse.nonnegativeInt(s, 'plant_id')
@@ -35,11 +35,13 @@ local function build_filter(vec, s)
 
     local set = {}
     for _,id in ipairs(argparse.stringList(s, 'list')) do
-        set[find_plant(id)] = true
+        if id ~= '' then
+            set[find_plant(id)] = true
+        end
     end
 
     for idx,_ in pairs(set) do
-        vec:insert(idx,'#') --add plant raw indices to vector
+        vec:insert('#', idx) --add plant raw indices to vector
     end
 end
 
@@ -66,6 +68,7 @@ function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
     {
         {'g', 'grow', handler=function() opts.grow = true end},
         {'c', 'create', hasArg=true, handler=function(optarg)
+            opts.create = true
             opts.plant_idx = find_plant(optarg) end},
         {'r', 'remove', handler=function() opts.del = true end},
         {'s', 'shrubs', handler=function() opts.shrubs = true end},
