@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#include "DataDefs.h"
+//#include "DataDefs.h"
 #include "Debug.h"
 #include "Core.h"
 #include "Console.h"
@@ -491,12 +491,6 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
         out.printerr("Map not loaded!\n");
         return CR_FAILURE;
     }
-    else if (!pos_1.isValid())
-    {   // Attempt to use cursor for pos if active
-        Gui::getCursorCoords(pos_1);
-        DEBUG(log, out).print("Try to use cursor (%d, %d, %d) for pos_1.\n",
-            pos_1.x, pos_1.y, pos_1.z);
-    }
 
     if (options.create)
     {   // Check improper options and plant raw
@@ -515,10 +509,18 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
             out.printerr("Can't accept second pos for --create!\n");
             return CR_WRONG_USAGE;
         }
-        else if (!pos_1.isValid())
-        {
-            out.printerr("Invalid pos for --create!\n");
-            return CR_WRONG_USAGE;
+        
+        if (!pos_1.isValid())
+        {   // Attempt to use cursor for pos if active
+            Gui::getCursorCoords(pos_1);
+            DEBUG(log, out).print("Try to use cursor (%d, %d, %d) for pos_1.\n",
+                pos_1.x, pos_1.y, pos_1.z);
+
+            if (!pos_1.isValid())
+            {
+                out.printerr("Invalid pos for --create! Make sure keyboard cursor is active if not entering pos manually!\n");
+                return CR_WRONG_USAGE;
+            }
         }
 
         DEBUG(log, out).print("plant_idx = %d\n", options.plant_idx);
