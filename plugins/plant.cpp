@@ -31,12 +31,12 @@ using std::vector;
 using std::string;
 using namespace DFHack;
 
-DFHACK_PLUGIN("plants");
+DFHACK_PLUGIN("plant");
 REQUIRE_GLOBAL(world);
 
 namespace DFHack
 {
-    DBG_DECLARE(plants, log, DebugCategory::LINFO);
+    DBG_DECLARE(plant, log, DebugCategory::LINFO);
 }
 
 struct cuboid
@@ -82,7 +82,7 @@ struct cuboid
     inline bool testPos(df::coord pos) { return testPos(pos.x, pos.y, pos.z); }
 };
 
-struct plants_options
+struct plant_options
 {
     bool grow = false; // Grow saplings into trees
     bool create = false; // Create a plant
@@ -99,22 +99,22 @@ struct plants_options
 
     static struct_identity _identity;
 };
-static const struct_field_info plants_options_fields[] =
+static const struct_field_info plant_options_fields[] =
 {
-    { struct_field_info::PRIMITIVE, "grow",      offsetof(plants_options, grow),      &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "create",    offsetof(plants_options, create),    &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "del",       offsetof(plants_options, del),       &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "shrubs",    offsetof(plants_options, shrubs),    &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "saplings",  offsetof(plants_options, saplings),  &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "trees",     offsetof(plants_options, trees),     &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "dry_run",   offsetof(plants_options, dry_run),   &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "filter_ex", offsetof(plants_options, filter_ex), &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "zlevel",    offsetof(plants_options, zlevel),    &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "plant_idx", offsetof(plants_options, plant_idx), &df::identity_traits<int32_t>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "age",       offsetof(plants_options, age),       &df::identity_traits<int32_t>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "grow",      offsetof(plant_options, grow),      &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "create",    offsetof(plant_options, create),    &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "del",       offsetof(plant_options, del),       &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "shrubs",    offsetof(plant_options, shrubs),    &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "saplings",  offsetof(plant_options, saplings),  &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "trees",     offsetof(plant_options, trees),     &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "dry_run",   offsetof(plant_options, dry_run),   &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "filter_ex", offsetof(plant_options, filter_ex), &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "zlevel",    offsetof(plant_options, zlevel),    &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "plant_idx", offsetof(plant_options, plant_idx), &df::identity_traits<int32_t>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "age",       offsetof(plant_options, age),       &df::identity_traits<int32_t>::identity, 0, 0 },
     { struct_field_info::END }
 };
-struct_identity plants_options::_identity(sizeof(plants_options), &df::allocator_fn<plants_options>, NULL, "plants_options", NULL, plants_options_fields);
+struct_identity plant_options::_identity(sizeof(plant_options), &df::allocator_fn<plant_options>, NULL, "plant_options", NULL, plant_options_fields);
 
 const int32_t sapling_to_tree_threshold = 120 * 28 * 12 * 3 - 1; // 3 years minus 1; let the game handle the actual growing-up
 
@@ -314,7 +314,7 @@ static void set_tt(df::coord pos)
         block->tiletype[tx][ty] = findRandomVariant(tiletype::SoilFloor1);
 }
 
-command_result df_removeplant(color_ostream &out, const cuboid &bounds, const plants_options &options, vector<int32_t> *filter = nullptr)
+command_result df_removeplant(color_ostream &out, const cuboid &bounds, const plant_options &options, vector<int32_t> *filter = nullptr)
 {
     if (!bounds.isValid())
     {
@@ -406,20 +406,20 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
         }
     }
 
-    out.print("Plants%s removed: %d (%d bad)\n", options.dry_run ? " that would be" : "", count, count_bad);
+    out.print("plants%s removed: %d (%d bad)\n", options.dry_run ? " that would be" : "", count, count_bad);
     return CR_OK;
 }
 
 command_result df_plant(color_ostream &out, vector<string> &parameters)
 {
-    plants_options options;
+    plant_options options;
     cuboid bounds;
     df::coord pos_1, pos_2;
     vector<int32_t> filter; // Unsorted
 
     CoreSuspender suspend;
 
-    if (!Lua::CallLuaModuleFunction(out, "plugins.plants", "parse_commandline",
+    if (!Lua::CallLuaModuleFunction(out, "plugins.plant", "parse_commandline",
         std::make_tuple(&options, &pos_1, &pos_2, &filter, parameters)))
     {
         return CR_WRONG_USAGE;
