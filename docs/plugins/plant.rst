@@ -21,7 +21,7 @@ Create
 ``-c <plant_id>``, ``--create <plant_id>``
     Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
 ``-a <value>``, ``--age <value>``
-    Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` (to create a sapling that will immediately grow into a tree.) Defaults to 0 if option is unused.
+    Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` to create a sapling that will immediately grow into a tree. Defaults to 0 if option is unused.
 
 Grow
 ----
