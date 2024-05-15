@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 
-//#include "DataDefs.h"
 #include "Debug.h"
 #include "Core.h"
 #include "Console.h"
@@ -41,12 +40,12 @@ namespace DFHack
 
 struct cuboid
 {
-    int16_t x_min = -30000;
-    int16_t x_max = -30000;
-    int16_t y_min = -30000;
-    int16_t y_max = -30000;
-    int16_t z_min = -30000;
-    int16_t z_max = -30000;
+    int16_t x_min = -1;
+    int16_t x_max = -1;
+    int16_t y_min = -1;
+    int16_t y_max = -1;
+    int16_t z_min = -1;
+    int16_t z_max = -1;
 
     bool isValid()
     {   // False if any bound is < 0
@@ -84,8 +83,8 @@ struct cuboid
 
 struct plant_options
 {
-    bool grow = false; // Grow saplings into trees
     bool create = false; // Create a plant
+    bool grow = false; // Grow saplings into trees
     bool del = false; // Remove plants
     bool shrubs = false; // Remove shrubs
     bool saplings = false; // Remove saplings
@@ -101,8 +100,8 @@ struct plant_options
 };
 static const struct_field_info plant_options_fields[] =
 {
-    { struct_field_info::PRIMITIVE, "grow",      offsetof(plant_options, grow),      &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "create",    offsetof(plant_options, create),    &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "grow",      offsetof(plant_options, grow),      &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "del",       offsetof(plant_options, del),       &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "shrubs",    offsetof(plant_options, shrubs),    &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "saplings",  offsetof(plant_options, saplings),  &df::identity_traits<bool>::identity, 0, 0 },
@@ -424,31 +423,19 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     {
         return CR_WRONG_USAGE;
     }
-    else if (!(options.grow || options.create || options.del))
-    {   // No sub-command
-        out.printerr("Choose a sub-command (grow/create/remove)\n");
-        return CR_WRONG_USAGE;
-    }
-    else if (options.grow && options.create ||
-        options.grow && options.del ||
-        options.create && options.del)
-    {   // Sub-commands are mutually exclusive
-        out.printerr("Choose only one of grow/create/remove!\n");
-        return CR_WRONG_USAGE;
-    }
     else if (!options.del && (options.shrubs || options.saplings || options.trees || options.dry_run))
     {   // Don't use remove options outside remove
-        out.printerr("Can't use remove's options without --remove!\n");
+        out.printerr("Can't use remove's options without remove!\n");
         return CR_WRONG_USAGE;
     }
     else if (options.del && options.age >= 0)
     {   // Don't use age with remove
-        out.printerr("Can't use --age with --remove!\n");
+        out.printerr("Can't use --age with remove!\n");
         return CR_WRONG_USAGE;
     }
     else if (options.trees)
     {   // TODO: implement
-        out.printerr("Tree removal not implemented!\n");
+        out.printerr("--trees not implemented!\n");
         return CR_FAILURE;
     }
     else if (options.plant_idx == -2)
@@ -469,8 +456,8 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
 
     out.print("pos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n\n",
         pos_1.x, pos_1.y, pos_1.z, pos_2.x, pos_2.y, pos_2.z);
-    out.print("grow = %d\n", options.grow);
     out.print("create = %d\n", options.create);
+    out.print("grow = %d\n", options.grow);
     out.print("remove = %d\n", options.del);
     out.print("shrubs = %d\n", options.shrubs);
     out.print("saplings = %d\n", options.saplings);
@@ -496,17 +483,17 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     {   // Check improper options and plant raw
         if (options.zlevel)
         {
-            out.printerr("Cannot use --zlevel with --create!\n");
+            out.printerr("Cannot use --zlevel with create!\n");
             return CR_FAILURE;
         }
         else if (!filter.empty())
         {
-            out.printerr("Cannot use filter/exclude with --create!\n");
+            out.printerr("Cannot use filter/exclude with create!\n");
             return CR_FAILURE;
         }
         else if (pos_2.isValid())
         {
-            out.printerr("Can't accept second pos for --create!\n");
+            out.printerr("Can't accept second pos for create!\n");
             return CR_WRONG_USAGE;
         }
         
@@ -518,7 +505,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
 
             if (!pos_1.isValid())
             {
-                out.printerr("Invalid pos for --create! Make sure keyboard cursor is active if not entering pos manually!\n");
+                out.printerr("Invalid pos for create! Make sure keyboard cursor is active if not entering pos manually!\n");
                 return CR_WRONG_USAGE;
             }
         }
@@ -536,7 +523,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
         }
         else
         {
-            out.printerr("Plant raw not found for --create: %d\n", options.plant_idx);
+            out.printerr("Plant raw not found for create: %d\n", options.plant_idx);
             return CR_FAILURE;
         }
     }
@@ -564,7 +551,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
                     }
                     else if (options.grow && !p_raw->flags.is_set(plant_raw_flags::SAPLING))
                     {   // User might copy-paste filters between grow and remove, so just log this
-                        DEBUG(log, out).print("Filter/exclude shrub with --grow: %d (%s)\n", idx, p_raw->id.c_str());
+                        DEBUG(log, out).print("Filter/exclude shrub with grow: %d (%s)\n", idx, p_raw->id.c_str());
                     }
                 }
                 else
@@ -599,12 +586,6 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
         }
         else // Entire map
         {
-            if (pos_2.isValid())
-            {
-                out.printerr("First pos invalid! Second pos okay.\n");
-                return CR_FAILURE;
-            }
-
             bounds.addPos(0, 0, world->map.z_count-1);
             bounds.addPos(world->map.x_count-1, world->map.y_count-1, 0);
         }
@@ -622,10 +603,10 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
 
     if (true) return CR_OK; //DEBUG
 
-    if (options.grow)
-        return df_grow(out, bounds, options.age, &filter, options.filter_ex);
-    else if (options.create)
+    if (options.create)
         return df_createplant(out, pos_1, options.plant_idx, options.age);
+    else if (options.grow)
+        return df_grow(out, bounds, options.age, &filter, options.filter_ex);
     else if (options.del)
         return df_removeplant(out, bounds, options, &filter);
 
