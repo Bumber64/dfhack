@@ -63,7 +63,7 @@ Examples
 ``plant -c 200 -a tree``
     Create an Acacia sapling at the cursor, ready to mature into a tree.
 ``plant 70,70,140 -c 0``
-    Create a Single-grain Wheat shrub at (70, 70, 140).
+    Create a Single-grain Wheat shrub at (70, 70, 140.)
 ``plant --grow``
     Attempt to grow all saplings on the map into trees.
 ``plant -gz -f maple,198,sand_pear``
@@ -75,4 +75,4 @@ Examples
 ``plant here -rsp``
     Remove the shrub or sapling at the cursor.
 ``plant 0,0,49 0,0,51 -rpz -e nether_cap``
-    Remove all saplings on z-levels 49-51, excluding Nether Cap.
+    Remove all saplings on z-levels 49 to 51, excluding Nether Cap.
