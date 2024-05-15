@@ -8,7 +8,7 @@ plant
 Grow and remove shrubs or trees. Modes are ``create``, ``grow``, and ``remove``. ``create`` allows the creation of new shrubs and saplings. ``grow`` adjusts the age of saplings and trees, allowing them to grow instantly. ``remove`` can remove existing shrubs and saplings.
 
 Usage
-=====
+-----
 
 Provide a mode (including a ``plant_id`` for ``create``) followed by optional ``pos`` arguments and options. The ``pos`` arguments can limit operation of ``grow`` or ``remove`` to a single tile or a cuboid. ``pos`` should normally be in the form ``0,0,0``, without spaces. The string ``here`` can be used in place of numeric coordinates to use the position of the keyboard cursor, if active.
 
