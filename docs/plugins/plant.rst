@@ -8,11 +8,11 @@ plant
 Grow and remove shrubs or trees. Modes are ``create``, ``grow``, and ``remove``. ``create`` allows the creation of new shrubs and saplings. ``grow`` adjusts the age of saplings and trees, allowing them to grow instantly. ``remove`` can remove existing shrubs and saplings.
 
 Usage
------
+=====
 
 Provide a mode (including a ``plant_id`` for ``create``) followed by optional ``pos`` arguments and options. The ``pos`` arguments can limit operation of ``grow`` or ``remove`` to a single tile or a cuboid. ``pos`` should normally be in the form ``0,0,0``, without spaces. The string ``here`` can be used in place of numeric coordinates to use the position of the keyboard cursor, if active.
 
-Create
+create
 ======
 
 ::
@@ -27,7 +27,7 @@ Options
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` to have saplings immediately grow into trees. Defaults to 0 if option is unused.
 
-Grow
+grow
 ====
 
 ::
@@ -48,7 +48,7 @@ Options
 ``-z``, ``--zlevel``
     Operate on a range of z-levels instead of default targeting. Will do all z-levels between ``pos`` arguments if both are given (instead of cuboid,) z-level of first ``pos`` if one is given (instead of single tile,) else z-level of current view if no ``pos`` is given (instead of entire map.)
 
-Remove
+remove
 ======
 
 ::
@@ -74,7 +74,7 @@ Options
     Operate on a range of z-levels instead of default targeting. Will do all z-levels between ``pos`` arguments if both are given (instead of cuboid,) z-level of first ``pos`` if one is given (instead of single tile,) else z-level of current view if no ``pos`` is given (instead of entire map.)
 
 Examples
---------
+========
 
 ``plant create tower_cap``
     Create a Tower Cap sapling at the cursor.
