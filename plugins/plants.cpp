@@ -630,7 +630,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     return CR_WRONG_USAGE;
 }
 
-DFhackCExport command_result plugin_init(color_ostream &out, std::vector <PluginCommand> &commands)
+DFhackCExport command_result plugin_init(color_ostream &out, vector<PluginCommand> &commands)
 {
     commands.push_back(PluginCommand(
         "plant",
