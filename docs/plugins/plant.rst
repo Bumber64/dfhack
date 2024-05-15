@@ -19,14 +19,14 @@ The ``pos`` argument can limit operation of ``--grow`` or ``--remove`` to a sing
 Create
 ------
 ``-c <plant_id>``, ``--create <plant_id>``
-    Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
+    Required. Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` to have saplings immediately grow into trees. Defaults to 0 if option is unused.
 
 Grow
 ----
 ``-g``, ``--grow``
-    Grows saplings (including dead ones) into trees. Will default to all saplings on the map if no ``pos`` arguments are used. Saplings will die and fail to grow if they are blocked by another tree.
+    Required. Grows saplings (including dead ones) into trees. Will default to all saplings on the map if no ``pos`` arguments are used. Saplings will die and fail to grow if they are blocked by another tree.
 ``-a <value>``, ``--age <value>``
     Define the age (in ticks) to set saplings to. ``value`` can be a non-negative integer, or the string ``tree``. Defaults to ``tree`` if option is unused. If a ``value`` larger than ``tree`` (equivalent to 120959) is used, it will make sure targeted trees have an age of at least the given value, allowing them to grow larger.
 ``-f <list>``, ``--filter <list>``
@@ -39,7 +39,7 @@ Grow
 Remove
 ------
 ``-r``, ``--remove``
-    Remove plants from the map (or area defined by ``pos`` arguments.) By default, only removes invalid plants that exist on non-plant tiles (`Bug 12868 <https://dwarffortressbugtracker.com/view.php?id=12868>`_.) The ``--shrubs`` and ``--saplings`` options allow normal plants to be targeted instead. Removal of fully-grown trees isn't supported.
+    Required. Remove plants from the map (or area defined by ``pos`` arguments.) By default, only removes invalid plants that exist on non-plant tiles (`Bug 12868 <https://dwarffortressbugtracker.com/view.php?id=12868>`_.) The ``--shrubs`` and ``--saplings`` options allow normal plants to be targeted instead. Removal of fully-grown trees isn't supported.
 ``-s``, ``--shrubs``
     Target shrubs for removal.
 ``-p``, ``--saplings``
