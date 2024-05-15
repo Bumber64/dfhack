@@ -100,7 +100,7 @@ function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
     elseif p1 == 'remove' then
         opts.del = true
     else
-        qerror('Invalid mode "'..p1..'"! Must be create, grow, or remove!')
+        qerror('Invalid mode: "'..p1..'"! Must be create, grow, or remove!')
     end
 
     local n = opts.create and 3 or 2
