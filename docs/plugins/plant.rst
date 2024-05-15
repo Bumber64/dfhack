@@ -40,13 +40,24 @@ Options
 -------
 
 ``-a <value>``, ``--age <value>``
-    Define the age (in ticks) to set saplings to. ``value`` can be a non-negative integer, or the string ``tree``. Defaults to ``tree`` if option is unused. If a ``value`` larger than ``tree`` (equivalent to 120959) is used, it will make sure even fully-grown trees have an age of at least the given value, allowing them to grow larger.
+    Define the age (in ticks) to set saplings to. ``value`` can be a
+	non-negative integer, or the string ``tree``. Defaults to ``tree`` if
+	option is unused. If a ``value`` larger than ``tree`` (equivalent to
+	120959) is used, it will make sure even fully-grown trees have an age of at
+	least the given value, allowing them to grow larger.
 ``-f <list>``, ``--filter <list>``
-    Define a filter list of plant IDs to target, ignoring all other tree types. ``list`` should be a comma-separated list of strings and/or non-negative integers with no spaces in between them. Spaces are acceptable within strings as long as they are enclosed in quotes.
+    Define a filter list of plant IDs to target, ignoring all other tree types.
+	``list`` should be a comma-separated list of strings and/or non-negative
+	integers with no spaces in between them. Spaces are acceptable within
+	strings as long as they are enclosed in quotes.
 ``-e <list>``, ``--exclude <list>``
-    Same as ``--filter``, but target everything except these. Cannot be used with ``--filter``.
+    Same as ``--filter``, but target everything except these. Cannot be used
+	with ``--filter``.
 ``-z``, ``--zlevel``
-    Operate on a range of z-levels instead of default targeting. Will do all z-levels between ``pos`` arguments if both are given (instead of cuboid,) z-level of first ``pos`` if one is given (instead of single tile,) else z-level of current view if no ``pos`` is given (instead of entire map.)
+    Operate on a range of z-levels instead of default targeting. Will do all
+	z-levels between ``pos`` arguments if both are given (instead of cuboid,)
+	z-level of first ``pos`` if one is given (instead of single tile,) else
+	z-level of current view if no ``pos`` is given (instead of entire map.)
 
 remove
 ======
@@ -55,7 +66,11 @@ remove
 
     plant remove [<pos> [<pos>]] [<options>]
 
-Remove plants from the map (or area defined by ``pos`` arguments.) By default, only removes invalid plants that exist on non-plant tiles (`Bug 12868 <https://dwarffortressbugtracker.com/view.php?id=12868>`_.) The ``--shrubs`` and ``--saplings`` options allow normal plants to be targeted instead. Removal of fully-grown trees isn't currently supported.
+Remove plants from the map (or area defined by ``pos`` arguments.) By default,
+only removes invalid plants that exist on non-plant tiles (due to `Bug 12868
+<https://dwarffortressbugtracker.com/view.php?id=12868>`_.) The ``--shrubs``
+and ``--saplings`` options allow normal plants to be targeted instead. Removal
+of fully-grown trees isn't currently supported.
 
 Options
 -------
@@ -65,13 +80,22 @@ Options
 ``-p``, ``--saplings``
     Target saplings for removal.
 ``-d``, ``--dryrun``
-    Don't actually remove plants. Just print the total number of plants that would be removed.
+    Don't actually remove plants. Just print the total number of plants that
+	would be removed.
 ``-f <list>``, ``--filter <list>``
-    Define a filter list of plant IDs to target, ignoring all other plant types. This applies after ``--shrubs`` and ``--saplings`` are targeted, and can't be used without one of those options. ``list`` should be a comma-separated list of strings and/or non-negative integers with no spaces in between them. Spaces are acceptable within strings as long as they are enclosed in quotes.
+    Define a filter list of plant IDs to target, ignoring all other plant types.
+	This applies after ``--shrubs`` and ``--saplings`` are targeted, and can't
+	be used without one of those options. ``list`` should be a comma-separated
+	list of strings and/or non-negative integers with no spaces in between them.
+	Spaces are acceptable within strings as long as they are enclosed in quotes.
 ``-e <list>``, ``--exclude <list>``
-    Same as ``--filter``, but target everything except these. Cannot be used with ``--filter``.
+    Same as ``--filter``, but target everything except these. Cannot be used
+	with ``--filter``.
 ``-z``, ``--zlevel``
-    Operate on a range of z-levels instead of default targeting. Will do all z-levels between ``pos`` arguments if both are given (instead of cuboid,) z-level of first ``pos`` if one is given (instead of single tile,) else z-level of current view if no ``pos`` is given (instead of entire map.)
+    Operate on a range of z-levels instead of default targeting. Will do all
+	z-levels between ``pos`` arguments if both are given (instead of cuboid,)
+	z-level of first ``pos`` if one is given (instead of single tile,) else
+	z-level of current view if no ``pos`` is given (instead of entire map.)
 
 Examples
 ========
@@ -87,9 +111,11 @@ Examples
 ``plant grow``
     Attempt to grow all saplings on the map into trees.
 ``plant grow -z -f maple,200,sand_pear``
-    Attempt to grow all Maple, Acacia, and Sand Pear saplings on the current z-level into trees.
+    Attempt to grow all Maple, Acacia, and Sand Pear saplings on the current
+	z-level into trees.
 ``plant grow 0,0,100 19,19,119 -a 4032000``
-    Set the age of all saplings and trees (with their original sapling tile) in the defined 20x20x20 cube to at least 100 years.
+    Set the age of all saplings and trees (with their original sapling tile)
+	in the defined 20x20x20 cube to at least 100 years.
 ``plant remove``
     Remove all invalid plants from the map.
 ``plant remove here -sp``
