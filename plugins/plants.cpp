@@ -118,7 +118,7 @@ struct_identity plants_options::_identity(sizeof(plants_options), &df::allocator
 
 const int32_t sapling_to_tree_threshold = 120 * 28 * 12 * 3 - 1; // 3 years minus 1; let the game handle the actual growing-up
 
-command_result df_grow(color_ostream &out, cuboid bounds, int32_t target_age = -1, vector<int32_t> *filter = nullptr, bool filter_ex = false)
+command_result df_grow(color_ostream &out, const cuboid &bounds, int32_t target_age = -1, vector<int32_t> *filter = nullptr, bool filter_ex = false)
 {
     if (!bounds.isValid())
     {
@@ -314,7 +314,7 @@ static void set_tt(df::coord pos)
         block->tiletype[tx][ty] = findRandomVariant(tiletype::SoilFloor1);
 }
 
-command_result df_removeplant(color_ostream &out, cuboid bounds, plants_options options, vector<int32_t> *filter = nullptr)
+command_result df_removeplant(color_ostream &out, const cuboid &bounds, const plants_options &options, vector<int32_t> *filter = nullptr)
 {
     if (!bounds.isValid())
     {
