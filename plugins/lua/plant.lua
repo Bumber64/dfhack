@@ -1,4 +1,4 @@
-local _ENV = mkmodule('plugins.plant')
+local _ENV = mkmodule('plugins.plants')
 
 local argparse = require('argparse')
 local utils = require('utils')
@@ -47,7 +47,7 @@ end
 
 local age_table =
 {
-    TREE = 120959, --sapling_to_tree_threshold
+    tree = 120959, --sapling_to_tree_threshold
 }
 
 local function plant_age(s) --tree stage or numerical value
@@ -55,7 +55,7 @@ local function plant_age(s) --tree stage or numerical value
         return argparse.nonnegativeInt(s, 'age')
     end
 
-    local n = age_table[s:upper()]
+    local n = age_table[s:lower()]
     if n then
         return n
     end
@@ -66,11 +66,6 @@ end
 function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
     local positionals = argparse.processArgsGetopt(args,
     {
-        {'g', 'grow', handler=function() opts.grow = true end},
-        {'c', 'create', hasArg=true, handler=function(optarg)
-            opts.create = true
-            opts.plant_idx = find_plant(optarg) end},
-        {'r', 'remove', handler=function() opts.del = true end},
         {'s', 'shrubs', handler=function() opts.shrubs = true end},
         {'p', 'saplings', handler=function() opts.saplings = true end},
         {'t', 'trees', handler=function() opts.trees = true end},
@@ -85,16 +80,36 @@ function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
         {'z', 'zlevel', handler=function() opts.zlevel = true end},
     })
 
-    if #positionals > 2 then
+    local p1 = positionals[1]
+    if not p1 then
+        qerror('Specify mode: create, grow, or remove!')
+    elseif p1 == 'create' then
+        opts.create = true
+
+        if positionals[2] then
+            opts.plant_idx = find_plant(positionals[2])
+        else
+            qerror('Must specify plant_id for create!')
+        end
+    elseif p1 == 'grow' then
+        opts.grow = true
+    elseif p1 == 'remove' then
+        opts.del = true
+    else
+        qerror('Invalid mode "'..p1..'"! Must be create, grow, or remove!')
+    end
+
+    local n = opts.create and 2 or 0
+    if #positionals > 2+n then
         qerror('Too many positionals!')
     end
 
-    if positionals[1] then
-        utils.assign(pos_1, argparse.coords(positionals[1], 'pos_1', true))
+    if positionals[1+n] then
+        utils.assign(pos_1, argparse.coords(positionals[1+n], 'pos_1', true))
     end
 
-    if positionals[2] then
-        utils.assign(pos_2, argparse.coords(positionals[2], 'pos_2', true))
+    if positionals[2+n] then
+        utils.assign(pos_2, argparse.coords(positionals[2+n], 'pos_2', true))
     end
 end
 
