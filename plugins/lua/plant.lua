@@ -80,6 +80,10 @@ function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
         {'z', 'zlevel', handler=function() opts.zlevel = true end},
     })
 
+    if #positionals > 3 then
+        qerror('Too many positionals!')
+    end
+
     local p1 = positionals[1]
     if not p1 then
         qerror('Specify mode: create, grow, or remove!')
@@ -99,17 +103,13 @@ function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
         qerror('Invalid mode "'..p1..'"! Must be create, grow, or remove!')
     end
 
-    local n = opts.create and 2 or 0
-    if #positionals > 2+n then
-        qerror('Too many positionals!')
+    local n = opts.create and 3 or 2
+    if positionals[n] then
+        utils.assign(pos_1, argparse.coords(positionals[n], 'pos_1', true))
     end
 
-    if positionals[1+n] then
-        utils.assign(pos_1, argparse.coords(positionals[1+n], 'pos_1', true))
-    end
-
-    if positionals[2+n] then
-        utils.assign(pos_2, argparse.coords(positionals[2+n], 'pos_2', true))
+    if not opts.create and positionals[3] then
+        utils.assign(pos_2, argparse.coords(positionals[3], 'pos_2', true))
     end
 end
 
