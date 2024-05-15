@@ -491,11 +491,6 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
             out.printerr("Cannot use filter/exclude with create!\n");
             return CR_FAILURE;
         }
-        else if (pos_2.isValid())
-        {
-            out.printerr("Can't accept second pos for create!\n");
-            return CR_WRONG_USAGE;
-        }
         
         if (!pos_1.isValid())
         {   // Attempt to use cursor for pos if active
