@@ -21,12 +21,29 @@ The ``pos`` argument can limit operation of ``--grow`` or ``-remove`` to a singl
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` (to create a sapling that will immediately grow into a tree.) Defaults to 0 if option is unused.
 
+
 ``-g``, ``--grow``
     Grows saplings into trees. Will default to all saplings on the map if no ``pos`` arguments are used.
 ``-a <value>``, ``--age <value>``
     Define the age (in ticks) to set saplings to. ``value`` can be a non-negative integer, or the string ``tree``. Defaults to ``tree`` if option is unused. If a ``value`` larger than ``tree`` (equivalent to 120959) is used, it will make sure selected trees have an age of at least the given value, allowing them to grow larger.
 ``-f <list>``, ``--filter <list>``
     Define a filter list of plant IDs to target, ignoring all other tree types. ``list`` should be a comma-separated list of strings and/or non-negative integers with no spaces in between them. Spaces are acceptable within strings as long as they are enclosed in quotes.
+``-e <list>``, ``--exclude <list>``
+    Same as ``--filter``, but target everything except these. Cannot be used with ``--filter``.
+``-z``, ``--zlevel``
+    Operate on a range of z-levels instead of default targeting. Will do all z-levels between ``pos`` arguments if both are given (instead of cuboid,) z-level of first ``pos`` if one is given (instead of single tile,) else z-level of current view if no ``pos`` is given (instead of entire map.)
+
+
+``-r``, ``--remove``
+    Remove plants from the map (or area defined by ``pos`` arguments.) By default, only removes invalid plants that exist on non-plant tiles (`Bug 12868 <https://dwarffortressbugtracker.com/view.php?id=12868>`_.) The ``--shrubs`` and ``--saplings`` options allow normal plants to be targeted instead.
+``-s``, ``--shrubs``
+    Target shrubs for removal.
+``-p``, ``--saplings``
+    Target saplings for removal.
+``-d``, ``--dryrun``
+    Don't actually remove plants. Just print the total number of plants that would be removed.
+``-f <list>``, ``--filter <list>``
+    Define a filter list of plant IDs to target, ignoring all other plant types. This applies after ``--shrubs`` and ``--saplings`` are targeted, and has no effect if neither are used. ``list`` should be a comma-separated list of strings and/or non-negative integers with no spaces in between them. Spaces are acceptable within strings as long as they are enclosed in quotes.
 ``-e <list>``, ``--exclude <list>``
     Same as ``--filter``, but target everything except these. Cannot be used with ``--filter``.
 ``-z``, ``--zlevel``
