@@ -26,7 +26,7 @@ Create
 Grow
 ----
 ``-g``, ``--grow``
-    Grows saplings into trees. Will default to all saplings on the map if no ``pos`` arguments are used. Saplings will fail to grow into trees and die if they are blocked by another tree.
+    Grows saplings into trees. Will default to all saplings on the map if no ``pos`` arguments are used. Saplings will fail to grow and instead die if they are blocked by another tree.
 ``-a <value>``, ``--age <value>``
     Define the age (in ticks) to set saplings to. ``value`` can be a non-negative integer, or the string ``tree``. Defaults to ``tree`` if option is unused. If a ``value`` larger than ``tree`` (equivalent to 120959) is used, it will make sure selected trees have an age of at least the given value, allowing them to grow larger.
 ``-f <list>``, ``--filter <list>``
