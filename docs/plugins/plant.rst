@@ -5,7 +5,7 @@ plant
     :summary: Grow and remove shrubs or trees.
     :tags: adventure fort armok map plants
 
-Grow and remove shrubs or trees. Primary options are ``--create``, ``--grow``, and ``--remove``. ``--create`` allows the creation of new shrubs and saplings. ``--grow`` adjusts the age of saplings and trees, allowing them to grow up instantly. ``--remove`` can remove existing shrubs and saplings.
+Grow and remove shrubs or trees. Primary options are ``--create``, ``--grow``, and ``--remove``. ``--create`` allows the creation of new shrubs and saplings. ``--grow`` adjusts the age of saplings and trees, allowing them to grow instantly. ``--remove`` can remove existing shrubs and saplings.
 
 Usage
 -----
@@ -21,12 +21,12 @@ Create
 ``-c <plant_id>``, ``--create <plant_id>``
     Creates a new plant of the specified type at ``pos`` or the cursor position. The target tile must be a dirt or grass floor. ``plant_id`` is not case-sensitive, but must be enclosed in quotes if spaces exist. A numerical ID can also be used. Providing an empty string with "" will print all available IDs and skip plant creation.
 ``-a <value>``, ``--age <value>``
-    Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` to create a sapling that will immediately grow into a tree. Defaults to 0 if option is unused.
+    Set the created plant to a specific age (in ticks.) ``value`` can be a non-negative integer, or the string ``tree`` to have saplings immediately grow into trees. Defaults to 0 if option is unused.
 
 Grow
 ----
 ``-g``, ``--grow``
-    Grows saplings into trees. Will default to all saplings on the map if no ``pos`` arguments are used.
+    Grows saplings into trees. Will default to all saplings on the map if no ``pos`` arguments are used. Saplings will fail to grow into trees and die if they are blocked by another tree.
 ``-a <value>``, ``--age <value>``
     Define the age (in ticks) to set saplings to. ``value`` can be a non-negative integer, or the string ``tree``. Defaults to ``tree`` if option is unused. If a ``value`` larger than ``tree`` (equivalent to 120959) is used, it will make sure selected trees have an age of at least the given value, allowing them to grow larger.
 ``-f <list>``, ``--filter <list>``
