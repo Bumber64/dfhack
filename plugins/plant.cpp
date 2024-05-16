@@ -86,7 +86,7 @@ struct cuboid
     inline bool testPos(df::coord pos) { return testPos(pos.x, pos.y, pos.z); }
 };
 
-struct plant_options
+struct plant_options // TODO: designated
 {
     bool create = false; // Create a plant
     bool grow = false; // Grow saplings into trees
