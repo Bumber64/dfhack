@@ -49,8 +49,8 @@ local year_table =
 {
     tree = 3, --sapling_to_tree_threshold
     1x1 = 3,
-    2x2 = 201, --Kapok, Ginkgo, Highwood
-    3x3 = 401, --Highwood
+    2x2 = 201, --kapok, ginkgo, highwood
+    3x3 = 401, --highwood
 }
 
 local function plant_age(s) --tree stage or numerical value
