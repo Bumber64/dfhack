@@ -30,7 +30,7 @@ end
 
 local function build_filter(vec, s)
     if #vec > 0 then
-        qerror('Filter list already populated!')
+        qerror('Filter already defined!')
     end
 
     local set = {}
