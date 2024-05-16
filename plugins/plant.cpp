@@ -56,24 +56,19 @@ struct cuboid
 
     bool addPos(int16_t x, int16_t y, int16_t z)
     {   // Expand cuboid to include point. Return true if bounds changed
-        if (x < 0 || y < 0 || z < 0)
+        if (x < 0 || y < 0 || z < 0 || (isValid() && testPos(x, y, z)))
             return false;
 
-        if (!this.isValid() || !this.testPos(x, y, z))
-        {
-            x_min = (x_min < 0 || x < x_min) ? x : x_min;
-            x_max = (x_max < 0 || x > x_max) ? x : x_max;
+        x_min = (x_min < 0 || x < x_min) ? x : x_min;
+        x_max = (x_max < 0 || x > x_max) ? x : x_max;
 
-            y_min = (y_min < 0 || y < y_min) ? y : y_min;
-            y_max = (y_max < 0 || y > y_max) ? y : y_max;
+        y_min = (y_min < 0 || y < y_min) ? y : y_min;
+        y_max = (y_max < 0 || y > y_max) ? y : y_max;
 
-            z_min = (z_min < 0 || z < z_min) ? z : z_min;
-            z_max = (z_max < 0 || z > z_max) ? z : z_max;
+        z_min = (z_min < 0 || z < z_min) ? z : z_min;
+        z_max = (z_max < 0 || z > z_max) ? z : z_max;
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
     inline bool addPos(df::coord pos) { return addPos(pos.x, pos.y, pos.z); }
 
