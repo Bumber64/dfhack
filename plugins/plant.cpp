@@ -133,7 +133,7 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, int32_t target_
     int32_t age = target_age < 0 ? sapling_to_tree_threshold : target_age;
     bool do_trees = age > sapling_to_tree_threshold;
 
-    int grown = 0;
+    int grown = 0, grown_trees = 0;
     for (auto plant : world->plants.all)
     {
         if (plant->flags.bits.is_shrub)
@@ -145,7 +145,10 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, int32_t target_
         else if (plant->tree_info)
         {   // Tree
             if (do_trees && !plant->damage_flags.bits.is_dead && plant->grow_counter < age) // TODO: bits.dead
+            {
                 plant->grow_counter = age;
+                grown_trees++;
+            }
             continue; // Next plant
         }
 
@@ -165,7 +168,11 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, int32_t target_
         grown++;
     }
 
-    out.print("%d saplings set to grow.\n", grown);
+    if (do_trees)
+        out.print("%d saplings and %d trees set to grow.\n", grown, grown_trees);
+    else
+        out.print("%d saplings set to grow.\n", grown);
+
     return CR_OK;
 }
 
