@@ -38,11 +38,11 @@ Options
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in years.) ``value`` can be a
     non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
-    ``2x2`` (201 years,) or ``3x3`` (401 years.) Max value is 1250. Defaults to
-    0 if option is unused. Only a few tree types grow wider than 1x1, but many
-    may grow taller. (Going directly to higher years will stunt height. It may
-    be more desirable to instead use ``plant grow`` in stages. Trees grow
-    taller every 10 years.)
+    ``2x2`` (201 years,) or ``3x3`` (401 years.) ``value`` will be capped at
+    1250. Defaults to 0 if option is unused. Only a few tree types grow wider
+    than 1x1, but many may grow taller. (Going directly to higher years will
+    stunt height. It may be more desirable to instead use ``plant grow`` in
+    stages. Trees grow taller every 10 years.)
 
 grow
 ====
@@ -61,12 +61,12 @@ Options
 ``-a <value>``, ``--age <value>``
     Define the age (in years) to set saplings to. ``value`` can be a
     non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
-    ``2x2`` (201 years,) or ``3x3`` (401 years.) Max value is 1250. Defaults
-    to 3 if option is unused. If a ``value`` larger than 3 is used, it will
-    make sure even fully-grown trees have an age of at least the given value,
-    allowing them to grow larger. (Going directly to higher years will stunt
-    tree height. It may be more desirable to grow in stages rather than all at
-    once. Trees grow taller every 10 years.)
+    ``2x2`` (201 years,) or ``3x3`` (401 years.) ``value`` will be capped at
+    1250. Defaults to 3 if option is unused. If a ``value`` larger than 3 is
+    used, it will make sure even fully-grown trees have an age of at least the
+    given value, allowing them to grow larger. (Going directly to higher years
+    will stunt tree height. It may be more desirable to grow in stages rather
+    than all at once. Trees grow taller every 10 years.)
 ``-f <list>``, ``--filter <list>``
     Define a filter list of plant IDs to target, ignoring all other tree types.
     ``list`` should be a comma-separated list of strings and/or non-negative
