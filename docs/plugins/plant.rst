@@ -38,8 +38,10 @@ Options
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in years.) ``value`` can be a
     non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
-    ``2x2`` (201 years,) or ``3x3`` (401 years.) Only a few tree types grow
-    wider than 1x1, but many may grow taller. Defaults to 0 if option is unused.
+    ``2x2`` (201 years,) or ``3x3`` (401 years.) Defaults to 0 if option is
+    unused. Only a few tree types grow wider than 1x1, but many may grow taller.
+    (Going directly to higher years will stunt height. It may be more desirable
+    to instead use ``plant grow`` in stages.)
 
 grow
 ====
@@ -61,7 +63,8 @@ Options
     ``2x2`` (201 years,) or ``3x3`` (401 years.) Defaults to 3 if option is
     unused. If a ``value`` larger than 3 is used, it will make sure even
     fully-grown trees have an age of at least the given value, allowing them
-    to grow larger.
+    to grow larger. (Going directly to higher years will stunt tree height.
+    It may be more desirable to grow in stages rather than all at once.)
 ``-f <list>``, ``--filter <list>``
     Define a filter list of plant IDs to target, ignoring all other tree types.
     ``list`` should be a comma-separated list of strings and/or non-negative
