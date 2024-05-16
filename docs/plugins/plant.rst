@@ -59,7 +59,7 @@ Options
     Define the age (in years) to set saplings to. ``value`` can be a
     non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
     ``2x2`` (201 years,) or ``3x3`` (401 years.) Defaults to 3 if option is
-    unused. If a ``value`` larger than 3 years is used, it will make sure even
+    unused. If a ``value`` larger than 3 is used, it will make sure even
     fully-grown trees have an age of at least the given value, allowing them
     to grow larger.
 ``-f <list>``, ``--filter <list>``
