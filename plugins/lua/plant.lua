@@ -45,9 +45,12 @@ local function build_filter(vec, s)
     end
 end
 
-local age_table =
+local year_table =
 {
-    tree = 120959, --sapling_to_tree_threshold
+    tree = 3, --sapling_to_tree_threshold
+    1x1 = 3,
+    2x2 = 201, --Kapok, Ginkgo, Highwood
+    3x3 = 401, --Highwood
 }
 
 local function plant_age(s) --tree stage or numerical value
@@ -55,9 +58,9 @@ local function plant_age(s) --tree stage or numerical value
         return argparse.nonnegativeInt(s, 'age')
     end
 
-    local n = age_table[s:lower()]
+    local n = year_table[s:lower()]
     if n then
-        return n
+        return 40320*n - 1 --years to tens of ticks - 1
     end
 
     qerror('Invalid age: "'..s..'"')
