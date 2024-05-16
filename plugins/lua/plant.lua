@@ -60,7 +60,7 @@ local function plant_age(s) --tree stage or numerical value
 
     local n = year_table[s:lower()]
     if n then
-        return 40320*n - 1 --years to tens of ticks - 1
+        return n <= 1250 and 40320*n - 1 or 50399999 --years to tens of ticks - 1
     end
 
     qerror('Invalid age: "'..s..'"')
