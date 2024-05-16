@@ -1,4 +1,4 @@
-local _ENV = mkmodule('plugins.plants')
+local _ENV = mkmodule('plugins.plant')
 
 local argparse = require('argparse')
 local utils = require('utils')
@@ -48,9 +48,9 @@ end
 local year_table =
 {
     tree = 3, --sapling_to_tree_threshold
-    1x1 = 3,
-    2x2 = 201, --kapok, ginkgo, highwood
-    3x3 = 401, --highwood
+    ["1x1"] = 3,
+    ["2x2"] = 201, --kapok, ginkgo, highwood
+    ["3x3"] = 401, --highwood
 }
 
 local function plant_age(s) --tree stage or numerical value
