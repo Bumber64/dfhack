@@ -47,7 +47,7 @@ struct cuboid
     int16_t z_min = -1;
     int16_t z_max = -1;
 
-    bool isValid()
+    bool isValid() const
     {   // False if any bound is < 0
         return x_min >= 0 && x_max >= 0 &&
             y_min >= 0 && y_max >= 0 &&
@@ -72,13 +72,13 @@ struct cuboid
     }
     inline bool addPos(df::coord pos) { return addPos(pos.x, pos.y, pos.z); }
 
-    bool testPos(int16_t x, int16_t y, int16_t z)
+    bool testPos(int16_t x, int16_t y, int16_t z) const
     {   // Return true if point inside cuboid. Make sure cuboid is valid first!
         return x >= x_min && x <= x_max &&
             y >= y_min && y <= y_max &&
             z >= z_min && z <= z_max;
     }
-    inline bool testPos(df::coord pos) { return testPos(pos.x, pos.y, pos.z); }
+    inline bool testPos(df::coord pos) const { return testPos(pos.x, pos.y, pos.z); }
 };
 
 struct plant_options
