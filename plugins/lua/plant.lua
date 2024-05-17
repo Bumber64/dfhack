@@ -73,7 +73,7 @@ function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
         {'s', 'shrubs', handler=function() opts.shrubs = true end},
         {'p', 'saplings', handler=function() opts.saplings = true end},
         {'t', 'trees', handler=function() opts.trees = true end},
-        {'d', 'dryrun', handler=function() opts.dry_run = true end},
+        {'d', 'dead', handler=function() opts.dead = true end},
         {'a', 'age', hasArg=true, handler=function(optarg)
             opts.age = plant_age(optarg) end},
         {'f', 'filter', hasArg=true, handler=function(optarg)
@@ -82,6 +82,7 @@ function parse_commandline(opts, pos_1, pos_2, filter_vec, args)
             opts.filter_ex = true
             build_filter(filter_vec, optarg) end},
         {'z', 'zlevel', handler=function() opts.zlevel = true end},
+        {'y', 'dryrun', handler=function() opts.dry_run = true end},
     })
 
     if #positionals > 3 then
