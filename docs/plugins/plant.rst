@@ -80,7 +80,7 @@ Options
     z-levels between ``pos`` arguments if both are given (instead of cuboid,)
     z-level of first ``pos`` if one is given (instead of single tile,) else
     z-level of current view if no ``pos`` is given (instead of entire map.)
-``-y``, ``--dryrun``
+``-n``, ``--dryrun``
     Don't actually grow plants. Just print the total number of plants that
     would be grown.
 
