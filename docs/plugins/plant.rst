@@ -80,6 +80,9 @@ Options
     z-levels between ``pos`` arguments if both are given (instead of cuboid,)
     z-level of first ``pos`` if one is given (instead of single tile,) else
     z-level of current view if no ``pos`` is given (instead of entire map.)
+``-y``, ``--dryrun``
+    Don't actually grow plants. Just print the total number of plants that
+    would be grown.
 
 remove
 ======
@@ -101,9 +104,8 @@ Options
     Target shrubs for removal.
 ``-p``, ``--saplings``
     Target saplings for removal.
-``-d``, ``--dryrun``
-    Don't actually remove plants. Just print the total number of plants that
-    would be removed.
+``-d``, ``--dead``
+    Only target dead plants for removal.
 ``-f <list>``, ``--filter <list>``
     Define a filter list of plant IDs to target, ignoring all other plant types.
     This applies after ``--shrubs`` and ``--saplings`` are targeted, and can't
@@ -118,6 +120,9 @@ Options
     z-levels between ``pos`` arguments if both are given (instead of cuboid,)
     z-level of first ``pos`` if one is given (instead of single tile,) else
     z-level of current view if no ``pos`` is given (instead of entire map.)
+``-y``, ``--dryrun``
+    Don't actually remove plants. Just print the total number of plants that
+    would be removed.
 
 Examples
 ========
@@ -142,5 +147,7 @@ Examples
     Remove all invalid plants from the map.
 ``plant remove here -sp``
     Remove the shrub or sapling at the cursor.
+``plant remove -spd``
+    Remove all dead shrubs and saplings from the map.
 ``plant remove 0,0,49 0,0,51 -pz -e nether_cap``
     Remove all saplings on z-levels 49 to 51, excluding Nether Cap.
