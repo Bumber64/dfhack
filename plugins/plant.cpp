@@ -89,9 +89,10 @@ struct plant_options
     bool shrubs = false; // Remove shrubs
     bool saplings = false; // Remove saplings
     bool trees = false; // Remove grown trees
-    bool dry_run = false; // Don't actually remove anything
+    bool dead = false; // Remove only dead plants
     bool filter_ex = false; // Filter vector excludes if true, else requires its plants
     bool zlevel = false; // Operate on entire z-levels
+    bool dry_run = false; // Don't actually grow or remove anything
 
     int32_t plant_idx = -1; // Plant raw index of plant to create; -2 means print all non-grass ids
     int32_t age = -1; // Set plant to this age for grow/create; -1 for default
@@ -106,9 +107,10 @@ static const struct_field_info plant_options_fields[] =
     { struct_field_info::PRIMITIVE, "shrubs",    offsetof(plant_options, shrubs),    &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "saplings",  offsetof(plant_options, saplings),  &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "trees",     offsetof(plant_options, trees),     &df::identity_traits<bool>::identity, 0, 0 },
-    { struct_field_info::PRIMITIVE, "dry_run",   offsetof(plant_options, dry_run),   &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "dead",      offsetof(plant_options, dead),      &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "filter_ex", offsetof(plant_options, filter_ex), &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "zlevel",    offsetof(plant_options, zlevel),    &df::identity_traits<bool>::identity, 0, 0 },
+    { struct_field_info::PRIMITIVE, "dry_run",   offsetof(plant_options, dry_run),   &df::identity_traits<bool>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "plant_idx", offsetof(plant_options, plant_idx), &df::identity_traits<int32_t>::identity, 0, 0 },
     { struct_field_info::PRIMITIVE, "age",       offsetof(plant_options, age),       &df::identity_traits<int32_t>::identity, 0, 0 },
     { struct_field_info::END }
@@ -117,66 +119,7 @@ struct_identity plant_options::_identity(sizeof(plant_options), &df::allocator_f
 
 const int32_t sapling_to_tree_threshold = 120 * 28 * 12 * 3 - 1; // 3 years minus 1; let the game handle the actual growing-up
 
-command_result df_grow(color_ostream &out, const cuboid &bounds, int32_t target_age = -1, vector<int32_t> *filter = nullptr, bool filter_ex = false)
-{
-    if (!bounds.isValid())
-    {
-        out.printerr("Invalid cuboid! (%d:%d, %d:%d, %d:%d)\n",
-            bounds.x_min, bounds.x_max, bounds.y_min, bounds.y_max, bounds.z_min, bounds.z_max);
-        return CR_FAILURE;
-    }
-
-    bool do_filter = filter && !filter->empty();
-    if (do_filter) // Sort filter vector
-        std::sort(filter->begin(), filter->end());
-
-    int32_t age = target_age < 0 ? sapling_to_tree_threshold : target_age;
-    bool do_trees = age > sapling_to_tree_threshold;
-
-    int grown = 0, grown_trees = 0;
-    for (auto plant : world->plants.all)
-    {
-        if (plant->flags.bits.is_shrub)
-            continue; // Shrub
-        else if (!bounds.testPos(plant->pos))
-            continue; // Outside cuboid
-        else if (do_filter && (vector_contains(*filter, (int32_t)plant->material) == filter_ex))
-            continue; // Filtered out
-        else if (plant->tree_info)
-        {   // Tree
-            if (do_trees && !plant->damage_flags.bits.is_dead && plant->grow_counter < age) // TODO: bits.dead
-            {
-                plant->grow_counter = age;
-                grown_trees++;
-            }
-            continue; // Next plant
-        }
-
-        auto tt = Maps::getTileType(plant->pos);
-        if (!tt || (*tt != tiletype::Sapling && *tt != tiletype::SaplingDead))
-        {
-            out.printerr("Invalid sapling tiletype at (%d, %d, %d): %s!\n",
-                plant->pos.x, plant->pos.y, plant->pos.z,
-                tt ? ENUM_KEY_STR(tiletype, *tt).c_str() : "No map block!");
-            continue; // Bad tiletype
-        }
-        else if (*tt == tiletype::SaplingDead)
-            *tt = tiletype::Sapling; // Revive sapling
-
-        plant->damage_flags.bits.is_dead = false; // TODO: bits.dead
-        plant->grow_counter = age;
-        grown++;
-    }
-
-    if (do_trees)
-        out.print("%d saplings and %d trees set to grow.\n", grown, grown_trees);
-    else
-        out.print("%d saplings set to grow.\n", grown);
-
-    return CR_OK;
-}
-
-command_result df_createplant(color_ostream &out, df::coord pos, int32_t plant_idx, int32_t age = -1)
+command_result df_createplant(color_ostream &out, df::coord pos, const plant_options &options)
 {
     auto col = Maps::getBlockColumn((pos.x / 48)*3, (pos.y / 48)*3);
     if (!Maps::getTileBlock(pos) || !col)
@@ -210,7 +153,7 @@ command_result df_createplant(color_ostream &out, df::coord pos, int32_t plant_i
         }
     }
 
-    auto p_raw = vector_get(world->raws.plants.all, plant_idx);
+    auto p_raw = vector_get(world->raws.plants.all, options.plant_idx);
     if (!p_raw)
     {
         out.printerr("Plant raw not found!\n");
@@ -232,9 +175,9 @@ command_result df_createplant(color_ostream &out, df::coord pos, int32_t plant_i
     if (!p_raw->flags.is_set(plant_raw_flags::DRY))
         plant->flags.bits.watery = true;
 
-    plant->material = plant_idx;
+    plant->material = options.plant_idx;
     plant->pos = pos;
-    plant->grow_counter = age < 0 ? 0 : age;
+    plant->grow_counter = options.age < 0 ? 0 : options.age;
     plant->update_order = rand() % 10;
 
     world->plants.all.push_back(plant);
@@ -290,6 +233,69 @@ static bool uncat_plant(df::plant *plant)
     }
 
     return true;
+}
+
+command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_options &options, vector<int32_t> *filter = nullptr)
+{
+    if (!bounds.isValid())
+    {
+        out.printerr("Invalid cuboid! (%d:%d, %d:%d, %d:%d)\n",
+            bounds.x_min, bounds.x_max, bounds.y_min, bounds.y_max, bounds.z_min, bounds.z_max);
+        return CR_FAILURE;
+    }
+
+    bool do_filter = filter && !filter->empty();
+    if (do_filter) // Sort filter vector
+        std::sort(filter->begin(), filter->end());
+
+    int32_t age = options.age < 0 ? sapling_to_tree_threshold : options.age;
+    bool do_trees = age > sapling_to_tree_threshold;
+
+    int grown = 0, grown_trees = 0;
+    for (auto plant : world->plants.all)
+    {
+        if (plant->flags.bits.is_shrub)
+            continue; // Shrub
+        else if (!bounds.testPos(plant->pos))
+            continue; // Outside cuboid
+        else if (do_filter && (vector_contains(*filter, (int32_t)plant->material) == options.filter_ex))
+            continue; // Filtered out
+        else if (plant->tree_info)
+        {   // Tree
+            if (do_trees && !plant->damage_flags.bits.dead && plant->grow_counter < age)
+            {
+                if (!options.dry_run)
+                    plant->grow_counter = age;
+                grown_trees++;
+            }
+            continue; // Next plant
+        }
+
+        auto tt = Maps::getTileType(plant->pos);
+        if (!tt || (*tt != tiletype::Sapling && *tt != tiletype::SaplingDead))
+        {
+            out.printerr("Invalid sapling tiletype at (%d, %d, %d): %s!\n",
+                plant->pos.x, plant->pos.y, plant->pos.z,
+                tt ? ENUM_KEY_STR(tiletype, *tt).c_str() : "No map block!");
+            continue; // Bad tiletype
+        }
+        else if (*tt == tiletype::SaplingDead)
+            *tt = tiletype::Sapling; // Revive sapling
+
+        if (!options.dry_run)
+        {
+            plant->damage_flags.bits.dead = false;
+            plant->grow_counter = age;
+        }
+        grown++;
+    }
+
+    if (do_trees)
+        out.print("%d saplings and %d trees%s set to grow.\n", grown, grown_trees, options.dry_run ? " would be" : "");
+    else
+        out.print("%d saplings%s set to grow.\n", grown, options.dry_run ? " would be" : "");
+
+    return CR_OK;
 }
 
 static bool has_grass(df::map_block *block, int tx, int ty)
@@ -357,6 +363,8 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
                 continue; // Not removing saplings
         }
 
+        if (options.dead && !plant->damage_flags.bits.dead)
+            continue; // Not dead
         if (!bounds.testPos(plant->pos))
             continue; // Outside cuboid
         else if (do_filter && (vector_contains(*filter, (int32_t)plant->material) == options.filter_ex))
@@ -412,7 +420,7 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
         }
     }
 
-    out.print("plants%s removed: %d (%d bad)\n", options.dry_run ? " that would be" : "", count, count_bad);
+    out.print("Plants%s removed: %d (%d bad)\n", options.dry_run ? " that would be" : "", count, count_bad);
     return CR_OK;
 }
 
@@ -430,7 +438,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     {
         return CR_WRONG_USAGE;
     }
-    else if (!options.del && (options.shrubs || options.saplings || options.trees || options.dry_run))
+    else if (!options.del && (options.shrubs || options.saplings || options.trees || options.dead))
     {   // Don't use remove options outside remove
         out.printerr("Can't use remove's options without remove!\n");
         return CR_WRONG_USAGE;
@@ -461,25 +469,6 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     DEBUG(log, out).print("pos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n",
         pos_1.x, pos_1.y, pos_1.z, pos_2.x, pos_2.y, pos_2.z);
 
-    out.print("pos_1 = (%d, %d, %d)\npos_2 = (%d, %d, %d)\n\n",
-        pos_1.x, pos_1.y, pos_1.z, pos_2.x, pos_2.y, pos_2.z);
-    out.print("create = %d\n", options.create);
-    out.print("grow = %d\n", options.grow);
-    out.print("remove = %d\n", options.del);
-    out.print("shrubs = %d\n", options.shrubs);
-    out.print("saplings = %d\n", options.saplings);
-    out.print("trees = %d\n", options.trees);
-    out.print("dry_run = %d\n", options.dry_run);
-    out.print("filter_ex = %d\n", options.filter_ex);
-    out.print("zlevel = %d\n", options.zlevel);
-    out.print("\nplant_idx = %d\n", options.plant_idx);
-    out.print("age = %d\n", options.age);
-    out.print("\nfilter =\n");
-    for (auto i : filter)
-        out.print("%d\n", i);
-    out.print("Done.\n");
-    if (true) return CR_OK; //DEBUG
-
     if (!Core::getInstance().isMapLoaded())
     {
         out.printerr("Map not loaded!\n");
@@ -488,9 +477,9 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
 
     if (options.create)
     {   // Check improper options and plant raw
-        if (options.zlevel)
+        if (options.zlevel || options.dry_run)
         {
-            out.printerr("Cannot use --zlevel with create!\n");
+            out.printerr("Cannot use --zlevel or --dryrun with create!\n");
             return CR_FAILURE;
         }
         else if (!filter.empty())
@@ -603,12 +592,10 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
         }
     }
 
-    if (true) return CR_OK; //DEBUG
-
     if (options.create)
-        return df_createplant(out, pos_1, options.plant_idx, options.age);
+        return df_createplant(out, pos_1, options);
     else if (options.grow)
-        return df_grow(out, bounds, options.age, &filter, options.filter_ex);
+        return df_grow(out, bounds, options, &filter);
     else if (options.del)
         return df_removeplant(out, bounds, options, &filter);
 
