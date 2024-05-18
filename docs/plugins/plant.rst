@@ -42,7 +42,7 @@ Options
     1250. Defaults to 0 if option is unused. Only a few tree types grow wider
     than 1x1, but many may grow taller. (Going directly to higher years will
     stunt height. It may be more desirable to instead use ``plant grow`` in
-    stages. Trees grow taller every 10 years.)
+    stages, or just spawn full trees using `gui/sandbox`.)
 
 grow
 ====
