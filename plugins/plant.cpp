@@ -351,10 +351,11 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
             continue; // Not implemented
         else if (by_type)
         {
-            /*if (plant->tree_info && !options.trees)
-                continue; // Not removing trees
-            else*/
-            if (plant->flags.bits.is_shrub)
+            if (options.dead && !plant->damage_flags.bits.dead)
+                continue; // Not dead
+            /*else if (plant->tree_info && !options.trees)
+                continue; // Not removing trees*/
+            else if (plant->flags.bits.is_shrub)
             {
                 if (!options.shrubs)
                     continue; // Not removing shrubs
@@ -363,8 +364,6 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
                 continue; // Not removing saplings
         }
 
-        if (options.dead && !plant->damage_flags.bits.dead)
-            continue; // Not dead
         if (!bounds.testPos(plant->pos))
             continue; // Outside cuboid
         else if (do_filter && (vector_contains(*filter, (int32_t)plant->material) == options.filter_ex))
@@ -438,13 +437,20 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     {
         return CR_WRONG_USAGE;
     }
-    else if (!options.del && (options.shrubs || options.saplings || options.trees || options.dead))
+
+    bool by_type = options.shrubs || options.saplings || options.trees; // Remove invalid plants otherwise
+    if (!options.del && (options.dead || by_type)
     {   // Don't use remove options outside remove
         out.printerr("Can't use remove's options without remove!\n");
         return CR_WRONG_USAGE;
     }
+    else if (options.dead && !by_type)
+    {   // Don't target dead plants while fixing invalid
+        out.printerr("Can't use --dead without targeting shrubs/saplings!\n"); // TODO: trees
+        return CR_WRONG_USAGE;
+    }
     else if (options.del && options.age >= 0)
-    {   // Don't use age with remove
+    {   // Can't set age with remove
         out.printerr("Can't use --age with remove!\n");
         return CR_WRONG_USAGE;
     }
@@ -522,7 +528,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     {   // Check filter and setup cuboid
         if (!filter.empty())
         {   // Validate filter plant raws
-            if (!(options.shrubs || options.saplings || options.trees))
+            if (!by_type)
             {
                 out.printerr("Filter/exclude set, but not targeting shrubs/saplings!\n"); // TODO: trees
                 return CR_WRONG_USAGE;
