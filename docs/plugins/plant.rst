@@ -105,7 +105,8 @@ Options
 ``-p``, ``--saplings``
     Target saplings for removal.
 ``-d``, ``--dead``
-    Only target dead plants for removal.
+    Only target dead plants for removal. Can't be used without ``--shrubs`` or
+    ``--saplings``.
 ``-f <list>``, ``--filter <list>``
     Define a filter list of plant IDs to target, ignoring all other plant types.
     This applies after ``--shrubs`` and ``--saplings`` are targeted, and can't
