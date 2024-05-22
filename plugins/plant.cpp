@@ -261,7 +261,7 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_opt
     return CR_OK;
 }
 
-static bool uncat_plant(color_ostream &out, df::plant *plant)
+static bool uncat_plant(df::plant *plant)
 {   // Remove plant from extra vectors
     auto &vec = world->plants.shrub_wet;
     switch (plant->flags.whole & 3) // watery, is_shrub
@@ -410,7 +410,7 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
 
         if (!options.dry_run)
         {
-            if (!uncat_plant(out, &plant))
+            if (!uncat_plant(&plant))
                 out.printerr("Remove plant: No block column at (%d, %d)!\n", plant.pos.x, plant.pos.y);
 
             if (!bad_tt) // TODO: trees
