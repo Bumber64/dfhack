@@ -238,6 +238,7 @@ Panel.ATTRS {
     resize_min = DEFAULT_NIL,
     on_resize_begin = DEFAULT_NIL,
     on_resize_end = DEFAULT_NIL,
+    no_force_pause_badge = false,
     autoarrange_subviews = false, -- whether to automatically lay out subviews
     autoarrange_gap = 0, -- how many blank lines to insert between widgets
 }
@@ -651,7 +652,7 @@ function Panel:onRenderFrame(dc, rect)
     if not self.frame_style then return end
     local inactive = self.parent_view and self.parent_view.hasFocus
             and not self.parent_view:hasFocus()
-    local pause_forced = self.parent_view and self.parent_view.force_pause
+    local pause_forced = not self.no_force_pause_badge and safe_index(self.parent_view, 'force_pause')
     gui.paint_frame(dc, rect, self.frame_style, self.frame_title, inactive,
             pause_forced, self.resizable)
     if self.kbd_get_pos then
@@ -1687,6 +1688,138 @@ function Label:onInput(keys)
     return check_text_keys(self, keys)
 end
 
+--------------------------------
+-- makeButtonLabelText
+--
+
+local function get_button_token_hover_ch(spec, x, y, ch)
+    local ch_hover = ch
+    if spec.chars_hover then
+        local row = spec.chars_hover[y]
+        if type(row) == 'string' then
+            ch_hover = row:sub(x, x)
+        else
+            ch_hover = row[x]
+        end
+    end
+    return ch_hover
+end
+
+local function get_button_token_base_pens(spec, x, y)
+    local pen, pen_hover = COLOR_GRAY, COLOR_WHITE
+    if spec.pens then
+        pen = type(spec.pens) == 'table' and (safe_index(spec.pens, y, x) or spec.pens[y]) or spec.pens
+        if spec.pens_hover then
+            pen_hover = type(spec.pens_hover) == 'table' and (safe_index(spec.pens_hover, y, x) or spec.pens_hover[y]) or spec.pens_hover
+        else
+            pen_hover = pen
+        end
+    end
+    return pen, pen_hover
+end
+
+local function get_button_tileset_idx(spec, x, y, tileset_offset, tileset_stride)
+    local idx = (tileset_offset or 1)
+    idx = idx + (x - 1)
+    idx = idx + (y - 1) * (tileset_stride or #spec.chars[1])
+    return idx
+end
+
+local function get_asset_tile(asset, x, y)
+    return dfhack.screen.findGraphicsTile(asset.page, asset.x+x-1, asset.y+y-1)
+end
+
+local function get_button_token_tiles(spec, x, y)
+    local tile = safe_index(spec.tiles_override, y, x)
+    local tile_hover = safe_index(spec.tiles_hover_override, y, x) or tile
+    if not tile and spec.tileset then
+        local tileset = spec.tileset
+        local idx = get_button_tileset_idx(spec, x, y, spec.tileset_offset, spec.tileset_stride)
+        tile = dfhack.textures.getTexposByHandle(tileset[idx])
+        if spec.tileset_hover then
+            local tileset_hover = spec.tileset_hover
+            local idx_hover = get_button_tileset_idx(spec, x, y,
+                spec.tileset_hover_offset or spec.tileset_offset,
+                spec.tileset_hover_stride or spec.tileset_stride)
+            tile_hover = dfhack.textures.getTexposByHandle(tileset_hover[idx_hover])
+        else
+            tile_hover = tile
+        end
+    end
+    if not tile and spec.asset then
+        tile = get_asset_tile(spec.asset, x, y)
+        if spec.asset_hover then
+            tile_hover = get_asset_tile(spec.asset_hover, x, y)
+        else
+            tile_hover = tile
+        end
+    end
+    return tile, tile_hover
+end
+
+local function get_button_token_pen(base_pen, tile, ch)
+    local pen = dfhack.pen.make(base_pen)
+    pen.tile = tile
+    pen.ch = ch
+    return pen
+end
+
+local function get_button_token_pens(spec, x, y, ch, ch_hover)
+    local base_pen, base_pen_hover = get_button_token_base_pens(spec, x, y)
+    local tile, tile_hover = get_button_token_tiles(spec, x, y)
+    return get_button_token_pen(base_pen, tile, ch), get_button_token_pen(base_pen_hover, tile_hover, ch_hover)
+end
+
+local function make_button_token(spec, x, y, ch)
+    local ch_hover = get_button_token_hover_ch(spec, x, y, ch)
+    local pen, pen_hover = get_button_token_pens(spec, x, y, ch, ch_hover)
+    return {
+        tile=pen,
+        htile=pen_hover,
+        width=1,
+    }
+end
+
+---@class widgets.ButtonLabelSpec
+---@field chars (string|string[])[]
+---@field chars_hover? (string|string[])[]
+---@field pens? dfhack.color|dfhack.color[][]
+---@field pens_hover? dfhack.color|dfhack.color[][]
+---@field tiles_override? integer[][]
+---@field tiles_hover_override? integer[][]
+---@field tileset? TexposHandle[]
+---@field tileset_hover? TexposHandle[]
+---@field tileset_offset? integer
+---@field tileset_hover_offset? integer
+---@field tileset_stride? integer
+---@field tileset_hover_stride? integer
+---@field asset? {page: string, x: integer, y: integer}
+---@field asset_hover? {page: string, x: integer, y: integer}
+
+---@nodiscard
+---@param spec widgets.ButtonLabelSpec
+---@return widgets.LabelToken[]
+function makeButtonLabelText(spec)
+    local tokens = {}
+    for y, row in ipairs(spec.chars) do
+        if type(row) == 'string' then
+            local x = 1
+            for ch in row:gmatch('.') do
+                table.insert(tokens, make_button_token(spec, x, y, ch))
+                x = x + 1
+            end
+        else
+            for x, ch in ipairs(row) do
+                table.insert(tokens, make_button_token(spec, x, y, ch))
+            end
+        end
+        if y < #spec.chars then
+            table.insert(tokens, NEWLINE)
+        end
+    end
+    return tokens
+end
+
 ------------------
 -- WrappedLabel --
 ------------------
@@ -2088,9 +2221,56 @@ end
 function CycleHotkeyLabel:onInput(keys)
     if CycleHotkeyLabel.super.onInput(self, keys) then
         return true
-    elseif keys._MOUSE_L and self:getMousePos() and not is_disabled(self) then
-        self:cycle()
-        return true
+    elseif keys._MOUSE_L and not is_disabled(self) then
+        local x = self:getMousePos()
+        if x then
+            self:cycle(self.key_back and x == 0)
+            return true
+        end
+    end
+end
+
+-----------------
+-- ButtonGroup --
+-----------------
+
+---@class widgets.ButtonGroup.attrs: widgets.CycleHotkeyLabel.attrs
+
+---@class widgets.ButtonGroup.initTable: widgets.ButtonGroup.attrs
+---@field button_specs widgets.ButtonLabelSpec[]
+---@field button_specs_selected widgets.ButtonLabelSpec[]
+
+---@class widgets.ButtonGroup: widgets.ButtonGroup.attrs, widgets.CycleHotkeyLabel
+---@field super widgets.CycleHotkeyLabel
+---@overload fun(init_table: widgets.ButtonGroup.initTable): self
+ButtonGroup = defclass(ButtonGroup, CycleHotkeyLabel)
+
+ButtonGroup.ATTRS{
+    auto_height=false,
+}
+
+function ButtonGroup:init(info)
+    ensure_key(self, 'frame').h = #info.button_specs[1].chars + 2
+
+    local start = 0
+    for idx in ipairs(self.options) do
+        local opt_val = self:getOptionValue(idx)
+        local width = #info.button_specs[idx].chars[1]
+        self:addviews{
+            Label{
+                frame={t=2, l=start, w=width},
+                text=makeButtonLabelText(info.button_specs[idx]),
+                on_click=function() self:setOption(opt_val, true) end,
+                visible=function() return self:getOptionValue() ~= opt_val end,
+            },
+            Label{
+                frame={t=2, l=start, w=width},
+                text=makeButtonLabelText(info.button_specs_selected[idx]),
+                on_click=function() self:setOption(opt_val, false) end,
+                visible=function() return self:getOptionValue() == opt_val end,
+            },
+        }
+        start = start + width
     end
 end
 
@@ -3063,6 +3243,84 @@ function RangeSlider:onRenderBody(dc, rect)
         self.is_dragging_target = nil
         self.is_dragging_idx = nil
     end
+end
+
+--------------------------------
+-- DimensionsTooltip
+--------------------------------
+
+---@class widgets.DimensionsTooltip.attrs: widgets.ResizingPanel.attrs
+---@field display_offset? df.coord2d
+---@field get_anchor_pos_fn fun(): df.coord?
+
+---@class widgets.DimensionsTooltip: widgets.ResizingPanel
+---@field super widgets.ResizingPanel
+---@overload fun(init_table: widgets.DimensionsTooltip.attrs): self
+DimensionsTooltip = defclass(DimensionsTooltip, ResizingPanel)
+
+DimensionsTooltip.ATTRS{
+    frame_style=gui.FRAME_THIN,
+    frame_background=gui.CLEAR_PEN,
+    no_force_pause_badge=true,
+    auto_width=true,
+    display_offset={x=3, y=3},
+    get_anchor_pos_fn=DEFAULT_NIL,
+}
+
+local function get_cur_area_dims(anchor_pos)
+    local mouse_pos = dfhack.gui.getMousePos(true)
+    if not mouse_pos or not anchor_pos then return 1, 1, 1 end
+
+    -- clamp to map edges (you can start a selection from out of bounds)
+    mouse_pos = xyz2pos(
+        math.max(0, math.min(df.global.world.map.x_count-1, mouse_pos.x)),
+        math.max(0, math.min(df.global.world.map.y_count-1, mouse_pos.y)),
+        math.max(0, math.min(df.global.world.map.z_count-1, mouse_pos.z)))
+    anchor_pos = xyz2pos(
+        math.max(0, math.min(df.global.world.map.x_count-1, anchor_pos.x)),
+        math.max(0, math.min(df.global.world.map.y_count-1, anchor_pos.y)),
+        math.max(0, math.min(df.global.world.map.z_count-1, anchor_pos.z)))
+
+    return math.abs(mouse_pos.x - anchor_pos.x) + 1,
+        math.abs(mouse_pos.y - anchor_pos.y) + 1,
+        math.abs(mouse_pos.z - anchor_pos.z) + 1
+end
+
+function DimensionsTooltip:init()
+    ensure_key(self, 'frame').w = 17
+    self.frame.h = 4
+
+    self.label = Label{
+        frame={t=0},
+        auto_width=true,
+        text={
+            {
+                text=function()
+                    local anchor_pos = self.get_anchor_pos_fn()
+                    return ('%dx%dx%d'):format(get_cur_area_dims(anchor_pos))
+                end
+            }
+        },
+    }
+
+    self:addviews{
+        Panel{
+            -- set minimum size for tooltip frame so the DFHack frame badge fits
+            frame={t=0, l=0, w=7, h=2},
+        },
+        self.label,
+    }
+end
+
+function DimensionsTooltip:render(dc)
+    local x, y = dfhack.screen.getMousePos()
+    if not x or not self.get_anchor_pos_fn() then return end
+    local sw, sh = dfhack.screen.getWindowSize()
+    local frame_width = math.max(9, self.label:getTextWidth() + 2)
+    self.frame.l = math.min(x + self.display_offset.x, sw - frame_width)
+    self.frame.t = math.min(y + self.display_offset.y, sh - self.frame.h)
+    self:updateLayout()
+    DimensionsTooltip.super.render(self, dc)
 end
 
 return _ENV

@@ -3376,7 +3376,8 @@ environment by the mandatory init file dfhack.lua:
 * ``safe_index(obj,index...)``
 
   Walks a sequence of dereferences, which may be represented by numbers or strings.
-  Returns *nil* if any of obj or indices is *nil*, or a numeric index is out of array bounds.
+  Returns *nil* if any of obj or indices is *nil*, obj isn't indexable, or a numeric
+  index is out of array bounds.
 
 * ``ensure_key(t, key[, default_value])``
 
@@ -4980,6 +4981,11 @@ Has attributes:
   module, remember to ``require`` the gui module and prefix the identifier with
   ``gui.``, e.g. ``gui.GREY_LINE_FRAME``.
 
+* ``no_force_pause_badge`` (default: ``false``)
+
+  If true, then don't display the PAUSE FORCED badge on the frame even if the
+  game has been force paused.
+
 Has functions:
 
 * ``panel:setKeyboardDragEnabled(bool)``
@@ -5257,9 +5263,10 @@ It has the following attributes:
 :auto_width: Sets self.frame.w from the text width.
 :on_click: A callback called when the label is clicked (optional)
 :on_rclick: A callback called when the label is right-clicked (optional)
-:scroll_keys: Specifies which keys the label should react to as a table. The table should map
-    keys to the number of lines to scroll as positive or negative integers or one of the keywords
-    supported by the ``scroll`` method. The default is up/down arrows scrolling by one line and page
+:scroll_keys: Specifies which keys the label should react to as a table. The
+    table should map keys to the number of lines to scroll as positive or
+    negative integers or one of the keywords supported by the ``scroll``
+    method. The default is up/down arrows scrolling by one line and page
     up/down scrolling by one page.
 
 ``text_pen``, ``text_dpen``, and ``text_hpen`` can either be a pen or a
@@ -5273,7 +5280,8 @@ the ``setText`` method, as one of:
 * A sequence of tokens.
 
 Every token in the sequence in turn may be either a string, possibly
-containing newlines, or a table with the following possible fields:
+containing newlines (or equal to ``NEWLINE``), or a table with the following
+possible fields:
 
 * ``token.text = ...``
 
@@ -5373,6 +5381,163 @@ The Label widget implements the following methods:
         return HotkeyLabel.super.shouldHover(self) or self.on_activate
     end
 
+The widgets module also provides the following methods for help in constructing
+common text token lists that you can then pass as ``text`` to a ``Label``:
+
+* ``makeButtonLabelText(spec)``
+
+    Returns a list of ``Label`` text tokens that represent a button according
+    to the given ``spec``, which is a table with the following fields. Fields
+    that contain ``_hover`` are optional and specify alternate values to be
+    used when the mouse cursor is hovering over the button.
+
+    - ``chars``, ``chars_hover``: A list of strings or a list of lists of
+        characters. These strings (or lists of characters) make up the ASCII
+        representation of the button. If a list of strings is passed, each
+        string must be the same length. ``chars`` is the only required element
+        in the spec. If ``chars_hover`` is not specified, it defaults to the
+        value of ``chars``.
+
+    - ``pens``, ``pens_hover``: A color or a pen or a list of lists of colors
+        or pens. This controls what color and other pen properties should be
+        applied to the corresponding button tile position. If a single color or
+        pen is passed, then that color or pen will apply to all tiles of the
+        button. If not specified, ``pens`` defaults to ``COLOR_GRAY`` and
+        ``pens_hover`` defaults to ``COLOR_WHITE``
+
+    - ``tileset``, ``tileset_hover``: If specified, must be a tileset that was
+        returned from ``dfhack.textures.loadTileset``.
+
+    - ``tileset_offset``, ``tileset_hover_offset``: The 1-based offset within
+        the tileset to the tile that represents the upper left corner of the
+        button. If not specified, defaults to ``1``.
+
+    - ``tileset_stride``, ``tileset_hover_stride``: The number of tiles in one
+        row of the tileset. This is used to find the start position of
+        subsequent rows of tiles for the button. If not specified, defaults to
+        the width of a button row specified in ``chars``, which is appropriate
+        for a tileset that has only a single button image per logical row.
+
+    - ``asset``, ``asset_hover``: If specified, must be a table defining a
+        graphic asset loaded by DF from the vanilla sprite sheets or a mod. The
+        table must indicate which sprite page to read and the x and y offsets
+        of the upper left corner of the target asset in the following format:
+        ``{page=pagename, x=x_offset, y=y_offset}``.
+
+    - ``tiles_override``, ``tiles_hover_override``: A list of lists of integers
+        representing raw tile texpos values to be displayed at the
+        corresponding button position. Tiles specified here will override
+        corresponding tiles from ``tileset`` and ``asset``. The lists can be
+        sparse, so any unspecified values in the override array will fall
+        through to other specifiers.
+
+    If no tile is set for a particular button position, the corresponding
+    pen is used without setting a ``tile`` value.
+
+    Example 1: The civ-alert button - a text-only (no graphic tiles) button
+    that highlights the text on hover::
+
+        widgets.Label{
+            text=widgets.makeButtonLabelText{
+                chars={
+                    ' Activate ',
+                    ' civilian ',
+                    '  alert   ',
+                },
+                pens={fg=COLOR_BLACK, bg=COLOR_LIGHTRED},
+                pens_hover={fg=COLOR_WHITE, bg=COLOR_RED},
+            },
+            on_click=sound_alarm,
+        },
+
+    Example 2: The DFHack logo - a graphical button in graphics mode and a text
+    button in ASCII mode. The ASCII colors use the default for hovering::
+
+        widgets.Label{
+            text=widgets.makeButtonLabelText{
+                chars={
+                    {179, 'D', 'F', 179},
+                    {179, 'H', 'a', 179},
+                    {179, 'c', 'k', 179},
+                },
+                tileset=dfhack.textures.loadTileset(
+                    'hack/data/art/logo.png', 8, 12, true),
+                tileset_hover=dfhack.textures.loadTileset(
+                    'hack/data/art/logo_hovered.png', 8, 12, true),
+            },
+            on_click=function()
+                dfhack.run_command{'hotkeys', 'menu', self.name}
+            end,
+        },
+
+    Example 3: One of the warm/damp toolbar buttons - similar to example 2, but
+    with custom colors throughout the button when in ASCII mode::
+
+        widgets.Label{
+            text=widgets.makeButtonLabelText{
+                chars={
+                    {218, 196, 196, 191},
+                    {179, '~', '~', 179},
+                    {192, 196, 196, 217},
+                },
+                pens={
+                    {COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE},
+                    {COLOR_WHITE, COLOR_RED,   COLOR_GRAY,  COLOR_WHITE},
+                    {COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE},
+                },
+                tileset=toolbar_textures,
+                tileset_offset=25,
+                tileset_stride=8,
+            },
+            on_click=launch_warm_damp_dig_config,
+        },
+
+    Example 4: A copy of the mining toolbar button (except that it has a
+    highlight on hover), loaded from the DF assets::
+
+        widgets.Label{
+            text=widgets.makeButtonLabelText{
+                chars={
+                    {218, 196, 196, 191},
+                    {179, '-', ')', 179},
+                    {192, 196, 196, 217},
+                },
+                pens={
+                    {COLOR_GRAY, COLOR_GRAY,  COLOR_GRAY, COLOR_GRAY},
+                    {COLOR_GRAY, COLOR_BROWN, COLOR_GRAY, COLOR_GRAY},
+                    {COLOR_GRAY, COLOR_GRAY,  COLOR_GRAY, COLOR_GRAY},
+                },
+                pens_hover={
+                    {COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE},
+                    {COLOR_WHITE, COLOR_BROWN, COLOR_GRAY,  COLOR_WHITE},
+                    {COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE},
+                },
+                asset={page='INTERFACE_BITS', x=0, y=22},
+            },
+            on_click=self:callback('mining_menu'),
+        },
+
+    Example 5: A copy of the mining toolbar button (except that it has a
+    custom hotkey hint in the upper corner), loaded from the DF assets and with
+    one tile overridden::
+
+        widgets.Label{
+            text=widgets.makeButtonLabelText{
+                chars={
+                    {218, 196, 196, self.hint_char},
+                    {179, '-', ')', 179},
+                    {192, 196, 196, 217},
+                },
+                pens={
+                    {COLOR_GRAY, COLOR_GRAY,  COLOR_GRAY, COLOR_RED},
+                    {COLOR_GRAY, COLOR_BROWN, COLOR_GRAY, COLOR_GRAY},
+                    {COLOR_GRAY, COLOR_GRAY,  COLOR_GRAY, COLOR_GRAY},
+                },
+                asset={page='INTERFACE_BITS', x=0, y=22},
+                tiles_override={{[4]=string.byte(self.hint_char)}},
+            },
+            on_click=self:callback('mining_menu'),
+        },
 
 WrappedLabel class
 ------------------
@@ -5498,6 +5663,21 @@ The CycleHotkeyLabel widget implements the following methods:
     Retrieves the option pen at the given index, or the pen of the currently
     selected option if no index is given. If an option was defined as just a
     string, then this function will return ``nil`` for that option.
+
+ButtonGroup class
+-----------------
+
+This is a specialized subclass of CycleHotkeyLabel that, in addition to the
+regular clickable widget, displays a corresponding row of clickable graphical
+buttons and synchronizes their selection state with the currently selected
+option.
+
+It takes two additional required parameters to define the buttons:
+
+:button_specs: A list of specs to pass to ``makeButtonLabelText`` (defined in
+    `Label class`_ above).
+:button_specs_selected: A list of specs that represent the buttons in their
+    selected state.
 
 ToggleHotkeyLabel class
 -----------------------
@@ -5742,6 +5922,19 @@ The parent widget owns the range values, and can control them independently (e.g
 :on_left_change: Callback executed when moving the left handle.
 :on_right_change: Callback executed when moving the right handle.
 
+DimensionsTooltip class
+-----------------------
+
+This widget follows the mouse cursor around and displays a string that
+indicates selected 3d dimensions. It is intended to be a child widget of a
+full-screen ``View``, such as a ``ZScreen``.
+
+:display_offset: the offset from the mouse cursor where the tooltip is
+    displayed. Positive offsets are down and to the right. Defaults to
+    ``{x=3, y=3}``.
+:get_anchor_pos_fn: function that provides the other corner of the selected
+    area as a ``df.coord``-style table, that is, a table with ``x``, ``y``, and
+    ``z`` fields. Must return ``nil`` if there is no current selection.
 
 gui.textures
 ============
