@@ -198,43 +198,6 @@ command_result df_createplant(color_ostream &out, df::coord pos, const plant_opt
     return CR_OK;
 }
 
-static bool uncat_plant(df::plant *plant)
-{   // Remove plant from extra vectors
-    vector<df::plant *> *vec = NULL;
-    switch (plant->flags.whole & 3) // watery, is_shrub
-    {
-        case 0: vec = &world->plants.tree_dry; break;
-        case 1: vec = &world->plants.tree_wet; break;
-        case 2: vec = &world->plants.shrub_dry; break;
-        default: vec = &world->plants.shrub_wet; break;
-    }
-
-    for (vector<df::plant *>::iterator it = vec->end() - 1; it > vec->begin(); it--)
-    {   // Not sorted, but more likely near end
-        if (*it == plant)
-        {
-            vec->erase(it);
-            break;
-        }
-    }
-
-    auto col = Maps::getBlockColumn((plant->pos.x / 48)*3, (plant->pos.y / 48)*3);
-    if (!col)
-        return false;
-
-    vec = &col->plants;
-    for (vector<df::plant *>::iterator it = vec->end() - 1; it > vec->begin(); it--)
-    {   // Not sorted, but more likely near end
-        if (*it == plant)
-        {
-            vec->erase(it);
-            break;
-        }
-    }
-
-    return true;
-}
-
 command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_options &options, vector<int32_t> *filter = nullptr)
 {
     if (!bounds.isValid())
@@ -298,6 +261,42 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_opt
     return CR_OK;
 }
 
+static bool uncat_plant(color_ostream &out, df::plant *plant)
+{   // Remove plant from extra vectors
+    auto &vec = world->plants.shrub_wet;
+    switch (plant->flags.whole & 3) // watery, is_shrub
+    {
+        case 0: vec = world->plants.tree_dry; break;
+        case 1: vec = world->plants.tree_wet; break;
+        case 2: vec = world->plants.shrub_dry; break;
+    }
+
+    for (size_t i = vec.size(); i-- > 0;)
+    {   // Not sorted, but more likely near end
+        if (vec[i] == plant)
+        {
+            vec.erase(vec.begin() + i);
+            break;
+        }
+    }
+
+    auto col = Maps::getBlockColumn((plant->pos.x / 48)*3, (plant->pos.y / 48)*3);
+    if (!col)
+        return false;
+
+    vec = col->plants;
+    for (size_t i = vec.size(); i-- > 0;)
+    {   // Not sorted, but more likely near end
+        if (vec[i] == plant)
+        {
+            vec.erase(vec.begin() + i);
+            break;
+        }
+    }
+
+    return true;
+}
+
 static bool has_grass(df::map_block *block, int tx, int ty)
 {   // Block tile has grass
     for (auto blev : block->block_events)
@@ -305,7 +304,7 @@ static bool has_grass(df::map_block *block, int tx, int ty)
         if (blev->getType() != block_square_event_type::grass)
             continue;
 
-        auto &g_ev = *(df::block_square_event_grassst*)blev;
+        auto &g_ev = *(df::block_square_event_grassst *)blev;
         if (g_ev.amount[tx][ty] > 0)
             return true;
     }
@@ -343,19 +342,19 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
 
     int count = 0, count_bad = 0;
     auto &vec = world->plants.all;
-    for (vector<df::plant *>::iterator it = vec.end() - 1; it > vec.begin(); it--)
+    for (size_t i = vec.size(); i-- > 0;)
     {
-        auto plant = *it;
+        auto &plant = *vec[i];
 
-        if (plant->tree_info) // TODO: handle trees
+        if (plant.tree_info) // TODO: handle trees
             continue; // Not implemented
         else if (by_type)
         {
-            if (options.dead && !plant->damage_flags.bits.dead)
+            if (options.dead && !plant.damage_flags.bits.dead)
                 continue; // Not dead
             /*else if (plant->tree_info && !options.trees)
                 continue; // Not removing trees*/
-            else if (plant->flags.bits.is_shrub)
+            else if (plant.flags.bits.is_shrub)
             {
                 if (!options.shrubs)
                     continue; // Not removing shrubs
@@ -364,31 +363,31 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
                 continue; // Not removing saplings
         }
 
-        if (!bounds.testPos(plant->pos))
+        if (!bounds.testPos(plant.pos))
             continue; // Outside cuboid
-        else if (do_filter && (vector_contains(*filter, (int32_t)plant->material) == options.filter_ex))
+        else if (do_filter && (vector_contains(*filter, (int32_t)plant.material) == options.filter_ex))
             continue; // Filtered out
 
         bool bad_tt = false;
-        auto tt = Maps::getTileType(plant->pos);
+        auto tt = Maps::getTileType(plant.pos);
         if (tt)
         {
-            if (plant->flags.bits.is_shrub)
+            if (plant.flags.bits.is_shrub)
             {
                 if (tileShape(*tt) != tiletype_shape::SHRUB)
                 {
                     out.printerr("Bad shrub tiletype at (%d, %d, %d): %s\n",
-                        plant->pos.x, plant->pos.y, plant->pos.z,
+                        plant.pos.x, plant.pos.y, plant.pos.z,
                         ENUM_KEY_STR(tiletype, *tt).c_str());
                     bad_tt = true;
                 }
             }
-            else if (!plant->tree_info)
+            else if (!plant.tree_info)
             {
                 if (tileShape(*tt) != tiletype_shape::SAPLING)
                 {
                     out.printerr("Bad sapling tiletype at (%d, %d, %d): %s\n",
-                        plant->pos.x, plant->pos.y, plant->pos.z,
+                        plant.pos.x, plant.pos.y, plant.pos.z,
                         ENUM_KEY_STR(tiletype, *tt).c_str());
                     bad_tt = true;
                 }
@@ -398,9 +397,12 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
         else
         {
             out.printerr("Bad plant tiletype at (%d, %d, %d): No map block!\n",
-                plant->pos.x, plant->pos.y, plant->pos.z);
+                plant.pos.x, plant.pos.y, plant.pos.z);
             bad_tt = true;
         }
+
+        if (!by_type && !bad_tt)
+            continue; // Only removing bad
 
         count++;
         if (bad_tt)
@@ -408,14 +410,14 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
 
         if (!options.dry_run)
         {
-            if (!uncat_plant(plant))
-                out.printerr("Remove plant: No block column at (%d, %d)!\n", plant->pos.x, plant->pos.y);
+            if (!uncat_plant(out, &plant))
+                out.printerr("Remove plant: No block column at (%d, %d)!\n", plant.pos.x, plant.pos.y);
 
             if (!bad_tt) // TODO: trees
-                set_tt(plant->pos);
+                set_tt(plant.pos);
 
-            vec.erase(it);
-            delete plant;
+            vec.erase(vec.begin() + i);
+            delete &plant;
         }
     }
 
@@ -439,7 +441,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     }
 
     bool by_type = options.shrubs || options.saplings || options.trees; // Remove invalid plants otherwise
-    if (!options.del && (options.dead || by_type)
+    if (!options.del && (options.dead || by_type))
     {   // Don't use remove options outside remove
         out.printerr("Can't use remove's options without remove!\n");
         return CR_WRONG_USAGE;
