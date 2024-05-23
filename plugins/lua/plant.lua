@@ -54,11 +54,13 @@ local year_table =
 }
 
 local function plant_age(s) --tree stage or numerical value
+    local n
     if tonumber(s) then
-        return argparse.nonnegativeInt(s, 'age')
+        n = argparse.nonnegativeInt(s, 'age')
+    else
+        n = year_table[s:lower()]
     end
 
-    local n = year_table[s:lower()]
     if n then
         n = (n > 1250) and 1250 or n
         return 40320*n - 1 --years to tens of ticks - 1
