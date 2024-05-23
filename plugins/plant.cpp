@@ -402,7 +402,7 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
         }
 
         if (!by_type && !bad_tt)
-            continue; // Only removing bad
+            continue; // Only remove bad plants
 
         count++;
         if (bad_tt)
@@ -495,7 +495,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
             out.printerr("Cannot use filter/exclude with create!\n");
             return CR_FAILURE;
         }
-        
+
         if (!pos_1.isValid())
         {   // Attempt to use cursor for pos if active
             Gui::getCursorCoords(pos_1);
