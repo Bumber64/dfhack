@@ -211,7 +211,7 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_opt
     if (do_filter) // Sort filter vector
         std::sort(filter->begin(), filter->end());
 
-    int32_t age = options.age < 0 ? sapling_to_tree_threshold : options.age;
+    int32_t age = options.age < 0 ? sapling_to_tree_threshold : options.age; // Enforce default
     bool do_trees = age > sapling_to_tree_threshold;
 
     int grown = 0, grown_trees = 0;
@@ -235,7 +235,7 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_opt
         }
 
         auto tt = Maps::getTileType(plant->pos);
-        if (!tt || (*tt != tiletype::Sapling && *tt != tiletype::SaplingDead))
+        if (!tt || tileShape(*tt) != tiletype_shape::SAPLING)
         {
             out.printerr("Invalid sapling tiletype at (%d, %d, %d): %s!\n",
                 plant->pos.x, plant->pos.y, plant->pos.z,
@@ -263,19 +263,20 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_opt
 
 static bool uncat_plant(df::plant *plant)
 {   // Remove plant from extra vectors
-    auto &vec = world->plants.shrub_wet;
+    vector<df::plant *> *vec = NULL;
     switch (plant->flags.whole & 3) // watery, is_shrub
     {
-        case 0: vec = world->plants.tree_dry; break;
-        case 1: vec = world->plants.tree_wet; break;
-        case 2: vec = world->plants.shrub_dry; break;
+        case 0: vec = &world->plants.tree_dry; break;
+        case 1: vec = &world->plants.tree_wet; break;
+        case 2: vec = &world->plants.shrub_dry; break;
+        case 3: vec = &world->plants.shrub_wet; break;
     }
 
-    for (size_t i = vec.size(); i-- > 0;)
+    for (size_t i = vec->size(); i-- > 0;)
     {   // Not sorted, but more likely near end
-        if (vec[i] == plant)
+        if ((*vec)[i] == plant)
         {
-            vec.erase(vec.begin() + i);
+            vec->erase(vec->begin() + i);
             break;
         }
     }
@@ -284,12 +285,12 @@ static bool uncat_plant(df::plant *plant)
     if (!col)
         return false;
 
-    vec = col->plants;
-    for (size_t i = vec.size(); i-- > 0;)
+    vec = &col->plants;
+    for (size_t i = vec->size(); i-- > 0;)
     {   // Not sorted, but more likely near end
-        if (vec[i] == plant)
+        if ((*vec)[i] == plant)
         {
-            vec.erase(vec.begin() + i);
+            vec->erase(vec->begin() + i);
             break;
         }
     }
@@ -345,13 +346,14 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
     for (size_t i = vec.size(); i-- > 0;)
     {
         auto &plant = *vec[i];
+        auto tt = Maps::getTileType(plant.pos);
 
         if (plant.tree_info) // TODO: handle trees
             continue; // Not implemented
         else if (by_type)
         {
-            if (options.dead && !plant.damage_flags.bits.dead)
-                continue; // Not dead
+            if (options.dead && !plant.damage_flags.bits.dead && tt && tileSpecial(*tt) != tiletype_special::DEAD)
+                continue; // Not removing living
             /*else if (plant->tree_info && !options.trees)
                 continue; // Not removing trees*/
             else if (plant.flags.bits.is_shrub)
@@ -369,7 +371,6 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
             continue; // Filtered out
 
         bool bad_tt = false;
-        auto tt = Maps::getTileType(plant.pos);
         if (tt)
         {
             if (plant.flags.bits.is_shrub)
@@ -441,12 +442,12 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     }
 
     bool by_type = options.shrubs || options.saplings || options.trees; // Remove invalid plants otherwise
-    if (!options.del && (options.dead || by_type))
+    if (!options.del && (by_type || options.dead))
     {   // Don't use remove options outside remove
         out.printerr("Can't use remove's options without remove!\n");
         return CR_WRONG_USAGE;
     }
-    else if (options.dead && !by_type)
+    else if (!by_type && options.dead)
     {   // Don't target dead plants while fixing invalid
         out.printerr("Can't use --dead without targeting shrubs/saplings!\n"); // TODO: trees
         return CR_WRONG_USAGE;
@@ -467,7 +468,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
         for (auto p_raw : world->raws.plants.bushes)
             out.print("%d: %s\n", p_raw->index, p_raw->id.c_str());
 
-        out.print("--- Saplings ---\n");
+        out.print("\n--- Saplings ---\n");
         for (auto p_raw : world->raws.plants.trees)
             out.print("%d: %s\n", p_raw->index, p_raw->id.c_str());
 
@@ -530,7 +531,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
     {   // Check filter and setup cuboid
         if (!filter.empty())
         {   // Validate filter plant raws
-            if (!by_type)
+            if (!by_type && options.del)
             {
                 out.printerr("Filter/exclude set, but not targeting shrubs/saplings!\n"); // TODO: trees
                 return CR_WRONG_USAGE;
