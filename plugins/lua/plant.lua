@@ -63,7 +63,11 @@ local function plant_age(s) --tree stage or numerical value
 
     if n then
         n = (n > 1250) and 1250 or n
-        return 40320*n - 1 --years to tens of ticks - 1
+        if n > 0 then
+            return 40320*n-1 --years to tens of ticks - 1
+        else
+            return 0 --don't subtract 1
+        end
     end
 
     qerror('Invalid age: "'..s..'"')
