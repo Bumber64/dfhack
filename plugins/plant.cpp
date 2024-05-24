@@ -549,7 +549,7 @@ command_result df_plant(color_ostream &out, vector<string> &parameters)
                         out.printerr("Filter/exclude plant raw was grass: %d (%s)\n", idx, p_raw->id.c_str());
                         return CR_FAILURE;
                     }
-                    else if (options.grow && !p_raw->flags.is_set(plant_raw_flags::SAPLING))
+                    else if (options.grow && !p_raw->flags.is_set(plant_raw_flags::TREE))
                     {   // User might copy-paste filters between grow and remove, so just log this
                         DEBUG(log, out).print("Filter/exclude shrub with grow: %d (%s)\n", idx, p_raw->id.c_str());
                     }
