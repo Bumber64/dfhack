@@ -19,9 +19,6 @@ Provide a mode (including a ``plant_id`` for ``create``) followed by optional
 in the form ``0,0,0``, without spaces. The string ``here`` can be used in place
 of numeric coordinates to use the position of the keyboard cursor, if active.
 
-create
-------
-
 ::
 
     plant create <plant_id> [<pos>] [<options>]
@@ -33,25 +30,6 @@ enclosed in quotes if spaces exist. (No unmodded shrub or sapling IDs have
 spaces.) A numerical ID can also be used. Providing an empty string with ""
 will print all available IDs and skip plant creation.
 
-Options
--------
-
-``-c``, ``--force``
-    Create plant even on tiles flagged ``no_grow`` and unset the flag. This
-    flag is set on tiles that were originally boulders or pebbles, as well
-    as on some tiles found in deserts, etc.
-``-a <value>``, ``--age <value>``
-    Set the created plant to a specific age (in years.) ``value`` can be a
-    non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
-    ``2x2`` (201 years,) or ``3x3`` (401 years.) ``value`` will be capped at
-    1250. Defaults to 0 if option is unused. Only a few tree types grow wider
-    than 1x1, but many may grow taller. (Going directly to higher years will
-    stunt height. It may be more desirable to instead use ``plant grow`` in
-    stages, or just spawn full trees using `gui/sandbox`.)
-
-grow
-----
-
 ::
 
     plant grow [<pos> [<pos>]] [<options>]
@@ -59,38 +37,6 @@ grow
 Grows saplings (including dead ones) into trees. Will default to all saplings
 on the map if no ``pos`` arguments are used. Saplings will die and fail to grow
 if they are blocked by another tree.
-
-Options
--------
-
-``-a <value>``, ``--age <value>``
-    Define the age (in years) to set saplings to. ``value`` can be a
-    non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
-    ``2x2`` (201 years,) or ``3x3`` (401 years.) ``value`` will be capped at
-    1250. Defaults to 3 if option is unused. If a ``value`` larger than 3 is
-    used, it will make sure even fully-grown trees have an age of at least the
-    given value, allowing them to grow larger. (Going directly to higher years
-    will stunt tree height. It may be more desirable to grow in stages rather
-    than all at once. Trees grow taller every 10 years.)
-``-f <list>``, ``--filter <list>``
-    Define a filter list of plant IDs to target, ignoring all other tree types.
-    ``list`` should be a comma-separated list of strings and/or non-negative
-    integers with no spaces in between them. Spaces are acceptable within
-    strings as long as they are enclosed in quotes.
-``-e <list>``, ``--exclude <list>``
-    Same as ``--filter``, but target everything except these. Cannot be used
-    with ``--filter``.
-``-z``, ``--zlevel``
-    Operate on a range of z-levels instead of default targeting. Will do all
-    z-levels between ``pos`` arguments if both are given (instead of cuboid,)
-    z-level of first ``pos`` if one is given (instead of single tile,) else
-    z-level of current view if no ``pos`` is given (instead of entire map.)
-``-n``, ``--dryrun``
-    Don't actually grow plants. Just print the total number of plants that
-    would be grown.
-
-remove
-------
 
 ::
 
@@ -101,34 +47,6 @@ only removes invalid plants that exist on non-plant tiles (due to `Bug 12868
 <https://dwarffortressbugtracker.com/view.php?id=12868>`_.) The ``--shrubs``
 and ``--saplings`` options allow normal plants to be targeted instead. Removal
 of fully-grown trees isn't currently supported.
-
-Options
--------
-
-``-s``, ``--shrubs``
-    Target shrubs for removal.
-``-p``, ``--saplings``
-    Target saplings for removal.
-``-d``, ``--dead``
-    Only target dead plants for removal. Can't be used without ``--shrubs`` or
-    ``--saplings``.
-``-f <list>``, ``--filter <list>``
-    Define a filter list of plant IDs to target, ignoring all other plant types.
-    This applies after ``--shrubs`` and ``--saplings`` are targeted, and can't
-    be used without one of those options. ``list`` should be a comma-separated
-    list of strings and/or non-negative integers with no spaces in between them.
-    Spaces are acceptable within strings as long as they are enclosed in quotes.
-``-e <list>``, ``--exclude <list>``
-    Same as ``--filter``, but target everything except these. Cannot be used
-    with ``--filter``.
-``-z``, ``--zlevel``
-    Operate on a range of z-levels instead of default targeting. Will do all
-    z-levels between ``pos`` arguments if both are given (instead of cuboid,)
-    z-level of first ``pos`` if one is given (instead of single tile,) else
-    z-level of current view if no ``pos`` is given (instead of entire map.)
-``-n``, ``--dryrun``
-    Don't actually remove plants. Just print the total number of plants that
-    would be removed.
 
 Examples
 --------
@@ -157,3 +75,76 @@ Examples
     Remove all dead shrubs and saplings from the map.
 ``plant remove 0,0,49 0,0,51 -pz -e nether_cap``
     Remove all saplings on z-levels 49 to 51, excluding Nether Cap.
+
+Create Options
+--------------
+
+``-c``, ``--force``
+    Create plant even on tiles flagged ``no_grow`` and unset the flag. This
+    flag is set on tiles that were originally boulders or pebbles, as well
+    as on some tiles found in deserts, etc.
+``-a <value>``, ``--age <value>``
+    Set the created plant to a specific age (in years.) ``value`` can be a
+    non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
+    ``2x2`` (201 years,) or ``3x3`` (401 years.) ``value`` will be capped at
+    1250. Defaults to 0 if option is unused. Only a few tree types grow wider
+    than 1x1, but many may grow taller. (Going directly to higher years will
+    stunt height. It may be more desirable to instead use ``plant grow`` in
+    stages, or just spawn full trees using `gui/sandbox`.)
+
+Grow Options
+------------
+
+``-a <value>``, ``--age <value>``
+    Define the age (in years) to set saplings to. ``value`` can be a
+    non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
+    ``2x2`` (201 years,) or ``3x3`` (401 years.) ``value`` will be capped at
+    1250. Defaults to 3 if option is unused. If a ``value`` larger than 3 is
+    used, it will make sure even fully-grown trees have an age of at least the
+    given value, allowing them to grow larger. (Going directly to higher years
+    will stunt tree height. It may be more desirable to grow in stages rather
+    than all at once. Trees grow taller every 10 years.)
+``-f <list>``, ``--filter <list>``
+    Define a filter list of plant IDs to target, ignoring all other tree types.
+    ``list`` should be a comma-separated list of strings and/or non-negative
+    integers with no spaces in between them. Spaces are acceptable within
+    strings as long as they are enclosed in quotes.
+``-e <list>``, ``--exclude <list>``
+    Same as ``--filter``, but target everything except these. Cannot be used
+    with ``--filter``.
+``-z``, ``--zlevel``
+    Operate on a range of z-levels instead of default targeting. Will do all
+    z-levels between ``pos`` arguments if both are given (instead of cuboid,)
+    z-level of first ``pos`` if one is given (instead of single tile,) else
+    z-level of current view if no ``pos`` is given (instead of entire map.)
+``-n``, ``--dryrun``
+    Don't actually grow plants. Just print the total number of plants that
+    would be grown.
+
+Remove Options
+--------------
+
+``-s``, ``--shrubs``
+    Target shrubs for removal.
+``-p``, ``--saplings``
+    Target saplings for removal.
+``-d``, ``--dead``
+    Only target dead plants for removal. Can't be used without ``--shrubs`` or
+    ``--saplings``.
+``-f <list>``, ``--filter <list>``
+    Define a filter list of plant IDs to target, ignoring all other plant types.
+    This applies after ``--shrubs`` and ``--saplings`` are targeted, and can't
+    be used without one of those options. ``list`` should be a comma-separated
+    list of strings and/or non-negative integers with no spaces in between them.
+    Spaces are acceptable within strings as long as they are enclosed in quotes.
+``-e <list>``, ``--exclude <list>``
+    Same as ``--filter``, but target everything except these. Cannot be used
+    with ``--filter``.
+``-z``, ``--zlevel``
+    Operate on a range of z-levels instead of default targeting. Will do all
+    z-levels between ``pos`` arguments if both are given (instead of cuboid,)
+    z-level of first ``pos`` if one is given (instead of single tile,) else
+    z-level of current view if no ``pos`` is given (instead of entire map.)
+``-n``, ``--dryrun``
+    Don't actually remove plants. Just print the total number of plants that
+    would be removed.
