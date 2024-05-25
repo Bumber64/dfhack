@@ -20,21 +20,26 @@ in the form ``0,0,0``, without spaces. The string ``here`` can be used in place
 of numeric coordinates to use the position of the keyboard cursor, if active.
 
 create
-======
+------
 
 ::
 
     plant create <plant_id> [<pos>] [<options>]
 
 Creates a new plant of the specified type at ``pos`` or the cursor position.
-The target tile must be a dirt or grass floor. ``plant_id`` is not
-case-sensitive, but must be enclosed in quotes if spaces exist. (No unmodded
-shrub or sapling IDs have spaces.) A numerical ID can also be used. Providing
-an empty string with "" will print all available IDs and skip plant creation.
+The target must be a floor tile, consisting of soil, grass, ashes, or
+non-smooth muddy stone. ``plant_id`` is not case-sensitive, but must be
+enclosed in quotes if spaces exist. (No unmodded shrub or sapling IDs have
+spaces.) A numerical ID can also be used. Providing an empty string with ""
+will print all available IDs and skip plant creation.
 
 Options
 -------
 
+``-c``, ``--force``
+    Create plant even on tiles flagged ``no_grow`` and unset the flag. This
+    flag is set on tiles that were originally boulders or pebbles, as well
+    as on some tiles found in deserts, etc.
 ``-a <value>``, ``--age <value>``
     Set the created plant to a specific age (in years.) ``value`` can be a
     non-negative integer, or one of the strings ``tree``/``1x1`` (3 years,)
@@ -45,7 +50,7 @@ Options
     stages, or just spawn full trees using `gui/sandbox`.)
 
 grow
-====
+----
 
 ::
 
@@ -85,7 +90,7 @@ Options
     would be grown.
 
 remove
-======
+------
 
 ::
 
@@ -126,7 +131,7 @@ Options
     would be removed.
 
 Examples
-========
+--------
 
 ``plant create tower_cap``
     Create a Tower Cap sapling at the cursor.
