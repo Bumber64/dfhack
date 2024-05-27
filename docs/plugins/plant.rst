@@ -5,9 +5,10 @@ plant
     :summary: Grow and remove shrubs or trees.
     :tags: adventure fort armok map plants
 
-Grow and remove shrubs or trees. Modes are ``create``, ``grow``, and ``remove``.
-``create`` allows the creation of new shrubs and saplings. ``grow`` adjusts the
-age of saplings and trees, allowing them to grow instantly. ``remove`` can
+Grow and remove shrubs or trees. Modes are ``list``, ``create``, ``grow``,
+and ``remove``. ``list`` prints a list of all valid shrub and sapling IDs.
+``create`` allows the creation of new shrubs and saplings. ``grow`` adjusts
+the age of saplings and trees, allowing them to grow instantly. ``remove`` can
 remove existing shrubs and saplings.
 
 Usage
@@ -18,6 +19,13 @@ Provide a mode (including a ``plant_id`` for ``create``) followed by optional
 ``grow`` or ``remove`` to a single tile or a cuboid. ``pos`` should normally be
 in the form ``0,0,0``, without spaces. The string ``here`` can be used in place
 of numeric coordinates to use the position of the keyboard cursor, if active.
+
+::
+
+    plant list
+
+Prints a list of all shrub and sapling IDs for use with the other modes.
+Both numerical and string IDs are provided.
 
 ::
 
@@ -51,10 +59,10 @@ of fully-grown trees isn't currently supported.
 Examples
 --------
 
+``plant list``
+    List all valid shrub and sapling IDs.
 ``plant create tower_cap``
     Create a Tower Cap sapling at the cursor.
-``plant create ""``
-    List all valid shrub and sapling IDs.
 ``plant create 203 -c -a tree``
     Create a Willow sapling at the cursor, even away from water features,
     ready to mature into a tree.
