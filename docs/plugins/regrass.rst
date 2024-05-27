@@ -37,7 +37,7 @@ Examples
 ``regrass 0,0,100 19,19,119 --ashes --mud``
     Regrass tiles in the 20 x 20 x 20 cube defined by the coords, refilling
     existing and depleted grass, and converting ashes and muddy stone (if
-    respective blocks ever had grass.)
+    respective blocks ever had grass).
 ``regrass 10,10,100 -baudnm``
     Regrass the block that contains the given coord; converting ashes, muddy
     stone, and tiles under buildings; adding all compatible grass types, and
