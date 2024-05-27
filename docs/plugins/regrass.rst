@@ -61,8 +61,8 @@ Options
 -------
 
 ``-l``, ``--list``
-    Print all available grass raw IDs and skip regrass. For use with
-    ``--plant``.
+    List all available grass raw IDs that you can later pass to the ``--plant``
+    option. The map will not be affected when running with this option.
 ``-m``, ``--max``
     Maxes out every grass type in the tile, giving extra grazing time.
     Not normal DF behavior. Tile will appear to be the first type of grass
