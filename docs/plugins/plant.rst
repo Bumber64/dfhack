@@ -51,10 +51,9 @@ if they are blocked by another tree.
     plant remove [<pos> [<pos>]] [<options>]
 
 Remove plants from the map (or area defined by ``pos`` arguments). By default,
-only removes invalid plants that exist on non-plant tiles (due to `Bug 12868
-<https://dwarffortressbugtracker.com/view.php?id=12868>`_). The ``--shrubs``
-and ``--saplings`` options allow normal plants to be targeted instead. Removal
-of fully-grown trees isn't currently supported.
+it only removes invalid plants that exist on non-plant tiles (due to
+:bug:`12868`). The ``--shrubs`` and ``--saplings`` options allow normal plants
+to be targeted instead. Removal of fully-grown trees isn't currently supported.
 
 Examples
 --------
