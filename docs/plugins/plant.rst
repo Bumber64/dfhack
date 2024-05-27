@@ -33,10 +33,10 @@ Both numerical and string IDs are provided.
 
 Creates a new plant of the specified type at ``pos`` or the cursor position.
 The target must be a floor tile, consisting of soil, grass, ashes, or
-non-smooth muddy stone. ``plant_id`` is not case-sensitive, but must be
-enclosed in quotes if spaces exist. (No unmodded shrub or sapling raw IDs have
-spaces.) A numerical ID can be used in place of a string. Use ``plant list``
-for a list of valid IDs.
+non-smooth muddy (layer, obsidian, or ore) stone. ``plant_id`` is not
+case-sensitive, but must be enclosed in quotes if spaces exist. (No unmodded
+shrub or sapling raw IDs have spaces.) A numerical ID can be used in place of a
+string. Use ``plant list`` for a list of valid IDs.
 
 ::
 
