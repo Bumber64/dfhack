@@ -43,6 +43,8 @@ distribution.
 #include "df/tile_dig_designation.h"
 #include "df/tiletype.h"
 
+#include <ranges>
+
 namespace df {
     struct block_square_event;
     struct block_square_event_designation_priorityst;
@@ -180,6 +182,49 @@ namespace DFHack
         return (p.x & ~15) == 0 && (p.y & ~15) == 0;
     }
 
+    /**
+     * Utility class representing a cuboid of df::coord
+     * \ingroup grp_maps
+     */
+    class cuboid
+    {
+        public:
+        int16_t x_min = -1;
+        int16_t x_max = -1;
+        int16_t y_min = -1;
+        int16_t y_max = -1;
+        int16_t z_min = -1;
+        int16_t z_max = -1;
+
+        // Default constructor
+        DFHACK_EXPORT cuboid() {}
+
+        // Construct from two corners
+        DFHACK_EXPORT cuboid(int16_t x1, int16_t y1, int16_t z1, int16_t x2, int16_t y2, int16_t z2);
+        DFHACK_EXPORT cuboid(const df::coord &p1, const df::coord &p2) { cuboid(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z); }
+
+        // Construct as single tile
+        DFHACK_EXPORT cuboid(int16_t x, int16_t y, int16_t z);
+        DFHACK_EXPORT cuboid(const df::coord &p) { cuboid(p.x, p.y, p.z); }
+
+        // Valid cuboid? True if all max >= min >= 0
+        DFHACK_EXPORT bool isValid() const;
+
+        // Clear cuboid dimensions, making it invalid
+        DFHACK_EXPORT void clear() { x_min = x_max = y_min = y_max = z_min = z_max = -1; }
+
+        // Expand cuboid to include point. Return true if bounds changed
+        DFHACK_EXPORT bool addPos(int16_t x, int16_t y, int16_t z);
+        DFHACK_EXPORT bool addPos(const df::coord &pos) { return addPos(pos.x, pos.y, pos.z); }
+
+        // Return true if point inside cuboid. Make sure cuboid is valid first!
+        DFHACK_EXPORT bool containsPos(int16_t x, int16_t y, int16_t z) const;
+        DFHACK_EXPORT bool containsPos(const df::coord &pos) const { return containsPos(pos.x, pos.y, pos.z); }
+
+        /// Iterate over every point in the cuboid from N-S, W-E, then top-down. Doesn't guarantee valid map tile!
+        /// If z_first iterate top-down, N-S, then W-E.
+        DFHACK_EXPORT void forCoord(std::function<void(df::coord)> fn, bool z_first = false);
+    };
 
     /**
      * The Maps module
@@ -189,6 +234,14 @@ namespace DFHack
     namespace Maps
     {
         extern DFHACK_EXPORT bool IsValid();
+
+        /// Iterate over points in a cuboid from y1:y2, x1:x2, then z1:z2. Doesn't guarantee valid map tile!
+        /// If z_first iterate z1:z2, y1:y2, then x1:x2.
+        DFHACK_EXPORT void forCoord(std::function<void(df::coord)> fn, int16_t x1, int16_t y1, int16_t z1,
+            int16_t x2, int16_t y2, int16_t z2, bool z_first = false);
+        inline void forCoord(std::function<void(df::coord)> fn, const df::coord &p1, const df::coord &p2, bool z_first = false) {
+            forCoord(fn, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, z_first);
+        }
 
         /**
          * Method for reading the geological surrounding of the currently loaded region.
@@ -235,7 +288,7 @@ namespace DFHack
         /**
          * Get pointers to features of an already read block
          */
-        extern DFHACK_EXPORT bool ReadFeatures(df::map_block * block,t_feature * local, t_feature * global);
+        extern DFHACK_EXPORT bool ReadFeatures(df::map_block * block, t_feature * local, t_feature * global);
 
 
         /**
@@ -259,13 +312,13 @@ namespace DFHack
          */
 
         /// get size of the map in blocks
-        extern DFHACK_EXPORT void getSize(int32_t& x, int32_t& y, int32_t& z);
-        extern DFHACK_EXPORT void getSize(uint32_t& x, uint32_t& y, uint32_t& z); // todo: deprecate me
+        extern DFHACK_EXPORT void getSize(int32_t &x, int32_t &y, int32_t &z);
+        extern DFHACK_EXPORT void getSize(uint32_t &x, uint32_t &y, uint32_t &z); // todo: deprecate me
         /// get size of the map in tiles
-        extern DFHACK_EXPORT void getTileSize(int32_t& x, int32_t& y, int32_t& z);
-        extern DFHACK_EXPORT void getTileSize(uint32_t& x, uint32_t& y, uint32_t& z); // todo: deprecate me
+        extern DFHACK_EXPORT void getTileSize(int32_t &x, int32_t &y, int32_t &z);
+        extern DFHACK_EXPORT void getTileSize(uint32_t &x, uint32_t &y, uint32_t &z); // todo: deprecate me
         /// get the position of the map on world map
-        extern DFHACK_EXPORT void getPosition(int32_t& x, int32_t& y, int32_t& z);
+        extern DFHACK_EXPORT void getPosition(int32_t &x, int32_t &y, int32_t &z);
 
         extern DFHACK_EXPORT bool isValidTilePos(int32_t x, int32_t y, int32_t z);
         inline bool isValidTilePos(df::coord pos) { return isValidTilePos(pos.x, pos.y, pos.z); }
@@ -290,15 +343,9 @@ namespace DFHack
         extern DFHACK_EXPORT df::tile_designation *getTileDesignation(int32_t x, int32_t y, int32_t z);
         extern DFHACK_EXPORT df::tile_occupancy *getTileOccupancy(int32_t x, int32_t y, int32_t z);
 
-        inline df::tiletype *getTileType(const df::coord &pos) {
-            return getTileType(pos.x, pos.y, pos.z);
-        }
-        inline df::tile_designation *getTileDesignation(const df::coord &pos) {
-            return getTileDesignation(pos.x, pos.y, pos.z);
-        }
-        inline df::tile_occupancy *getTileOccupancy(const df::coord &pos) {
-            return getTileOccupancy(pos.x, pos.y, pos.z);
-        }
+        inline df::tiletype *getTileType(df::coord pos) { return getTileType(pos.x, pos.y, pos.z); }
+        inline df::tile_designation *getTileDesignation(df::coord pos) { return getTileDesignation(pos.x, pos.y, pos.z); }
+        inline df::tile_occupancy *getTileOccupancy(df::coord pos) { return getTileOccupancy(pos.x, pos.y, pos.z); }
 
         /**
          * Returns biome info about the specified world region.
@@ -310,9 +357,7 @@ namespace DFHack
          */
         DFHACK_EXPORT df::coord2d getBlockTileBiomeRgn(df::map_block *block, df::coord2d pos);
 
-        inline df::coord2d getTileBiomeRgn(df::coord pos) {
-            return getBlockTileBiomeRgn(getTileBlock(pos), pos);
-        }
+        inline df::coord2d getTileBiomeRgn(df::coord pos) { return getBlockTileBiomeRgn(getTileBlock(pos), pos); }
 
         // Enables per-frame updates for liquid flow and/or temperature.
         DFHACK_EXPORT void enableBlockUpdates(df::map_block *blk, bool flow = false, bool temperature = false);
