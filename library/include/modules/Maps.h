@@ -236,7 +236,7 @@ namespace DFHack
         extern DFHACK_EXPORT bool IsValid();
 
         /// Iterate over points in a cuboid from y1:y2, x1:x2, then z1:z2. Doesn't guarantee valid map tile!
-        /// If z_first iterate z1:z2, y1:y2, then x1:x2.
+        /// Can also iterate blocks or region tiles. If z_first iterate z1:z2, y1:y2, then x1:x2.
         DFHACK_EXPORT void forCoord(std::function<void(df::coord)> fn, int16_t x1, int16_t y1, int16_t z1,
             int16_t x2, int16_t y2, int16_t z2, bool z_first = false);
         inline void forCoord(std::function<void(df::coord)> fn, const df::coord &p1, const df::coord &p2, bool z_first = false) {
