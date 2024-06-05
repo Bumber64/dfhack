@@ -105,9 +105,90 @@ const char * DFHack::sa_feature(df::feature_type index)
     }
 };
 
+/*
+ * Cuboid class fns
+ */
+cuboid::cuboid(int16_t x1, int16_t y1, int16_t z1, int16_t x2, int16_t y2, int16_t z2)
+{
+    x_min = std::min(x1, x2);
+    x_max = std::max(x1, x2);
+    y_min = std::min(y1, y2);
+    y_max = std::max(y1, y2);
+    z_min = std::min(z1, z2);
+    z_max = std::max(z1, z2);
+}
+
+cuboid::cuboid(int16_t x, int16_t y, int16_t z)
+{
+    x_min = x_max = x;
+    y_min = y_max = y;
+    z_min = z_max = z;
+}
+
+bool cuboid::isValid() const
+{
+    return x_min >= 0 && y_min >= 0 && z_min >= 0 &&
+        x_max >= x_min && y_max >= y_min && z_max >= z_min;
+}
+
+bool cuboid::addPos(int16_t x, int16_t y, int16_t z)
+{
+    if (x < 0 || y < 0 || z < 0 || (isValid() && containsPos(x, y, z)))
+        return false;
+
+    x_min = (x_min < 0 || x < x_min) ? x : x_min;
+    x_max = (x_max < 0 || x > x_max) ? x : x_max;
+
+    y_min = (y_min < 0 || y < y_min) ? y : y_min;
+    y_max = (y_max < 0 || y > y_max) ? y : y_max;
+
+    z_min = (z_min < 0 || z < z_min) ? z : z_min;
+    z_max = (z_max < 0 || z > z_max) ? z : z_max;
+
+    return true;
+}
+
+bool cuboid::containsPos(int16_t x, int16_t y, int16_t z) const
+{
+    return x >= x_min && y >= y_min && z >= z_min &&
+        x <= x_max && y <= y_max && z <= z_max;
+}
+
+void cuboid::forCoord(std::function<void(df::coord)> fn, bool z_first)
+{
+    if (isValid()) // Only iterate if valid cuboid
+        Maps::forCoord(fn, x_min, y_min, z_max, x_max, y_max, z_min, z_first);
+}
+
+/*
+ * The Maps module
+ */
 bool Maps::IsValid ()
 {
     return (world->map.block_index != NULL);
+}
+
+void Maps::forCoord(std::function<void(df::coord)> fn, int16_t x1, int16_t y1, int16_t z1,
+    int16_t x2, int16_t y2, int16_t z2, bool z_first)
+{
+    int16_t dx = x1 > x2 ? -1 : 1;
+    int16_t dy = y1 > y2 ? -1 : 1;
+    int16_t dz = z1 > z2 ? -1 : 1;
+
+    if (z_first)
+    {   // Process z-columns first
+        for (int16_t x = x1; x != x2 + dx; x += dx)
+            for (int16_t y = y1; y != y2 + dy; y += dy)
+                for (int16_t z = z1; z != z2 + dz; z += dz)
+                    fn(df::coord(x, y, z));
+    }
+    else
+    {   // One z-level at a time
+        for (int16_t z = z1; z != z2 + dz; z += dz)
+            for (int16_t x = x1; x != x2 + dx; x += dx)
+                for (int16_t y = y1; y != y2 + dy; y += dy)
+                    fn(df::coord(x, y, z));
+    }
 }
 
 // getter for map size in blocks
