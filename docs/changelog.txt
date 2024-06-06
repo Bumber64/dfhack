@@ -52,9 +52,11 @@ Template for new versions:
 # Future
 
 ## New Tools
+- `plant`: (reinstated) tool for creating/growing/removing plants
 
 ## New Features
 - `tweak`: ``named-codices``: display book titles instead of a material description in the stocks/trade screens
+- `plant`: can now ``remove`` shrubs and saplings; ``list`` all valid shrub/sapling raw IDs; ``grow`` can make mature trees older; many new command options
 
 ## Fixes
 - `suspendmanager`: stop suspending single tile stair constructions
@@ -65,6 +67,7 @@ Template for new versions:
 - ``Buildings::containsTile``: fix result for buildings that are solid and have no extent structures
 - Mortal mode: prevent keybindings that run armok tools from being recognized when in mortal mode
 - `dig`: don't leave phantom dig designations behind when autodigging warm/damp designated tiles
+- `regrass`: don't remove mud on regrass, consistent with vanilla behavior
 
 ## Misc Improvements
 - `blueprint`: capture track carving designations in addition to already-carved tracks
@@ -77,6 +80,7 @@ Template for new versions:
 - `buildingplan`: add option to ignore items from a specified burrow
 - `autobutcher`: do not butcher pregnant (or brooding) females
 - `quickfort`: support buildable instruments
+- `regrass`: now accepts numerical IDs for grass raws; ``regrass --list`` replaces ``regrass --plant ""``
 
 ## Documentation
 - `installing`: add instructions for how to use Steam DFHack with non-Steam DF (for DFHack auto-updates and cloud backups)
@@ -112,6 +116,7 @@ Template for new versions:
 
 ## Removed
 - ``gui.FramedScreen``: this class is now deprecated; please use ``gui.ZScreen`` and ``widgets.Window`` instead
+- `plants`: renamed to `plant`
 
 # 50.13-r2
 
