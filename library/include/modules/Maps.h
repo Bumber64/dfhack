@@ -219,9 +219,8 @@ namespace DFHack
         DFHACK_EXPORT bool containsPos(int16_t x, int16_t y, int16_t z) const;
         DFHACK_EXPORT bool containsPos(const df::coord &pos) const { return containsPos(pos.x, pos.y, pos.z); }
 
-        /// Iterate over every point in the cuboid from N-S, W-E, then top-down. Doesn't guarantee valid map tile!
-        /// If z_first iterate top-down, N-S, then W-E.
-        DFHACK_EXPORT void forCoord(std::function<void(df::coord)> fn, bool z_first = false);
+        // Iterate over every point in the cuboid from top-down, N-S, then W-E. Doesn't guarantee valid map tile!
+        DFHACK_EXPORT void forCoord(std::function<void(df::coord)> fn);
     };
 
     /**
@@ -233,12 +232,12 @@ namespace DFHack
     {
         extern DFHACK_EXPORT bool IsValid();
 
-        /// Iterate over points in a cuboid from y1:y2, x1:x2, then z1:z2. Doesn't guarantee valid map tile!
-        /// Can be used to iterate over blocks, etc. If z_first iterate z1:z2, y1:y2, then x1:x2.
+        /// Iterate over points in a cuboid from z1:z2, y1:y2, then x1:x2.
+        /// Doesn't guarantee valid map tile! Can be used to iterate over blocks, etc.
         DFHACK_EXPORT void forCoord(std::function<void(df::coord)> fn, int16_t x1, int16_t y1, int16_t z1,
-            int16_t x2, int16_t y2, int16_t z2, bool z_first = false);
-        inline void forCoord(std::function<void(df::coord)> fn, const df::coord &p1, const df::coord &p2, bool z_first = false) {
-            forCoord(fn, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, z_first);
+            int16_t x2, int16_t y2, int16_t z2);
+        inline void forCoord(std::function<void(df::coord)> fn, const df::coord &p1, const df::coord &p2) {
+            forCoord(fn, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
         }
 
         /**
