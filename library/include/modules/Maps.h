@@ -187,6 +187,7 @@ namespace DFHack
     class cuboid
     {
         public:
+        // Bounds
         int16_t x_min = -1;
         int16_t x_max = -1;
         int16_t y_min = -1;
@@ -211,7 +212,12 @@ namespace DFHack
         // Clear cuboid dimensions, making it invalid
         DFHACK_EXPORT void clear() { x_min = x_max = y_min = y_max = z_min = z_max = -1; }
 
-        // Expand cuboid to include point. Return true if bounds changed
+        /// Clamp cuboid within map area and ensure max >= min. Fails if map not loaded or any bound < 0.
+        /// Can optionally treat cuboid as map blocks instead of tiles.
+        /// Note: A point being in map area isn't sufficient to know that a tile block is allocated there!
+        DFHACK_EXPORT bool clamp(bool block = false);
+
+        // Expand cuboid to include point. Returns true if bounds changed.
         DFHACK_EXPORT bool addPos(int16_t x, int16_t y, int16_t z);
         DFHACK_EXPORT bool addPos(const df::coord &pos) { return addPos(pos.x, pos.y, pos.z); }
 
@@ -364,14 +370,14 @@ namespace DFHack
         /// sorts the block event vector into multiple vectors by type
         /// mineral veins, what's under ice, blood smears and mud
         extern DFHACK_EXPORT bool SortBlockEvents(df::map_block *block,
-            std::vector<df::block_square_event_mineralst *>* veins,
-            std::vector<df::block_square_event_frozen_liquidst *>* ices = 0,
-            std::vector<df::block_square_event_material_spatterst *>* materials = 0,
-            std::vector<df::block_square_event_grassst *>* grass = 0,
-            std::vector<df::block_square_event_world_constructionst *>* constructions = 0,
-            std::vector<df::block_square_event_spoorst *>* spoors = 0,
-            std::vector<df::block_square_event_item_spatterst *>* items = 0,
-            std::vector<df::block_square_event_designation_priorityst *>* priorities = 0
+            std::vector<df::block_square_event_mineralst *> *veins,
+            std::vector<df::block_square_event_frozen_liquidst *> *ices = 0,
+            std::vector<df::block_square_event_material_spatterst *> *materials = 0,
+            std::vector<df::block_square_event_grassst *> *grass = 0,
+            std::vector<df::block_square_event_world_constructionst *> *constructions = 0,
+            std::vector<df::block_square_event_spoorst *> *spoors = 0,
+            std::vector<df::block_square_event_item_spatterst *> *items = 0,
+            std::vector<df::block_square_event_designation_priorityst *> *priorities = 0
         );
 
         /// remove a block event from the block by address
@@ -397,12 +403,12 @@ namespace DFHack
         DFHACK_EXPORT bool setTileAquifer(int32_t x, int32_t y, int32_t z, bool heavy = false);
         inline bool setTileAquifer(df::coord pos, bool heavy = false) { return setTileAquifer(pos.x, pos.y, pos.z, heavy); }
         DFHACK_EXPORT int setAreaAquifer(df::coord pos1, df::coord pos2, bool heavy = false,
-            std::function<bool(df::coord, df::map_block*)> filter = [](df::coord pos, df::map_block* block)->bool { return true; }
+            std::function<bool(df::coord, df::map_block *)> filter = [](df::coord pos, df::map_block *block)->bool { return true; }
         );
         DFHACK_EXPORT bool removeTileAquifer(int32_t x, int32_t y, int32_t z);
         inline bool removeTileAquifer(df::coord pos) { return removeTileAquifer(pos.x, pos.y, pos.z); }
         DFHACK_EXPORT int removeAreaAquifer(df::coord pos1, df::coord pos2,
-            std::function<bool(df::coord, df::map_block*)> filter = [](df::coord pos, df::map_block* block)->bool { return true; }
+            std::function<bool(df::coord, df::map_block *)> filter = [](df::coord pos, df::map_block *block)->bool { return true; }
         );
     }
 }
