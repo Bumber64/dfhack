@@ -131,6 +131,29 @@ bool cuboid::isValid() const
         x_max >= x_min && y_max >= y_min && z_max >= z_min;
 }
 
+bool cuboid::clamp(bool block)
+{
+    if (!Maps::IsValid() || x_min < 0 || y_min < 0 || z_min < 0 ||
+        x_max < 0 || y_max < 0 || z_max < 0)
+    {
+        return false;
+    }
+
+    int32_t xy_mult = block ? 1 : 16;
+    x_min = std::min(x_min, (int16_t)(world->map.x_count_block * xy_mult));
+    x_max = std::min(x_max, (int16_t)(world->map.x_count_block * xy_mult));
+    y_min = std::min(y_min, (int16_t)(world->map.y_count_block * xy_mult));
+    y_max = std::min(y_max, (int16_t)(world->map.y_count_block * xy_mult));
+    z_min = std::min(z_min, (int16_t)world->map.z_count_block);
+    z_max = std::min(z_max, (int16_t)world->map.z_count_block);
+
+    if (x_min > x_max) std::swap(x_min, x_max);
+    if (y_min > y_max) std::swap(y_min, y_max);
+    if (z_min > z_max) std::swap(z_min, z_max);
+
+    return true;
+}
+
 bool cuboid::addPos(int16_t x, int16_t y, int16_t z)
 {
     if (x < 0 || y < 0 || z < 0 || (isValid() && containsPos(x, y, z)))
@@ -183,7 +206,7 @@ void Maps::forCoord(std::function<void(df::coord)> fn, int16_t x1, int16_t y1, i
 }
 
 // getter for map size in blocks
-inline void getSizeInline (int32_t& x, int32_t& y, int32_t& z)
+inline void getSizeInline (int32_t &x, int32_t &y, int32_t &z)
 {
     if (!Maps::IsValid())
     {
@@ -194,11 +217,11 @@ inline void getSizeInline (int32_t& x, int32_t& y, int32_t& z)
     y = world->map.y_count_block;
     z = world->map.z_count_block;
 }
-void Maps::getSize (int32_t& x, int32_t& y, int32_t& z)
+void Maps::getSize (int32_t &x, int32_t &y, int32_t &z)
 {
     getSizeInline(x, y, z);
 }
-void Maps::getSize (uint32_t& x, uint32_t& y, uint32_t& z) //todo: deprecate me
+void Maps::getSize (uint32_t &x, uint32_t &y, uint32_t &z) //todo: deprecate me
 {
     int32_t sx, sy, sz;
     getSizeInline(sx, sy, sz);
@@ -208,17 +231,17 @@ void Maps::getSize (uint32_t& x, uint32_t& y, uint32_t& z) //todo: deprecate me
 }
 
 // getter for map size in tiles
-inline void getTileSizeInline (int32_t& x, int32_t& y, int32_t& z)
+inline void getTileSizeInline (int32_t &x, int32_t &y, int32_t &z)
 {
     getSizeInline(x, y, z);
     x *= 16;
     y *= 16;
 }
-void Maps::getTileSize (int32_t& x, int32_t& y, int32_t& z)
+void Maps::getTileSize (int32_t &x, int32_t &y, int32_t &z)
 {
     getTileSizeInline(x, y, z);
 }
-void Maps::getTileSize (uint32_t& x, uint32_t& y, uint32_t& z) //todo: deprecate me
+void Maps::getTileSize (uint32_t &x, uint32_t &y, uint32_t &z) //todo: deprecate me
 {
     int32_t sx, sy, sz;
     getTileSizeInline(sx, sy, sz);
@@ -228,7 +251,7 @@ void Maps::getTileSize (uint32_t& x, uint32_t& y, uint32_t& z) //todo: deprecate
 }
 
 // getter for map position
-void Maps::getPosition (int32_t& x, int32_t& y, int32_t& z)
+void Maps::getPosition (int32_t &x, int32_t &y, int32_t &z)
 {
     if (!IsValid())
     {
@@ -477,7 +500,7 @@ bool GetLocalFeature(t_feature &feature, df::coord2d rgn_pos, int32_t index)
 
 inline bool ReadFeaturesInline(int32_t x, int32_t y, int32_t z, t_feature *local, t_feature *global)
 {
-    df::map_block* block = Maps::getBlock(x, y, z);
+    df::map_block *block = Maps::getBlock(x, y, z);
     if (!block)
         return false;
     return Maps::ReadFeatures(block, local, global);
@@ -515,8 +538,8 @@ bool Maps::ReadFeatures(df::map_block * block, t_feature * local, t_feature * gl
  * Block events
  */
 bool Maps::SortBlockEvents(df::map_block *block,
-    vector <df::block_square_event_mineralst *>* veins,
-    vector <df::block_square_event_frozen_liquidst *>* ices,
+    vector <df::block_square_event_mineralst *> *veins,
+    vector <df::block_square_event_frozen_liquidst *> *ices,
     vector <df::block_square_event_material_spatterst *> *materials,
     vector <df::block_square_event_grassst *> *grasses,
     vector <df::block_square_event_world_constructionst *> *constructions,
@@ -587,7 +610,7 @@ bool Maps::SortBlockEvents(df::map_block *block,
 
 inline bool RemoveBlockEventInline(int32_t x, int32_t y, int32_t z, df::block_square_event * which)
 {
-    df::map_block* block = Maps::getBlock(x, y, z);
+    df::map_block *block = Maps::getBlock(x, y, z);
     if (!block)
         return false;
     int idx = linear_index(block->block_events, which);
@@ -726,8 +749,8 @@ bool Maps::canStepBetween(df::coord pos1, df::coord pos2)
         pos2 = temp;
     }
 
-    df::map_block* block1 = getTileBlock(pos1);
-    df::map_block* block2 = getTileBlock(pos2);
+    df::map_block *block1 = getTileBlock(pos1);
+    df::map_block *block2 = getTileBlock(pos2);
 
     if ( !block1 || !block2 )
         return false;
@@ -743,8 +766,8 @@ bool Maps::canStepBetween(df::coord pos1, df::coord pos2)
     if ( dz == 0 )
         return true;
 
-    df::tiletype* type1 = Maps::getTileType(pos1);
-    df::tiletype* type2 = Maps::getTileType(pos2);
+    df::tiletype *type1 = Maps::getTileType(pos1);
+    df::tiletype *type2 = Maps::getTileType(pos2);
 
     df::tiletype_shape shape1 = ENUM_ATTR(tiletype,shape,*type1);
     df::tiletype_shape shape2 = ENUM_ATTR(tiletype,shape,*type2);
@@ -771,7 +794,7 @@ bool Maps::canStepBetween(df::coord pos1, df::coord pos2)
                 for ( int32_t y = -1; y <= 1; y++ ) {
                     if ( x == 0 && y == 0 )
                         continue;
-                    df::tiletype* type = Maps::getTileType(df::coord(pos1.x+x,pos1.y+y,pos1.z));
+                    df::tiletype *type = Maps::getTileType(df::coord(pos1.x+x,pos1.y+y,pos1.z));
                     df::tiletype_shape shape3 = ENUM_ATTR(tiletype,shape,*type);
                     if ( shape3 == tiletype_shape::WALL ) {
                         foundWall = true;
@@ -787,7 +810,7 @@ bool Maps::canStepBetween(df::coord pos1, df::coord pos2)
             if ( index_tile(block2->occupancy,pos2).bits.building != tile_building_occ::Dynamic )
                 return false;
             //note that forbidden hatches have Floored occupancy. unforbidden ones have dynamic occupancy
-            df::building* building = Buildings::findAtTile(pos2);
+            df::building *building = Buildings::findAtTile(pos2);
             if ( building == NULL ) {
                 out << __FILE__ << ", line " << __LINE__ << ": couldn't find hatch.\n";
                 return false;
@@ -808,7 +831,7 @@ bool Maps::canStepBetween(df::coord pos1, df::coord pos2)
             for ( int32_t y = -1; y <= 1; y++ ) {
                 if ( x == 0 && y == 0 )
                     continue;
-                df::tiletype* type = Maps::getTileType(df::coord(pos1.x+x,pos1.y+y,pos1.z));
+                df::tiletype *type = Maps::getTileType(df::coord(pos1.x+x,pos1.y+y,pos1.z));
                 df::tiletype_shape shape3 = ENUM_ATTR(tiletype,shape,*type);
                 if ( shape3 == tiletype_shape::WALL ) {
                     foundWall = true;
@@ -819,12 +842,12 @@ bool Maps::canStepBetween(df::coord pos1, df::coord pos2)
         }
         if ( !foundWall )
             return false; //unusable ramp
-        df::tiletype* typeUp = Maps::getTileType(up);
+        df::tiletype *typeUp = Maps::getTileType(up);
         df::tiletype_shape shapeUp = ENUM_ATTR(tiletype,shape,*typeUp);
         if ( shapeUp != tiletype_shape::RAMP_TOP )
             return false;
 
-        df::map_block* blockUp = getTileBlock(up);
+        df::map_block *blockUp = getTileBlock(up);
         if ( !blockUp )
             return false;
 
@@ -1078,17 +1101,17 @@ df::enums::biome_type::biome_type Maps::getBiomeTypeWithRef(int16_t region_x, in
 }
 
 bool Maps::isTileAquifer(int32_t x, int32_t y, int32_t z) {
-    df::tile_designation* des = Maps::getTileDesignation(x, y, z);
+    df::tile_designation *des = Maps::getTileDesignation(x, y, z);
     return des && des->bits.water_table;
 }
 
 bool Maps::isTileHeavyAquifer(int32_t x, int32_t y, int32_t z) {
-    df::tile_occupancy* occ = Maps::getTileOccupancy(x, y, z);
+    df::tile_occupancy *occ = Maps::getTileOccupancy(x, y, z);
     return occ && occ->bits.heavy_aquifer;
 }
 
 bool Maps::setTileAquifer(int32_t x, int32_t y, int32_t z, bool heavy) {
-    df::map_block* block = Maps::getTileBlock(x, y ,z);
+    df::map_block *block = Maps::getTileBlock(x, y ,z);
     if (!block)
         return false;
 
@@ -1105,7 +1128,7 @@ bool Maps::setTileAquifer(int32_t x, int32_t y, int32_t z, bool heavy) {
     return true;
 }
 
-int Maps::setAreaAquifer(df::coord pos1, df::coord pos2, bool heavy, std::function<bool(df::coord, df::map_block*)> filter) {
+int Maps::setAreaAquifer(df::coord pos1, df::coord pos2, bool heavy, std::function<bool(df::coord, df::map_block *)> filter) {
     df::coord minPos = df::coord(std::min(pos1.x, pos2.x), std::min(pos1.y, pos2.y), std::min(pos1.z, pos2.z));
     df::coord maxPos = df::coord(std::max(pos1.x, pos2.x), std::max(pos1.y, pos2.y), std::max(pos1.z, pos2.z));
 
@@ -1114,7 +1137,7 @@ int Maps::setAreaAquifer(df::coord pos1, df::coord pos2, bool heavy, std::functi
     for (int16_t z = minPos.z; z <= maxPos.z; z++) {
         for (int16_t blockX = (minPos.x >> 4) << 4; blockX <= maxPos.x; blockX += 16) {
             for (int16_t blockY = (minPos.y >> 4) << 4; blockY <= maxPos.y; blockY += 16) {
-                df::map_block* block = Maps::getTileBlock(blockX, blockY, z);
+                df::map_block *block = Maps::getTileBlock(blockX, blockY, z);
                 if (!block)
                     continue;
 
@@ -1150,7 +1173,7 @@ int Maps::setAreaAquifer(df::coord pos1, df::coord pos2, bool heavy, std::functi
 }
 
 bool Maps::removeTileAquifer(int32_t x, int32_t y, int32_t z) {
-    df::map_block* block = Maps::getTileBlock(x, y, z);
+    df::map_block *block = Maps::getTileBlock(x, y, z);
     if (!block)
         return false;
     if (!isTileAquifer(x, y, z))
@@ -1177,7 +1200,7 @@ bool Maps::removeTileAquifer(int32_t x, int32_t y, int32_t z) {
     return true;
 }
 
-int Maps::removeAreaAquifer(df::coord pos1, df::coord pos2, std::function<bool(df::coord, df::map_block*)> filter) {
+int Maps::removeAreaAquifer(df::coord pos1, df::coord pos2, std::function<bool(df::coord, df::map_block *)> filter) {
     df::coord minPos = df::coord(std::min(pos1.x, pos2.x), std::min(pos1.y, pos2.y), std::min(pos1.z, pos2.z));
     df::coord maxPos = df::coord(std::max(pos1.x, pos2.x), std::max(pos1.y, pos2.y), std::max(pos1.z, pos2.z));
 
@@ -1186,7 +1209,7 @@ int Maps::removeAreaAquifer(df::coord pos1, df::coord pos2, std::function<bool(d
     for (int16_t z = minPos.z; z <= maxPos.z; z++) {
         for (int16_t blockX = (minPos.x >> 4) << 4; blockX <= maxPos.x; blockX += 16) {
             for (int16_t blockY = (minPos.y >> 4) << 4; blockY <= maxPos.y; blockY += 16) {
-                df::map_block* block = Maps::getTileBlock(blockX, blockY, z);
+                df::map_block *block = Maps::getTileBlock(blockX, blockY, z);
                 if (!block)
                     continue;
 
@@ -1199,7 +1222,7 @@ int Maps::removeAreaAquifer(df::coord pos1, df::coord pos2, std::function<bool(d
                 // Loop through all tiles in the block
                 for (int16_t xOffset = 0; xOffset <= 15; xOffset++) {
                     for (int16_t yOffset = 0; yOffset <= 15; yOffset++) {
-                        df::tile_designation& des = block->designation[xOffset][yOffset];
+                        df::tile_designation &des = block->designation[xOffset][yOffset];
                         if (des.bits.water_table) {
                             if (xOffset >= startX && yOffset >= startY && xOffset <= endX && yOffset <= endY
                                 && filter(df::coord(blockX + xOffset, blockY + yOffset, z), block)
