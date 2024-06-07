@@ -116,11 +116,6 @@ static bool tile_watery(const df::coord &pos)
     return false;
 }
 
-static inline bool is_shrub(plant_type::plant_type type)
-{
-    return type == plant_type::DRY_PLANT || type == plant_type::WET_PLANT;
-}
-
 command_result df_createplant(color_ostream &out, const df::coord &pos, const plant_options &options)
 {
     auto col = Maps::getBlockColumn((pos.x / 48)*3, (pos.y / 48)*3);
@@ -270,7 +265,7 @@ command_result df_grow(color_ostream &out, const cuboid &bounds, const plant_opt
     int grown = 0, grown_trees = 0;
     for (auto plant : world->plants.all)
     {
-        if (is_shrub(plant->type))
+        if (ENUM_ATTR(plant_type, is_shrub, plant->type))
             continue; // Shrub
         else if (!bounds.containsPos(plant->pos))
             continue; // Outside cuboid
@@ -410,7 +405,7 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
                 continue; // Not removing living
             /*else if (plant->tree_info && !options.trees)
                 continue; // Not removing trees*/
-            else if (is_shrub(plant.type))
+            else if (ENUM_ATTR(plant_type, is_shrub, plant.type))
             {
                 if (!options.shrubs)
                     continue; // Not removing shrubs
@@ -427,7 +422,7 @@ command_result df_removeplant(color_ostream &out, const cuboid &bounds, const pl
         bool bad_tt = false;
         if (tt)
         {
-            if (is_shrub(plant.type))
+            if (ENUM_ATTR(plant_type, is_shrub, plant.type))
             {
                 if (tileShape(*tt) != tiletype_shape::SHRUB)
                 {
