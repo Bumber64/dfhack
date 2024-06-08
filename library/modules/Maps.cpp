@@ -177,7 +177,7 @@ bool cuboid::containsPos(int16_t x, int16_t y, int16_t z) const
         x <= x_max && y <= y_max && z <= z_max;
 }
 
-void cuboid::forCoord(std::function<void(df::coord)> fn)
+void cuboid::forCoord(std::function<bool(df::coord)> fn)
 {
     if (isValid()) // Only iterate if valid cuboid
         Maps::forCoord(fn, x_min, y_min, z_max, x_max, y_max, z_min);
@@ -191,7 +191,7 @@ bool Maps::IsValid ()
     return (world->map.block_index != NULL);
 }
 
-void Maps::forCoord(std::function<void(df::coord)> fn, int16_t x1, int16_t y1, int16_t z1,
+void Maps::forCoord(std::function<bool(df::coord)> fn, int16_t x1, int16_t y1, int16_t z1,
     int16_t x2, int16_t y2, int16_t z2)
 {
     int16_t dx = x1 > x2 ? -1 : 1;
@@ -202,7 +202,8 @@ void Maps::forCoord(std::function<void(df::coord)> fn, int16_t x1, int16_t y1, i
     for (int16_t x = x1; x != x2 + dx; x += dx)
         for (int16_t y = y1; y != y2 + dy; y += dy)
             for (int16_t z = z1; z != z2 + dz; z += dz)
-                fn(df::coord(x, y, z));
+                if (!fn(df::coord(x, y, z)))
+                    return;
 }
 
 // getter for map size in blocks
