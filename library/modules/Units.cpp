@@ -924,6 +924,16 @@ df::unit *Units::create(int16_t race, int16_t caste) {
     return (*f)(race, caste);
 }
 
+df::caste_raw *Units::getCasteRaw(int race, int caste) {
+    auto creature = df::creature_raw::find(race);
+    return creature ? vector_get(creature->caste, caste) : NULL;
+}
+
+df::caste_raw *Units::getCasteRaw(df::unit *unit) {
+    CHECK_NULL_POINTER(unit);
+    return getCasteRaw(unit->race, unit->caste);
+}
+
 int Units::getPhysicalAttrValue(df::unit *unit, df::physical_attribute_type attr) {
     auto &aobj = unit->body.physical_attrs[attr];
     int value = max(0, aobj.value - aobj.soft_demotion);
