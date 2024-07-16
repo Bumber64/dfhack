@@ -51,7 +51,6 @@
 #include "df/color_modifier_raw.h"
 #include "df/construction.h"
 #include "df/creature_raw.h"
-#include "df/creature_raw.h"
 #include "df/descriptor_color.h"
 #include "df/descriptor_pattern.h"
 #include "df/descriptor_shape.h"
