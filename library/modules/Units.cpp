@@ -413,10 +413,10 @@ bool Units::isTamable(df::unit *unit) {
     CHECK_NULL_POINTER(unit);
     if (isInvader(unit))
         return false;
+    auto caste = getCasteRaw(unit->race, unit->caste);
 
-    auto caste = df::creature_raw::find(unit->race)->caste.at(unit->caste);
-    return caste->flags.is_set(caste_raw_flags::PET)
-        || caste->flags.is_set(caste_raw_flags::PET_EXOTIC);
+    return caste && (caste->flags.is_set(caste_raw_flags::PET) ||
+        caste->flags.is_set(caste_raw_flags::PET_EXOTIC));
 }
 
 bool Units::isDomesticated(df::unit *unit) {
@@ -479,9 +479,10 @@ bool Units::isGelded(df::unit *unit) {
 
 bool Units::isEggLayer(df::unit *unit) {
     CHECK_NULL_POINTER(unit);
-    auto caste = df::creature_raw::find(unit->race)->caste.at(unit->caste);
-    return caste->flags.is_set(caste_raw_flags::LAYS_EGGS)
-        || caste->flags.is_set(caste_raw_flags::LAYS_UNUSUAL_EGGS);
+    auto caste = getCasteRaw(unit->race, unit->caste);
+
+    return caste && (caste->flags.is_set(caste_raw_flags::LAYS_EGGS) ||
+        caste->flags.is_set(caste_raw_flags::LAYS_UNUSUAL_EGGS));
 }
 
 bool Units::isEggLayerRace(df::unit *unit) {
@@ -969,11 +970,7 @@ int Units::getMentalAttrValue(df::unit *unit, df::mental_attribute_type attr) {
 }
 
 bool Units::casteFlagSet(int race, int caste, df::caste_raw_flags flag) {
-    auto creature = df::creature_raw::find(race);
-    if (!creature)
-        return false;
-
-    auto craw = vector_get(creature->caste, caste);
+    auto craw = getCasteRaw(race, caste);
     return craw ? craw->flags.is_set(flag) : false;
 }
 
@@ -1360,11 +1357,7 @@ int Units::computeMovementSpeed(df::unit *unit)
     // Base speed
     int speed = 0;
     /*
-    auto creature = df::creature_raw::find(unit->race);
-    if (!creature)
-        return 0;
-
-    auto craw = vector_get(creature->caste, unit->caste);
+    auto craw = getCasteRaw(unit->race, unit->caste);
     if (!craw)
         return 0;
 
