@@ -47,7 +47,6 @@
 #include "df/building_wellst.h"
 
 #include "df/caste_raw.h"
-#include "df/caste_raw.h"
 #include "df/color_modifier_raw.h"
 #include "df/construction.h"
 #include "df/creature_raw.h"
