@@ -2220,9 +2220,9 @@ static int units_getUnitsByNobleRole(lua_State *L) {
 static int units_getCasteRaw(lua_State *state) {
     df::caste_raw *craw = NULL;
 
-    if (lua_gettop(state) == 1)
+    if (lua_gettop(state) <= 1)
         craw = Units::getCasteRaw(Lua::CheckDFObject<df::unit>(state, 1));
-    else
+    else // Use race, caste
         craw = Units::getCasteRaw(lua_tointeger(state, 1), lua_tointeger(state, 2));
 
     Lua::PushDFObject(state, craw);
