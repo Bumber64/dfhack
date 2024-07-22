@@ -1261,7 +1261,7 @@ Announcements
 * ``dfhack.gui.autoDFAnnouncement(report,text)``
   ``dfhack.gui.autoDFAnnouncement(type,pos,text[,color[,is_bright[,unit_a[,unit_d[,is_sparring]]]]])``
 
-  Takes an ``df.announcement_infost`` (see:
+  Takes a ``df.announcement_infost`` (see:
   `structure definition <https://github.com/DFHack/df-structures/blob/master/df.announcements.xml>`_)
   and a string and processes them just like DF does. Can also be built from parameters instead of
   an ``announcement_infost``. Setting ``is_sparring`` to ``true`` means the report will be added
