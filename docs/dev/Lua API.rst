@@ -1234,7 +1234,7 @@ Announcements
   ``"[CHAR:~"..string.char(154).."]"`` both result in ``Ü``. Use ``[CHAR:32]`` or
   ``[CHAR:~ ]`` to add extra spaces, which would normally be trimmed by the parser.
 
-  ``[LPAGE:`` link_type ``:`` id ``]``, ``[LPAGE:`` link_type ``:`` id`` :`` subid ``]``:
+  ``[LPAGE:`` link_type ``:`` id ``]``, ``[LPAGE:`` link_type ``:`` id ``:`` subid ``]``:
   Start a ``markup_text_linkst``. These are intended for Legends mode page links and
   don't work in popups. The text will just be colored based on ``link_type``.
   Valid link types are: ``HF`` (``HIST_FIG``,) ``SITE``, ``ARTIFACT``, ``BOOK``,
@@ -1261,7 +1261,7 @@ Announcements
 * ``dfhack.gui.autoDFAnnouncement(report,text)``
   ``dfhack.gui.autoDFAnnouncement(type,pos,text[,color[,is_bright[,unit_a[,unit_d[,is_sparring]]]]])``
 
-  Takes an ``df.announcement_infost``(see:
+  Takes an ``df.announcement_infost`` (see:
   `structure definition <https://github.com/DFHack/df-structures/blob/master/df.announcements.xml>`_)
   and a string and processes them just like DF does. Can also be built from parameters instead of
   an ``announcement_infost``. Setting ``is_sparring`` to ``true`` means the report will be added
