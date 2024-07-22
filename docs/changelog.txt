@@ -54,11 +54,6 @@ Template for new versions:
 ## New Tools
 
 ## New Features
-- ``cuboid``: construct from ``df::map_block*``, ``forBlock`` iterator to access map blocks in cuboid
-- ``cuboid``: ``clamp(cuboid other)``, ``clampNew(cuboid other)`` for cuboid intersection. ``clampNew`` returns new cuboid instead of modifying.
-- ``Units::isUnitInBox``, ``getUnitsInBox``: add versions that take cuboid, filter fn parameter for ``getUnitsInBox``
-- ``Units::getProfession``: get a unit's profession type accounting for fake identity
-- ``Units::getCasteRaw``: get a caste_raw from a unit or race and caste
 
 ## Fixes
 - `changelayer`: fix incorrect lookup of geological region in multi-region embarks
@@ -83,10 +78,17 @@ Template for new versions:
 - Improve ``Units`` module Lua API docs, including some fns that were completely unlisted
 
 ## API
-- ``Units::getRaceReadableName``, ``getRaceReadableNameById``, ``getRaceNamePluralById``: add missing fns to Lua API
+- ``Units``: allow historical figures to be passed instead of units for ``getReadableName``, ``getVisibleName``, and ``getProfessionName``
+- ``Units``: add missing fns ``getRaceReadableName``, ``getRaceReadableNameById``, ``getRaceNamePluralById`` to Lua API
+- ``Units::isUnitInBox``, ``getUnitsInBox``: add versions that take cuboid, filter fn parameter for ``getUnitsInBox``
+- ``Units::getProfession``: get a unit's profession type accounting for fake identity
+- ``Units::getCasteRaw``: get a caste_raw from a unit or race and caste
+- ``cuboid``: construct from ``df::map_block*``, ``forBlock`` iterator to access map blocks in cuboid
+- ``cuboid``: ``clamp(cuboid other)``, ``clampNew(cuboid other)`` for cuboid intersection. ``clampNew`` returns new cuboid instead of modifying.
 
 ## Lua
 - ``ZScreen``: new ``defocused`` property for starting screens without keyboard focus
+- ``dfhack.units``: allow historical figures to be passed instead of units for ``getReadableName``, ``getVisibleName``, and ``getProfessionName``
 
 ## Removed
 - ``cuboid::clamp(bool block)``: renamed to ``cuboid::clampMap(bool block)``, name taken by ``cuboid::clamp(cuboid other)``
