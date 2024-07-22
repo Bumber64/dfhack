@@ -1438,7 +1438,7 @@ Units module
   The unit is normally capable of rational action. I.e., not dead, insane, zombie,
   nor crazed (unless active werebeast).
 
-* ``dfhack.units.isCrazed``
+* ``dfhack.units.isCrazed(unit)``
 
   The unit is berserk and will attack all other creatures except crazed members of
   its own species. (Can be modified by curses.)
@@ -1453,7 +1453,7 @@ Units module
 
 * ``dfhack.units.isHidingCurse(unit)``
 
-  The unit is hiding a curse.
+  The unit is currently hiding a curse (i.e., vampire).
 
 * ``dfhack.units.isMale(unit)``
 * ``dfhack.units.isFemale(unit)``
@@ -1602,10 +1602,10 @@ Units module
 
   Returns a list of units (possibly empty) assigned to the given noble role.
 
-* ``dfhack.units.getCitizens([exclude_residents, include_insane])``
+* ``dfhack.units.getCitizens([exclude_residents[,include_insane]])``
 
   Returns a list of all living, sane citizens and residents that are currently
-  on the  map. Can ``exclude_residents`` or ``include_insane`` (both default
+  on the map. Can ``exclude_residents`` or ``include_insane`` (both default
   to ``false``).
 
 * ``dfhack.units.getPosition(unit)``
@@ -1628,7 +1628,7 @@ Units module
 
 * ``dfhack.units.getContainer(unit)``
 
-  Returns the container (cage) item or *nil*.
+  Returns the container (i.e., cage) holding the unit or *nil*.
 
 * ``dfhack.units.getOuterContainerRef(unit)``
 
@@ -1695,36 +1695,34 @@ Units module
 
   Finds (or creates if requested) a misc trait object with the given id.
 
-* ``dfhack.units.getRaceNameById(race_id)``
+* ``dfhack.units.getRaceNameById(race)``
 * ``dfhack.units.getRaceName(unit)``
 
   Get raw token name (e.g., "DWARF").
 
-* ``dfhack.units.getRaceReadableNameById(race_id)``
+* ``dfhack.units.getRaceReadableNameById(race)``
 * ``dfhack.units.getRaceReadableName(unit)``
-* ``dfhack.units.getRaceNamePluralById(race_id)``
+* ``dfhack.units.getRaceNamePluralById(race)``
 * ``dfhack.units.getRaceNamePlural(unit)``
 
   Get human-readable name (e.g., "dwarf" or "dwarves").
 
-* ``dfhack.units.getRaceBabyNameById(race_id[,plural])``
+* ``dfhack.units.getRaceBabyNameById(race[,plural])``
 * ``dfhack.units.getRaceBabyName(unit[,plural])``
-* ``dfhack.units.getRaceChildNameById(race_id[,plural])``
+* ``dfhack.units.getRaceChildNameById(race[,plural])``
 * ``dfhack.units.getRaceChildName(unit[,plural])``
 
   Get human-readable baby or child name (e.g., "dwarven baby" or "dwarven child").
 
-* ``dfhack.units.getReadableName(unit)``
+* ``dfhack.units.getReadableName(unit or historical_figure)``
 
   Returns a string that includes the language name of the unit (if any), the
   race of the unit (if different from fort), whether it is trained for war or
   hunting, any syndrome-given descriptions (such as "necromancer"), the training
-  level (if tame), and profession or noble role.
-
-* ``dfhack.units.getPhysicalDescription(unit)``
-
-  Should return physical description of the unit, but may not work for a given
-  DFHack build.
+  level (if tame), and profession or noble role. If a `historical_figure` is
+  passed instead of a unit, some information (e.g., agitation status) is not
+  available, and the profession may be different (e.g., "Monk") from what is
+  displayed in fort mode.
 
 * ``dfhack.units.getAge(unit[,true_age])``
 
@@ -1771,23 +1769,27 @@ Units module
   Meandering and floundering in liquid introduces additional slowdown. It is
   random, but the function computes and returns the expected mean factor as a float.
 
-* ``dfhack.units.getNoblePositions(unit)``
+* ``dfhack.units.getNoblePositions(unit or historical_figure)``
 
   Returns a list of tables describing noble position assignments, or *nil*.
-  Every table has fields ``entity``, ``assignment`` and ``position``.
+  Every table has fields ``entity``, ``assignment``, and ``position``.
 
 * ``dfhack.units.getProfession(unit)``
 
   Returns unit's profession ID (``df.profession``), accounting for false identity.
 
-* ``dfhack.units.getProfessionName(unit[,ignore_noble,plural,land_title])``
+* ``dfhack.units.getProfessionName(unit[,ignore_noble[,plural[,land_title]]])``
+* ``dfhack.units.getProfessionName(historical_figure[,ignore_noble[,plural[,land_title]]])``
 
   Retrieves the profession name using custom profession, noble assignments,
   or raws. The ``ignore_noble`` boolean disables the use of noble positions
   ("Prisoner", "Slave", and noble spouse titles included). The ``land_title``
-  boolean causes ``of Sitename`` to be appended when applicable.
+  boolean causes ``of Sitename`` to be appended when applicable. If a
+  `historical_figure` is passed instead of a unit, some information (e.g.,
+  agitation status) is not available, and the profession may be different
+  (e.g., "Monk") from what is displayed in fort mode.
 
-* ``dfhack.units.getCasteProfessionName(race,caste,prof_id[,plural])``
+* ``dfhack.units.getCasteProfessionName(race, caste, prof_id[, plural])``
 
   Retrieves the profession name for the given race and caste using raws.
 
@@ -1796,7 +1798,7 @@ Units module
   Retrieves the color associated with the profession, using noble assignments
   or raws. The ``ignore_noble`` boolean disables the use of noble positions.
 
-* ``dfhack.units.getCasteProfessionColor(race,caste,prof_id)``
+* ``dfhack.units.getCasteProfessionColor(race, caste, prof_id)``
 
   Retrieves the profession color for the given race and caste using raws.
 
