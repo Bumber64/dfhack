@@ -1887,7 +1887,7 @@ Timers will be capped to go no lower than 1.
 ``affectedActionTypeGroup`` parameters are values from the (custom) DF enum
 ``unit_action_type_group`` (see
 `unit_action_type definition <https://github.com/DFHack/df-structures/blob/master/df.units.xml>`_
-for specific grouping). They are as follows:
+for which action types each group contains). They are as follows:
 
   * ``All``
   * ``Movement``
