@@ -1932,7 +1932,7 @@ API functions:
   ``affectedActionTypeGroup`` category to ``amount`` (32-bit integer).
 
 Military module
-~~~~~~~~~~~~~~~~~~~
+---------------
 
 * ``dfhack.military.makeSquad(assignment_id)``
 
