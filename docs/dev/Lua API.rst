@@ -1882,12 +1882,12 @@ them down. All functions in this API have overflow/underflow protection when mod
 action timers (the value will cap out). Actions with a timer of 0 (or less) will not
 be modified as they are completed (or invalid in the case of negatives).
 Timers will be capped to go no lower than 1.
-``affectedActionType`` parameters are values from the DF enum ``unit_action_type``.
-E.g., ``df.unit_action_type.Move``.
+``affectedActionType`` parameters are values from the DF enum ``unit_action_type``
+(e.g., ``df.unit_action_type.Move``).
 ``affectedActionTypeGroup`` parameters are values from the (custom) DF enum
 ``unit_action_type_group`` (see
 `unit_action_type definition <https://github.com/DFHack/df-structures/blob/master/df.units.xml>`_
-for grouping). They are as follows:
+for specific grouping). They are as follows:
 
   * ``All``
   * ``Movement``
