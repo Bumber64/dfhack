@@ -178,7 +178,7 @@ static command_result autodump_main(color_ostream &out, vector<string> &paramete
             if (here && itm->pos != pos_cursor)
                 continue;
             itm->flags.bits.garbage_collect = true;
-            // Cosmetic changes: make them disappear from view instantly
+            // Cosmetic changes: make them disappear from view instantly.
             itm->flags.bits.forbid = true;
             itm->flags.bits.hidden = true;
         }
