@@ -142,13 +142,13 @@ static command_result autodump_main(color_ostream &out, vector<string> &paramete
             itm->flags.bits.construction ||
             itm->flags.bits.in_building ||
             itm->flags.bits.artifact
-            )
+        )
             continue;
         else if ((need_visible && itm->flags.bits.hidden)
             || (need_hidden && !itm->flags.bits.hidden)
             || (need_forbidden && !itm->flags.bits.forbid)
             || (!need_forbidden && itm->flags.bits.forbid)
-            )
+        )
             continue;
 
         if (!destroy)
