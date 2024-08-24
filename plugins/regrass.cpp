@@ -512,7 +512,7 @@ command_result df_regrass(color_ostream &out, vector<string> &parameters)
         auto z2 = pos_2.isValid() ? pos_2.z : z1;
         DEBUG(log, out).print("Regrassing z-levels %d to %d...\n", z1, z2);
         count = regrass_cuboid(out, options, cuboid(0, 0, z1,
-            world->map.x_count_block-1, world->map.y_count_block-1, z2));
+            world->map.x_count-1, world->map.y_count-1, z2));
     }
     else if (pos_1.isValid())
     {   // Block, cuboid, or point.
