@@ -58,9 +58,12 @@ end
 
 function clearCursorPos()
     if dfhack.world.isAdventureMode() then
-        u = dfhack.world.getAdventurer()
+        if not a_look.open then
+            return
+        end
+        local u = dfhack.world.getAdventurer()
         if u and u.pos:isValid() then
-            a_look.cursor = u.pos
+            a_look.cursor = copyall(u.pos)
         end
     else
         df.global.cursor = xyz2pos(nil)
