@@ -7,6 +7,7 @@ local utils = require('utils')
 
 local dscreen = dfhack.screen
 
+local a_look = df.global.game.main_interface.adventure.look
 local g_cursor = df.global.cursor
 local g_sel_rect = df.global.selection_rect
 local world_map = df.global.world.map
@@ -38,17 +39,29 @@ end
 
 ---@return df.coord|nil
 function getCursorPos()
-    if g_cursor.x >= 0 then
+    if dfhack.world.isAdventureMode() then
+        if a_look.open then
+            return a_look.cursor
+        end
+    elseif g_cursor.x >= 0 then
         return copyall(g_cursor)
     end
 end
 
 function setCursorPos(cursor)
-    df.global.cursor = copyall(cursor)
+    if dfhack.world.isAdventureMode() then
+        a_look.cursor = copyall(cursor)
+    else
+        df.global.cursor = copyall(cursor)
+    end
 end
 
 function clearCursorPos()
-    df.global.cursor = xyz2pos(nil)
+    if dfhack.world.isAdventureMode() then
+        a_look.cursor = xyz2pos(0,0,0)
+    else
+        df.global.cursor = xyz2pos(nil)
+    end
 end
 
 function getSelection()
