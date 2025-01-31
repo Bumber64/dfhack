@@ -83,7 +83,10 @@ bool makeItem(df::unit *unit, df::item_type type, int16_t subtype, int16_t mat_t
                 out_items[i]->moveToGround(building->centerx, building->centery, building->z);
         }
         else if (move_to_cursor)
-            out_items[i]->moveToGround(Gui::getCursorPos());
+        {
+            auto pos = Gui::getCursorPos();
+            out_items[i]->moveToGround(pos.x, pos.y, pos.z);
+        }
         // else createItem() already put it on the floor at the unit's feet, so we're good
 
         // Special logic for creating proper gloves in pairs
@@ -394,11 +397,13 @@ command_result df_createitem (color_ostream &out, vector<string> &parameters) {
 
     auto unit = Gui::getSelectedUnit(out, true);
     if (!unit) {
+        auto pos = Gui::getCursorPos();
         if (*gametype == game_type::ADVENTURE_ARENA || World::isAdventureMode())
         {   // Use the adventurer unit
             unit = World::getAdventurer();
+            move_to_cursor = pos.isValid();
         }
-        else if (Gui::getCursorPos().isValid())
+        else if (pos.isValid())
         {   // Use the first possible citizen if possible, otherwise the first unit
             for (auto u : Units::citizensRange(world->units.active)) {
                 unit = u;
