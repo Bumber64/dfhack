@@ -30,7 +30,6 @@ using namespace DFHack;
 using namespace df::enums;
 
 DFHACK_PLUGIN("createitem");
-REQUIRE_GLOBAL(cursor);
 REQUIRE_GLOBAL(world);
 REQUIRE_GLOBAL(gametype);
 REQUIRE_GLOBAL(cur_year_tick);
@@ -84,7 +83,7 @@ bool makeItem(df::unit *unit, df::item_type type, int16_t subtype, int16_t mat_t
                 out_items[i]->moveToGround(building->centerx, building->centery, building->z);
         }
         else if (move_to_cursor)
-            out_items[i]->moveToGround(cursor->x, cursor->y, cursor->z);
+            out_items[i]->moveToGround(Gui::getCursorPos());
         // else createItem() already put it on the floor at the unit's feet, so we're good
 
         // Special logic for creating proper gloves in pairs
@@ -399,7 +398,7 @@ command_result df_createitem (color_ostream &out, vector<string> &parameters) {
         {   // Use the adventurer unit
             unit = World::getAdventurer();
         }
-        else if (cursor->x >= 0)
+        else if (Gui::getCursorPos().isValid())
         {   // Use the first possible citizen if possible, otherwise the first unit
             for (auto u : Units::citizensRange(world->units.active)) {
                 unit = u;
