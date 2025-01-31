@@ -41,7 +41,7 @@ end
 function getCursorPos()
     if dfhack.world.isAdventureMode() then
         if a_look.open then
-            return a_look.cursor
+            return copyall(a_look.cursor)
         end
     elseif g_cursor.x >= 0 then
         return copyall(g_cursor)
