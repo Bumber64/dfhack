@@ -2748,10 +2748,10 @@ df::coord Gui::getCursorPos()
     {
         if (!game)
             return df::coord();
-        auto look = game->main_interface->adventure->look;
-        if (!look->open)
+        auto &look = game->main_interface.adventure.look;
+        if (!look.open)
             return df::coord();
-        return look->cursor;
+        return look.cursor;
     }
 
     if (!cursor)
@@ -2945,9 +2945,9 @@ bool Gui::getCursorCoords(int32_t &x, int32_t &y, int32_t &z)
         df::coord p;
         if (is_adv && game)
         {
-            auto look = game->main_interface->adventure->look;
-            if (look->open)
-                p = look->cursor;
+            auto &look = game->main_interface.adventure.look;
+            if (look.open)
+                p = look.cursor;
         }
         x = p.x; y = p.y; z = p.z;
         return p.isValid();
@@ -2965,9 +2965,9 @@ bool Gui::getCursorCoords(df::coord &pos)
     {
         if (game)
         {
-            auto look = game->main_interface->adventure->look;
-            if (look->open)
-                p = look->cursor;
+            auto &look = game->main_interface.adventure.look;
+            if (look.open)
+                p = look.cursor;
         }
     }
     else if (cursor)
@@ -2985,8 +2985,8 @@ bool Gui::setCursorCoords(const int32_t x, const int32_t y, const int32_t z)
     {
         if (!game)
             return false;
-        auto look = game->main_interface->adventure->look;
-        look->cursor = df::coord(x, y, z);
+        auto &look = game->main_interface.adventure.look;
+        look.cursor = df::coord(x, y, z);
         return true;
     }
     if (!cursor)
