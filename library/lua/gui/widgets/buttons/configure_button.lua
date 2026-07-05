@@ -1,4 +1,4 @@
--- A 3x1 tile button with a gear mark on it. Clicking on it will run a callback
+-- A 3x1 tile button with a gear symbol on it. Clicking on it will run a callback
 
 local textures = require('gui.textures')
 local Panel = require('gui.widgets.containers.panel')
