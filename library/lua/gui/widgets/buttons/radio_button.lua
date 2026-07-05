@@ -18,9 +18,9 @@ local disabled_pen_center = to_pen{fg=COLOR_RED,
 local disabled_pen_right = to_pen{fg=COLOR_CYAN,
     tile=curry(textures.tp_control_panel, 6) or nil, ch=string.byte(']')}
 
-------------------
+-----------------
 -- RadioButton --
-------------------
+-----------------
 
 ---@class widgets.RadioButton.attrs: widgets.ConfigureButton.attrs
 ---@field initial_state boolean
