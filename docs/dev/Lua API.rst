@@ -2430,7 +2430,7 @@ World module
   Optionally accepts a ``gametype`` ID to match against.
 
   Be advised that ``isAdventureMode()`` does not detect adventure arena (controlling
-  arena unit). It may be preferable to test ``gamemode == df.game_mode.ADVENTURE``
+  arena unit). It may be desirable to test ``gamemode == df.game_mode.ADVENTURE``
   to allow for both, or ``gametype == df.game_type.ADVENTURE_ARENA`` to check for
   just adventure arena.
 
